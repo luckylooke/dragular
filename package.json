@@ -1,6 +1,6 @@
 {
   "name": "dragular",
-  "version": "1.6.1",
+  "version": "1.0.0",
   "description": "Drag and drop so simple it hurts (Angular version)",
   "main": "dragular.js",
   "scripts": {
@@ -28,7 +28,7 @@
   "homepage": "https://github.com/luckylooke/dragula",
   "dependencies": {
     "angular": "~1.4.0"
-    },
+  },
   "devDependencies": {
     "browserify": "8.1.0",
     "clean-css": "3.0.4",
