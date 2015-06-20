@@ -25,7 +25,7 @@
     </div>
     <pre>
       <code>
-dragula([document.getElementById(left), document.getElementById(right)]);
+dragularService([document.getElementById(left), document.getElementById(right)]);
       </code>
     </pre>
   </div>
@@ -46,13 +46,20 @@ dragula([document.getElementById(left), document.getElementById(right)]);
     </div>
     <pre>
       <code>
-dragula([document.getElementById(left), document.getElementById(right)]).on('drag', function (el) {
-  el.className = el.className.replace(' animazing', '');
-}).on('drop', function (el) {
-  setTimeout(function () {
-    el.className += ' animazing';
-  }, 0);
-});
+dragularService([document.getElementById(left), document.getElementById(right)], {
+      scope: $scope
+    });
+    $scope.$on('drag', function(e, el) {
+      e.stopPropagation();
+      console.log(arguments);
+      el.className = el.className.replace(' ex-moved', '');
+    });
+    $scope.$on('drop', function(e, el) {
+      e.stopPropagation();
+      $timeout(function() {
+        el.className += ' ex-moved';
+      }, 0);
+    });
       </code>
     </pre>
   </div>
@@ -70,7 +77,7 @@ dragula([document.getElementById(left), document.getElementById(right)]).on('dra
     </div>
     <pre>
       <code>
-dragula([document.getElementById(single)], { removeOnSpill: true });
+dragularService([document.getElementById(single)], { removeOnSpill: true });
       </code>
     </pre>
   </div>
@@ -91,7 +98,7 @@ dragula([document.getElementById(single)], { removeOnSpill: true });
     </div>
     <pre>
       <code>
-dragula([document.getElementById(left), document.getElementById(right)], { revertOnSpill: true });
+dragularService([document.getElementById(left), document.getElementById(right)], { revertOnSpill: true });
       </code>
     </pre>
   </div>
@@ -108,7 +115,7 @@ dragula([document.getElementById(left), document.getElementById(right)], { rever
     </div>
     <pre>
       <code>
-dragula([document.getElementById(left), document.getElementById(right)], { copy: true });
+dragularService([document.getElementById(left), document.getElementById(right)], { copy: true });
       </code>
     </pre>
   </div>
@@ -123,7 +130,7 @@ dragula([document.getElementById(left), document.getElementById(right)], { copy:
     </div>
     <pre>
       <code>
-dragula([document.getElementById(left), document.getElementById(right)], {
+dragularService([document.getElementById(left), document.getElementById(right)], {
   moves: function (el, container, handle) {
     return handle.className === 'handle';
   }
