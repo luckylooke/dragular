@@ -1,4 +1,4 @@
-# Dragula
+# Dragular (angular version of [dragula](https://github.com/bevacqua/dragula))
 
 > Drag and drop so simple it hurts
 
@@ -10,7 +10,15 @@ Browser support includes every sane browser and **IE7+**. <sub>_(Granted you pol
 
 # Inspiration
 
-Have you ever wanted a drag and drop library that just works? That doesn't just depend on bloated frameworks, that has great support? That actually understands where to place the elements when they are dropped? That doesn't need you to do a zillion things to get it to work? Well, so did I!
+Have you ever wanted a drag and drop library that just works? That doesn't just depend on bloated frameworks, that has great support? That actually understands where to place the elements when they are dropped? That doesn't need you to do a zillion things to get it to work? Well, so did [Nicolas Bevacqua](https://github.com/bevacqua) and I have forked it into angular module!
+
+# What I have done exactly?
+
+- replaced crossvent by angulars event binding
+- replaced contra.emitter by $scope.$emit if scope provided in options (options.scope)
+- encapsulated the code into angular factory (dragularService)
+- created directive dragular where options can be passed providing scope property name
+- both service and directive provided as angular module (dragularModule)
 
 # Features
 
@@ -22,38 +30,38 @@ Have you ever wanted a drag and drop library that just works? That doesn't just 
 
 # Install
 
-You can get it on npm.
-
-```shell
-npm install dragula --save
+download dragular.js and dragular.css from dist folder and include it in your html
+```html
+  <link href='styles/dragular.css' rel='stylesheet' type='text/css' />
+  <script src='scripts/dragular.js'></script>
+```
+and put dragularModule into dependency array
+```javascript
+var app = angular.module('myApp', ['dragularModule', 'otherDependencies']);
 ```
 
-Or bower, too. <sub>_(note that it's called `dragula.js` in bower)_</sub>
-
-```shell
-bower install dragula.js --save
-```
+TODO: npm, bower pacakges
 
 # Usage
 
 Dragula provides the easiest possible API to make drag and drop a breeze in your applications.
 
-## `dragula(containers, options?)`
+## As service `dragularService(containers, options?)`
 
-By default, `dragula` will allow the user to drag an element in any of the `containers` and drop it in any other container in the list. If the element is dropped anywhere that's not one of the `containers`, the event will be gracefully cancelled according to the `revertOnSpill` and `removeOnSpill` options.
+By default, `dragular` will allow the user to drag an element in any of the `containers` and drop it in any other container in the list. If the element is dropped anywhere that's not one of the `containers`, the event will be gracefully cancelled according to the `revertOnSpill` and `removeOnSpill` options.
 
 Note that dragging is only triggered on left clicks, and only if no meta keys are pressed. Clicks on buttons and anchor tags are ignored, too.
 
 The example below allows the user to drag elements from `left` into `right`, and from `right` into `left`.
 
 ```js
-dragula([document.querySelector('#left'), document.querySelector('#right')]);
+dragularService([document.querySelector('#left'), document.querySelector('#right')]);
 ```
 
 You can also provide an `options` object. Here's an overview.
 
 ```js
-dragula(containers, {
+dragularService(containers, {
   moves: function (el, container, handle) {
     return true;         // elements are always draggable by default
   },
@@ -100,11 +108,29 @@ By default, spilling an element outside of any containers will move the element 
 
 #### `options.direction`
 
-When an element is dropped onto a container, it'll be placed near the point where the mouse was released. If the `direction` is `'vertical'`, the default value, the Y axis will be considered. Otherwise, if the `direction` is `'horizontal'`, the X axis will be considered.
+When an element is dropped onto a container, it'll be placed near the point where the mouse was released. If the `direction` is `'vertical'`, the Y axis will be considered. Otherwise, if the `direction` is `'horizontal'`, the X axis will be considered. Default is automatic, where simple logic determines direction by comparison of dimensions of parent and its first child.
+
+#### `options.scope`
+
+Scope can be provided for emitting events, you can provide whichever scope you like.
+
+## `Events`
+
+If $scope is provided as options.scope the following events can be tracked using `$scope.on(type, listener)`:
+
+Event Name | Listener Arguments      | Event Description
+-----------|-------------------------|-------------------------------------------------------------------------------------
+`drag`     | `el, container`         | `el` was lifted from `container`
+`dragend`  | `el`                    | Dragging event for `el` ended with either `cancel`, `remove`, or `drop`
+`drop`     | `el, container, source` | `el` was dropped into `container`, and originally came from `source`
+`cancel`   | `el, container`         | `el` was being dragged but it got nowhere and went back into `container`, its last stable parent
+`remove`   | `el, container`         | `el` was being dragged but it got nowhere and it was removed from the DOM. Its last stable parent was `container`.
+`shadow`   | `el, container`         | `el`, _the visual aid shadow_, was moved into `container`. May trigger many times as the position of `el` changes, even within the same `container`
+`cloned`   | `clone, original`       | DOM element `original` was cloned as `clone`. Triggers for mirror images and when `copy: true`
 
 ## API
 
-The `dragula` method returns a tiny object with a concise API. We'll refer to the API returned by `dragula` as `drake`.
+The `dragularService` method returns a tiny object with a concise API. We'll refer to the API returned by `dragularService` as `drake`.
 
 #### `drake.addContainer(container)`
 
@@ -139,23 +165,9 @@ Note that **a _"cancellation"_ will result in a `cancel` event** only in the fol
 
 If an element managed by `drake` is currently being dragged, this method will gracefully remove it from the DOM.
 
-#### `drake.on` _(Events)_
-
-The `drake` is an event emitter. The following events can be tracked using `drake.on(type, listener)`:
-
-Event Name | Listener Arguments      | Event Description
------------|-------------------------|-------------------------------------------------------------------------------------
-`drag`     | `el, container`         | `el` was lifted from `container`
-`dragend`  | `el`                    | Dragging event for `el` ended with either `cancel`, `remove`, or `drop`
-`drop`     | `el, container, source` | `el` was dropped into `container`, and originally came from `source`
-`cancel`   | `el, container`         | `el` was being dragged but it got nowhere and went back into `container`, its last stable parent
-`remove`   | `el, container`         | `el` was being dragged but it got nowhere and it was removed from the DOM. Its last stable parent was `container`.
-`shadow`   | `el, container`         | `el`, _the visual aid shadow_, was moved into `container`. May trigger many times as the position of `el` changes, even within the same `container`
-`cloned`   | `clone, original`       | DOM element `original` was cloned as `clone`. Triggers for mirror images and when `copy: true`
-
 #### `drake.destroy()`
 
-Removes all drag and drop events used by `dragula` to manage drag and drop between the `containers`. If `.destroy` is called while an element is being dragged, the drag will be effectively cancelled.
+Removes all drag and drop events used by `dragularService` to manage drag and drop between the `containers`. If `.destroy` is called while an element is being dragged, the drag will be effectively cancelled.
 
 # License
 
@@ -163,7 +175,7 @@ MIT
 
 [![eyes.png][3]][4]
 
-[1]: https://github.com/bevacqua/dragula/blob/master/resources/demo.png
-[2]: http://bevacqua.github.io/dragula/
-[3]: https://github.com/bevacqua/dragula/blob/master/resources/eyes.png
+[1]: https://github.com/dragular/dragular/blob/master/resources/demo.png
+[2]: http://luckylooke.github.io/dragular/
+[3]: https://github.com/dragular/dragular/blob/master/resources/eyes.png
 [4]: https://www.youtube.com/watch?v=EqQuihD0hoI
