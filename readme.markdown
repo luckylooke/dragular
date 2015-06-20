@@ -20,6 +20,12 @@ Have you ever wanted a drag and drop library that just works? That doesn't just 
 - created directive dragular where options can be passed providing scope property name
 - both service and directive provided as angular module (dragularModule)
 
+# Todo
+
+- accepting jQlite arraylike object as containers array
+- more/better examples
+- better workflow (gulp?)
+
 # Features
 
 - Super easy to set up
