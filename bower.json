@@ -1,0 +1,15 @@
+{
+  "name": "dragular.js",
+  "version": "1.6.1",
+  "description": "Drag and drop so simple it hurts (Angular version)",
+  "main": [
+    "dist/dragular.js",
+    "dist/dragular.css"
+  ],
+  "ignore": [],
+  "homepage": "https://github.com/bevacqua/dragula",
+  "authors": [
+    "Nicolas Bevacqua <nicolasbevacqua@gmail.com>"
+  ],
+  "license": "MIT"
+}
