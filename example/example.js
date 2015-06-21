@@ -16,7 +16,6 @@ angular.module('example', ['dragularModule'])
     });
     $scope.$on('drag', function(e, el) {
       e.stopPropagation();
-      console.log(arguments);
       el.className = el.className.replace(' ex-moved', '');
     });
     $scope.$on('drop', function(e, el) {
