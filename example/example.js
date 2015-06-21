@@ -9,9 +9,9 @@
 angular.module('example', ['dragularModule'])
   .controller('Example1', ['$element', 'dragularService', function TodoCtrl($element, dragularService) {
     // dragularService([$element.children();
-    dragularService([$element.children()[0], $element.children()[1]]);
+    dragularService($element.children());
   }]).controller('Example2', ['$scope', '$element', 'dragularService', '$timeout', function TodoCtrl($scope, $element, dragularService, $timeout) {
-    dragularService([$element.children()[0], $element.children()[1]], {
+    dragularService($element.children(), {
       scope: $scope
     });
     $scope.$on('drag', function(e, el) {
@@ -25,19 +25,19 @@ angular.module('example', ['dragularModule'])
       }, 0);
     });
   }]).controller('Example3', ['$scope', '$element', 'dragularService', function TodoCtrl($scope, $element, dragularService) {
-    dragularService([$element.children()[0]], {
+    dragularService($element.children(), {
       removeOnSpill: true
     });
   }]).controller('Example4', ['$scope', '$element', 'dragularService', function TodoCtrl($scope, $element, dragularService) {
-    dragularService([$element.children()[0], $element.children()[1]], {
+    dragularService($element.children(), {
       revertOnSpill: true
     });
   }]).controller('Example5', ['$scope', '$element', 'dragularService', function TodoCtrl($scope, $element, dragularService) {
-    dragularService([$element.children()[0], $element.children()[1]], {
+    dragularService($element.children(), {
       copy: true
     });
   }]).controller('Example6', ['$scope', '$element', 'dragularService', function TodoCtrl($scope, $element, dragularService) {
-    dragularService([$element.children()[0], $element.children()[1]], {
+    dragularService($element.children(), {
       moves: function(el, container, handle) {
         return handle.className === 'handle';
       }

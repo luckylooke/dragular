@@ -57,12 +57,26 @@ angular.module('dragularModule', []).factory('dragularService', function dragula
 
     function manipulateContainers(op) {
       return function addOrRemove(all) {
-        var changes = Array.isArray(all) ? all : [all];
+        var changes = Array.isArray(all) ? all : makeArray(all);
         changes.forEach(track);
         if (op === 'add') {
           _containers = _containers.concat(changes);
         } else {
           _containers = _containers.filter(removals);
+        }
+
+        function makeArray(all) {
+          if (all.length) {
+            var iAll = all.length,
+              newArray = [];
+            while (iAll) {
+              iAll--;
+              newArray.push(all[iAll]);
+            }
+            return newArray;
+          } else {
+            return [all];
+          }
         }
 
         function track(container) {
