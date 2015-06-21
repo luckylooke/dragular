@@ -24,22 +24,28 @@ angular.module('example', ['dragularModule'])
         el.className += ' ex-moved';
       }, 0);
     });
-  }]).controller('Example3', ['$scope', '$element', 'dragularService', function TodoCtrl($scope, $element, dragularService) {
+  }]).controller('Example3', ['$element', 'dragularService', function TodoCtrl($element, dragularService) {
     dragularService($element.children(), {
       removeOnSpill: true
     });
-  }]).controller('Example4', ['$scope', '$element', 'dragularService', function TodoCtrl($scope, $element, dragularService) {
+  }]).controller('Example4', ['$element', 'dragularService', function TodoCtrl($element, dragularService) {
     dragularService($element.children(), {
       revertOnSpill: true
     });
-  }]).controller('Example5', ['$scope', '$element', 'dragularService', function TodoCtrl($scope, $element, dragularService) {
+  }]).controller('Example5', ['$element', 'dragularService', function TodoCtrl($element, dragularService) {
     dragularService($element.children(), {
       copy: true
     });
-  }]).controller('Example6', ['$scope', '$element', 'dragularService', function TodoCtrl($scope, $element, dragularService) {
+  }]).controller('Example6', ['$element', 'dragularService', function TodoCtrl($element, dragularService) {
     dragularService($element.children(), {
       moves: function(el, container, handle) {
         return handle.className === 'handle';
+      }
+    });
+  }]).controller('Example7', ['$element', 'dragularService', function TodoCtrl($element, dragularService) {
+    dragularService($element.children(), {
+      classes: {
+        mirror: 'custom-green-mirror'
       }
     });
   }]);

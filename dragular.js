@@ -21,21 +21,27 @@ angular.module('dragularModule', []).factory('dragularService', function dragula
     var _copy; // item used for copying
     var _containers = []; // containers managed by the drake
 
-    var o = options || {};
-    if (o.moves === void 0) {
-      o.moves = always;
-    }
-    if (o.accepts === void 0) {
-      o.accepts = always;
-    }
-    if (o.copy === void 0) {
-      o.copy = false;
-    }
-    if (o.revertOnSpill === void 0) {
-      o.revertOnSpill = false;
-    }
-    if (o.removeOnSpill === void 0) {
-      o.removeOnSpill = false;
+    var o = {
+      classes: {
+        mirror: 'gu-mirror',
+        hide: 'gu-hide',
+        unselectable: 'gu-unselectable',
+        transit: 'gu-transit'
+      },
+      moves: always,
+      accepts: always,
+      copy: false,
+      revertOnSpill: false,
+      removeOnSpill: false
+    };
+
+    if (options && options.scope) {
+      var temp = options.scope;
+      options.scope = undefined;
+      angular.merge(o, options);
+      options.scope = o.scope = temp;
+    } else {
+      angular.merge(o, options);
     }
 
     var api = {
@@ -148,12 +154,12 @@ angular.module('dragularModule', []).factory('dragularService', function dragula
 
       if (o.copy) {
         _copy = item.cloneNode(true);
-        addClass(_copy, 'gu-transit');
+        addClass(_copy, o.classes.transit);
         if (o.scope) {
           o.scope.$emit('cloned', _copy, item);
         }
       } else {
-        addClass(item, 'gu-transit');
+        addClass(item, o.classes.transit);
       }
 
       _source = container;
@@ -248,7 +254,7 @@ angular.module('dragularModule', []).factory('dragularService', function dragula
     function cleanup() {
       var item = _copy || _item;
       removeMirrorImage();
-      rmClass(item, 'gu-transit');
+      rmClass(item, o.classes.transit);
       _source = _item = _copy = _initialSibling = _currentSibling = null;
       api.dragging = false;
       if (o.scope) {
@@ -337,11 +343,11 @@ angular.module('dragularModule', []).factory('dragularService', function dragula
       _mirror = _item.cloneNode(true);
       _mirror.style.width = rect.width + 'px';
       _mirror.style.height = rect.height + 'px';
-      rmClass(_mirror, 'gu-transit');
-      addClass(_mirror, ' gu-mirror');
+      rmClass(_mirror, o.classes.transit);
+      addClass(_mirror, o.classes.mirror);
       body.appendChild(_mirror);
       regEvent(documentElement, 'on', 'mousemove', drag);
-      addClass(body, 'gu-unselectable');
+      addClass(body, o.classes.unselectable);
       if (o.scope) {
         o.scope.$emit('cloned', _mirror, _item);
       }
@@ -349,7 +355,7 @@ angular.module('dragularModule', []).factory('dragularService', function dragula
 
     function removeMirrorImage() {
       if (_mirror) {
-        rmClass(body, 'gu-unselectable');
+        rmClass(body, o.classes.unselectable);
         regEvent(documentElement, 'off', 'mousemove', drag);
         _mirror.parentElement.removeChild(_mirror);
         _mirror = null;
@@ -420,6 +426,19 @@ angular.module('dragularModule', []).factory('dragularService', function dragula
         top: rect.top + getScroll('scrollTop', 'pageYOffset')
       };
     }
+
+    function getElementBehindPoint(point, x, y) {
+      if (!x && !y) {
+        return null;
+      }
+      var p = point || {};
+      var state = p.className;
+      var el;
+      p.className += ' ' + o.classes.hide;
+      el = document.elementFromPoint(x, y);
+      p.className = state;
+      return el;
+    }
   };
 
   function regEvent(el, op, type, fn) {
@@ -439,19 +458,6 @@ angular.module('dragularModule', []).factory('dragularService', function dragula
     }
     el[op](touch[type], fn);
     el[op](type, fn);
-  }
-
-  function getElementBehindPoint(point, x, y) {
-    if (!x && !y) {
-      return null;
-    }
-    var p = point || {};
-    var state = p.className;
-    var el;
-    p.className += ' gu-hide';
-    el = document.elementFromPoint(x, y);
-    p.className = state;
-    return el;
   }
 
   function always() {

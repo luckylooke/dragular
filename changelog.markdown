@@ -1,3 +1,7 @@
+# 1.0.2 customClasses
+
+- custom classes via option.classes;
+
 # 1.0.1 arraylike
 
 - accepting arraylike objects as containers array;

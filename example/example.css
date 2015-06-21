@@ -158,3 +158,17 @@ button:hover {
   background-color: rgba(0, 0, 0, 0.4);
   cursor: move;
 }
+
+.custom-green-mirror {
+  background-color: #56AB1C;
+  margin: 10px;
+  padding: 10px;
+  cursor: move;
+  cursor: grab;
+  cursor: -moz-grab;
+  cursor: -webkit-grab;
+  opacity: 0.8;
+  position: fixed !important;
+  margin: 0 !important;
+  z-index: 9999 !important;
+}
