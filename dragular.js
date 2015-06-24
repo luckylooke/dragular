@@ -20,7 +20,6 @@ angular.module('dragularModule', []).factory('dragularService', function dragula
       _currentSibling, // reference sibling now
       _copy, // item used for copying
       _containers = [], // containers managed by the drake
-      _containersNameSpaced = {}, // namespaced containers managed by the drakes
       o = { // options
         classes: {
           mirror: 'gu-mirror',
@@ -35,7 +34,7 @@ angular.module('dragularModule', []).factory('dragularService', function dragula
         removeOnSpill: false
       };
 
-    if (!angular.merge) {
+    if (!angular.merge) { // angular.merge pollyfill for angular < 1.4.1
       angular.merge = (function mergePollyfill() {
         function setHashKey(obj, h) {
           if (h) {
@@ -50,17 +49,21 @@ angular.module('dragularModule', []).factory('dragularService', function dragula
 
           for (var i = 0, ii = objs.length; i < ii; ++i) {
             var obj = objs[i];
-            if (!angular.isObject(obj) && !angular.isFunction(obj)) continue;
+            if (!angular.isObject(obj) && !angular.isFunction(obj)) {
+              continue;
+            }
             var keys = Object.keys(obj);
             for (var j = 0, jj = keys.length; j < jj; j++) {
               var key = keys[j];
               var src = obj[key];
 
               if (deep && angular.isObject(src)) {
-                if (isDate(src)) {
+                if (angular.isDate(src)) {
                   dst[key] = new Date(src.valueOf());
                 } else {
-                  if (!angular.isObject(dst[key])) dst[key] = angular.isArray(src) ? [] : {};
+                  if (!angular.isObject(dst[key])) {
+                    dst[key] = angular.isArray(src) ? [] : {};
+                  }
                   baseExtend(dst[key], [src], true);
                 }
               } else {
@@ -75,7 +78,7 @@ angular.module('dragularModule', []).factory('dragularService', function dragula
 
         return function merge(dst) {
           return baseExtend(dst, [].slice.call(arguments, 1), true);
-        }
+        };
       })();
     }
 
