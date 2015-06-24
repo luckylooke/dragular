@@ -1,3 +1,7 @@
+# 1.0.3 nameSpaced containers
+
+- allowing share of containers groups
+
 # 1.0.2 customClasses
 
 - custom classes via option.classes;
