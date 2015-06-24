@@ -24,6 +24,7 @@ Have you ever wanted a drag and drop library that just works? That actually unde
 - automatic direction if not provided in options, instead of default vertical
 - accepting arraylike objects as containers array
 - accepting custom classes via option.classes
+- namespaced containers groups available via option.nameSpace
 
 # Todo
 
