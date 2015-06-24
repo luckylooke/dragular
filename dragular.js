@@ -9,31 +9,75 @@
 
 angular.module('dragularModule', []).factory('dragularService', function dragula() {
   return function(initialContainers, options) {
-    var body = document.body;
-    var documentElement = document.documentElement;
-    var _mirror; // mirror image
-    var _source; // source container
-    var _item; // item being dragged
-    var _offsetX; // reference x
-    var _offsetY; // reference y
-    var _initialSibling; // reference sibling when grabbed
-    var _currentSibling; // reference sibling now
-    var _copy; // item used for copying
-    var _containers = []; // containers managed by the drake
+    var body = document.body,
+      documentElement = document.documentElement,
+      _mirror, // mirror image
+      _source, // source container
+      _item, // item being dragged
+      _offsetX, // reference x
+      _offsetY, // reference y
+      _initialSibling, // reference sibling when grabbed
+      _currentSibling, // reference sibling now
+      _copy, // item used for copying
+      _containers = [], // containers managed by the drake
+      _containersNameSpaced = {}, // namespaced containers managed by the drakes
+      o = { // options
+        classes: {
+          mirror: 'gu-mirror',
+          hide: 'gu-hide',
+          unselectable: 'gu-unselectable',
+          transit: 'gu-transit'
+        },
+        moves: always,
+        accepts: always,
+        copy: false,
+        revertOnSpill: false,
+        removeOnSpill: false
+      };
 
-    var o = {
-      classes: {
-        mirror: 'gu-mirror',
-        hide: 'gu-hide',
-        unselectable: 'gu-unselectable',
-        transit: 'gu-transit'
-      },
-      moves: always,
-      accepts: always,
-      copy: false,
-      revertOnSpill: false,
-      removeOnSpill: false
-    };
+    if (!angular.merge) {
+      angular.merge = (function mergePollyfill() {
+        function setHashKey(obj, h) {
+          if (h) {
+            obj.$$hashKey = h;
+          } else {
+            delete obj.$$hashKey;
+          }
+        }
+
+        function baseExtend(dst, objs, deep) {
+          var h = dst.$$hashKey;
+
+          for (var i = 0, ii = objs.length; i < ii; ++i) {
+            var obj = objs[i];
+            if (!angular.isObject(obj) && !angular.isFunction(obj)) continue;
+            var keys = Object.keys(obj);
+            for (var j = 0, jj = keys.length; j < jj; j++) {
+              var key = keys[j];
+              var src = obj[key];
+
+              if (deep && angular.isObject(src)) {
+                if (isDate(src)) {
+                  dst[key] = new Date(src.valueOf());
+                } else {
+                  if (!angular.isObject(dst[key])) dst[key] = angular.isArray(src) ? [] : {};
+                  baseExtend(dst[key], [src], true);
+                }
+              } else {
+                dst[key] = src;
+              }
+            }
+          }
+
+          setHashKey(dst, h);
+          return dst;
+        }
+
+        return function merge(dst) {
+          return baseExtend(dst, [].slice.call(arguments, 1), true);
+        }
+      })();
+    }
 
     if (options && options.scope) {
       var temp = options.scope;
