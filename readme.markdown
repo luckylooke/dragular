@@ -12,7 +12,7 @@ Browser support includes every sane browser and **IE7+**. <sub>_(Granted you pol
 
 Have you ever wanted a drag and drop library that just works? That actually understands where to place the elements when they are dropped? That doesn't need you to do a zillion things to get it to work? Well, so did [Nicolas Bevacqua](https://github.com/bevacqua) and I have forked it into angular module!
 
-<b>Actual version 0.1.2 is made from dragula 1.6.1 and tested with angular 1.4.1.</b>
+<b>Actual version 1.0.3 is made from dragula 1.6.1 and tested with angular 1.4.1.</b>
 
 # What I have done
 
