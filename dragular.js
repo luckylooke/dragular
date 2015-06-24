@@ -8,6 +8,7 @@
  */
 
 angular.module('dragularModule', []).factory('dragularService', function dragula() {
+  var containersNameSpaced = []; // name-spaced containers managed by the drakes
   return function(initialContainers, options) {
     var body = document.body,
       documentElement = document.documentElement,
@@ -91,6 +92,13 @@ angular.module('dragularModule', []).factory('dragularService', function dragula
       angular.merge(o, options);
     }
 
+    if (o.nameSpace) {
+      if (!containersNameSpaced[o.nameSpace]) {
+        containersNameSpaced[o.nameSpace] = [];
+      }
+      _containers = containersNameSpaced[o.nameSpace];
+    }
+
     var api = {
       addContainer: manipulateContainers('add'),
       removeContainer: manipulateContainers('remove'),
@@ -111,12 +119,15 @@ angular.module('dragularModule', []).factory('dragularService', function dragula
     function manipulateContainers(op) {
       return function addOrRemove(all) {
         var changes = Array.isArray(all) ? all : makeArray(all);
-        changes.forEach(track);
-        if (op === 'add') {
-          _containers = _containers.concat(changes);
-        } else {
-          _containers = _containers.filter(removals);
-        }
+        changes.forEach(function forEachContainer(container) {
+          if (op === 'add') {
+            _containers.push(container);
+            regEvent(container, 'on', 'mousedown', grab);
+          } else {
+            _containers.splice(_containers.indexOf(container), 1);
+            regEvent(container, 'off', 'mousedown', grab);
+          }
+        });
 
         function makeArray(all) {
           if (all.length) {
@@ -130,14 +141,6 @@ angular.module('dragularModule', []).factory('dragularService', function dragula
           } else {
             return [all];
           }
-        }
-
-        function track(container) {
-          regEvent(container, op === 'add' ? 'on' : 'off', 'mousedown', grab);
-        }
-
-        function removals(container) {
-          return changes.indexOf(container) === -1;
         }
       };
     }
