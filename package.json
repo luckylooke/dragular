@@ -1,6 +1,6 @@
 {
   "name": "dragular",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "Drag and drop so simple it hurts (Angular version)",
   "main": "dragular.js",
   "scripts": {
@@ -14,18 +14,18 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/luckylooke/dragular.git"
+    "url": "http://github.com/luckylooke/dragular.git"
   },
   "author": {
     "name": "Ctibor Laky",
     "email": "luckylooke@gmail.com",
-    "url": "https://github.com/luckylooke"
+    "url": "http://github.com/luckylooke"
   },
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/luckylooke/dragula/issues"
+    "url": "http://github.com/luckylooke/dragular/issues"
   },
-  "homepage": "https://github.com/luckylooke/dragula",
+  "homepage": "http://luckylooke.github.io/dragular/",
   "dependencies": {
     "angular": "~1.4.0"
   },
