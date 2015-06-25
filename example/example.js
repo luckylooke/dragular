@@ -45,8 +45,23 @@ angular.module('example', ['dragularModule'])
   }]).controller('Example7', ['$element', 'dragularService', function TodoCtrl($element, dragularService) {
     dragularService($element.children(), {
       classes: {
-        mirror: 'custom-green-mirror'
+        mirror: 'custom-green-mirror',
+        nameSpace: 'same'
       }
+    });
+  }]).controller('Example8', ['$scope', 'dragularService', function TodoCtrl($scope) {
+    $scope.dragularOptions = {
+      classes: {
+        mirror: 'custom-green-mirror'
+      },
+      nameSpace: 'same'
+    };
+  }]).controller('Example9', ['$element', 'dragularService', function TodoCtrl($element, dragularService) {
+    dragularService([$element.children()[0], $element.children()[2]], {
+      nameSpace: 'apples'
+    });
+    dragularService([$element.children()[1], $element.children()[3]], {
+      nameSpace: 'oranges'
     });
   }]);
 

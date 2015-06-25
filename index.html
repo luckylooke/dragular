@@ -168,6 +168,73 @@ option.classes = {
       </code>
     </pre>
   </div>
+  <div class='parent'>
+    <label for='hy'>Same as previous example, but via directive.</label>
+    <div class='wrapper' ng-controller="Example8">
+      <div id='left4' class='container' dragular="dragularOptions">
+        <div>Move me, but you can only drop me in one of these containers.</div>
+        <div>If you try to drop me somewhere other than these containers, I'll just come back.</div>
+        <div>Item 3.</div>
+        <div>Item 6.</div>
+      </div>
+      <div id='right3' class='container' dragular="dragularOptions">
+        <div>You can drop me in the left container, otherwise I'll stay here.</div>
+        <div>Item 4.</div>
+        <div>Item 5.</div>
+      </div>
+    </div>
+    <pre>
+      <code>
+&lt;div class='container' dragular=&quot;dragularOptions&quot;&gt;
+
+$scope.dragularOptions = {
+  classes: {
+    mirror: 'custom-green-mirror'
+  },
+  nameSpace: 'same'
+};
+      </code>
+    </pre>
+  </div>
+  <div class='parent'>
+    <label for='hy'>Add some fantastic events!</label>
+    <div class='wrapper' ng-controller="Example9">
+      <div class='container width25'>
+        <div>apples and oranges cannot be mixed</div>
+        <div>apple 2</div>
+        <div>apple 3</div>
+        <div>apple 4</div>
+      </div>
+      <div class='container width25'>
+        <div>orange 1</div>
+        <div>orange 2</div>
+        <div>orange 3</div>
+        <div>orange 4</div>
+      </div>
+      <div class='container width25'>
+        <div>apple 5</div>
+        <div>apple 6</div>
+        <div>apple 7</div>
+        <div>apple 8</div>
+      </div>
+      <div class='container width25'>
+        <div>orange 5</div>
+        <div>orange 6</div>
+        <div>orange 7</div>
+        <div>orange 8</div>
+      </div>
+    </div>
+    <pre>
+      <code>
+dragularService([$element.children()[0], $element.children()[2]], {
+  nameSpace: 'apples'
+});
+dragularService([$element.children()[1], $element.children()[3]], {
+  nameSpace: 'oranges'
+});
+      </code>
+    </pre>
+  </div>
 </div>
 <h3>Get it on GitHub! <a href='https://github.com/luckylooke/dragular'>luckylooke/dragular</a></h3>
 <script src='dist/angular.min.js'></script>
@@ -179,8 +246,11 @@ _gaq.push(['_setAccount', 'UA-64333581-1']);
 _gaq.push(['_trackPageview']);
 
 (function() {
-  var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+  var ga = document.createElement('script');
+  ga.type = 'text/javascript';
+  ga.async = true;
   ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-  var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  var s = document.getElementsByTagName('script')[0];
+  s.parentNode.insertBefore(ga, s);
 })();
 </script>
