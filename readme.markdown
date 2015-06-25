@@ -43,17 +43,33 @@ Have you ever wanted a drag and drop library that just works? That actually unde
 
 # Install
 
-download dragular.js and dragular.css from dist folder and include it in your html
+download dragular.js and dragular.css from dist folder
+
+OR clone git
+
+```
+git clone http://github.com/luckylooke/dragular.git
+```
+OR use npm
+```
+[sudo] npm install dragular
+```
+OR use bower
+```
+bower install dragular
+```
+AND
+include files into your project
 ```html
   <link href='styles/dragular.css' rel='stylesheet' type='text/css' />
   <script src='scripts/dragular.js'></script>
 ```
-and put dragularModule into dependency array
+AND 
+put dragularModule into dependency array
 ```javascript
 var app = angular.module('myApp', ['dragularModule', 'otherDependencies']);
 ```
-
-TODO: npm, bower pacakges
+DONE :)
 
 # Usage
 
