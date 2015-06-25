@@ -1,6 +1,6 @@
-# Dragular (angular drag&drop based on [dragula](https://github.com/bevacqua/dragula))
+# Dragular
 
-> Drag and drop so simple it hurts
+> Angular drag&drop based on [dragula](https://github.com/bevacqua/dragula)
 
 Browser support includes every sane browser and **IE7+**. <sub>_(Granted you polyfill the functional `Array` methods in ES5)_</sub>
 
