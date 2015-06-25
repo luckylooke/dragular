@@ -1,4 +1,4 @@
-# Dragular (angular version of [dragula](https://github.com/bevacqua/dragula))
+# Dragular (angular drag&drop based on [dragula](https://github.com/bevacqua/dragula))
 
 > Drag and drop so simple it hurts
 
@@ -12,7 +12,7 @@ Browser support includes every sane browser and **IE7+**. <sub>_(Granted you pol
 
 Have you ever wanted a drag and drop library that just works? That actually understands where to place the elements when they are dropped? That doesn't need you to do a zillion things to get it to work? Well, so did [Nicolas Bevacqua](https://github.com/bevacqua) and I have forked it into angular module!
 
-<b>Actual version 1.0.3 is made from dragula 1.6.1 and tested with angular 1.4.1.</b>
+<b>Actual version 1.0.3 is based on dragula 1.6.1 and tested with angular 1.4.1.</b>
 
 # What I have done
 
@@ -25,10 +25,10 @@ Have you ever wanted a drag and drop library that just works? That actually unde
 - accepting arraylike objects as containers array
 - accepting custom classes via option.classes
 - namespaced containers groups available via option.nameSpace
+- more examples
 
 # Todo
 
-- more/better examples
 - npm/bower packaging
 - better workflow (gulp?)
 - publish more (blog?)
