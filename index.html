@@ -2,13 +2,14 @@
 <link href='dist/dragular.css' rel='stylesheet' type='text/css' />
 <link href='example/example.css' rel='stylesheet' type='text/css' />
 <title>dragular</title>
-<h1>dragular</h1>
-<h3>Drag and drop so simple it hurts</h3>
-<a href='https://github.com/luckylooke/dragular'>
+<h1>=== DRAGULAR ===</h1>
+<h3>Angular drag&drop based on <a href="http://github.com/bevacqua/dragula">dragula</a></h3>
+<a href='http://github.com/luckylooke/dragular'>
   <img class='gh-fork' src='https://camo.githubusercontent.com/52760788cde945287fbb584134c4cbc2bc36f904/68747470733a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f72696768745f77686974655f6666666666662e706e67' alt='Fork me on GitHub' data-canonical-src='https://s3.amazonaws.com/github/ribbons/forkme_right_white_ffffff.png' />
 </a>
 <div class='examples' ng-app="example">
   <div class='parent'>
+    <h2>Example 1 - basics</h2>
     <label for='hy'>Move stuff between these two containers. Note how the stuff gets inserted near the mouse pointer? Great stuff.</label>
     <div class='wrapper' ng-controller="Example1">
       <div id='left1' class='container'>
@@ -30,6 +31,7 @@ dragularService([document.getElementById(left), document.getElementById(right)])
     </pre>
   </div>
   <div class='parent'>
+    <h2>Example 2 - events</h2>
     <label for='hy'>Add some fantastic events!</label>
     <div class='wrapper' ng-controller="Example2">
       <div id='left3' class='container'>
@@ -63,6 +65,7 @@ dragularService([document.getElementById(left), document.getElementById(right)],
     </pre>
   </div>
   <div class='parent'>
+    <h2>Example 3 - remove on spill</h2>
     <label for='hy'>Need to be able to quickly delete stuff when it spills out of the chosen containers?</label>
     <div class='wrapper' ng-controller="Example3">
       <div id='single1' class='container'>
@@ -81,6 +84,7 @@ dragularService([document.getElementById(single)], { removeOnSpill: true });
     </pre>
   </div>
   <div class='parent'>
+    <h2>Example 4 - revert on spill</h2>
     <label for='hy'>By default, dropping an element outside of any known containers will keep the element in the last place it hovered over. You can make elements go back home if they're dropped outside of known containers, too.</label>
     <div class='wrapper' ng-controller="Example4">
       <div id='left4' class='container'>
@@ -102,10 +106,11 @@ dragularService([document.getElementById(left), document.getElementById(right)],
     </pre>
   </div>
   <div class='parent'>
+    <h2>Example 5 - copy</h2>
     <label for='hy'>Copying stuff is great too</label>
     <div class='wrapper' ng-controller="Example5">
       <div id='left2' class='container'>
-        <div>Move me, but you can only drop me in one of these containers.</div>
+        <div>Move me, and make copy on drop.</div>
         <div>If you try to drop me somewhere other than these containers, I'll just come back.</div>
       </div>
       <div id='right2' class='container'>
@@ -119,6 +124,7 @@ dragularService([document.getElementById(left), document.getElementById(right)],
     </pre>
   </div>
   <div class='parent'>
+    <h2>Example 6 - handle</h2>
     <label for='hy'>Drag handles float your cruise?</label>
     <div class='wrapper' ng-controller="Example6">
       <div id='left5' class='container'>
@@ -138,6 +144,7 @@ dragularService([document.getElementById(left), document.getElementById(right)],
     </pre>
   </div>
   <div class='parent'>
+    <h2>Example 7 - custom classes</h2>
     <label for='hy'>You can overwrite buildin classes by providing classes names in object via options.classes.</label>
     <div class='wrapper' ng-controller="Example7">
       <div id='left4' class='container'>
@@ -169,7 +176,8 @@ option.classes = {
     </pre>
   </div>
   <div class='parent'>
-    <label for='hy'>Same as previous example, but via directive.</label>
+    <h2>Example 8 - directive</h2>
+    <label for='hy'>Same as previous example, but using directive.</label>
     <div class='wrapper' ng-controller="Example8">
       <div id='left4' class='container' dragular="dragularOptions">
         <div>Move me, but you can only drop me in one of these containers.</div>
@@ -197,7 +205,8 @@ $scope.dragularOptions = {
     </pre>
   </div>
   <div class='parent'>
-    <label for='hy'>Add some fantastic events!</label>
+    <h2>Example 9 - namespaces</h2>
+    <label for='hy'>Try name-spaces not to mix apples and oranges.</label>
     <div class='wrapper' ng-controller="Example9">
       <div class='container width25'>
         <div>apples and oranges cannot be mixed</div>
