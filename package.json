@@ -1,7 +1,7 @@
 {
   "name": "dragular",
   "version": "1.0.3",
-  "description": "Drag and drop so simple it hurts (Angular version)",
+  "description": "Angular drag and drop based on dragula",
   "main": "dragular.js",
   "scripts": {
     "start": "watchify -s dragular -do dist/dragular.js dragular.js & stylus -w dragular.styl --import node_modules/nib -o dist",

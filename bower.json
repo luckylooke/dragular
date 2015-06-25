@@ -1,15 +1,21 @@
 {
   "name": "dragular.js",
-  "version": "1.6.1",
-  "description": "Drag and drop so simple it hurts (Angular version)",
+  "version": "1.0.3",
+  "description": "Angular drag and drop based on dragula",
   "main": [
-    "dist/dragular.js",
-    "dist/dragular.css"
+    "dist/dragular.min.js",
+    "dist/dragular.min.css"
   ],
-  "ignore": [],
-  "homepage": "https://github.com/bevacqua/dragula",
+  "dependencies": {
+    "angular": "1.x"
+  },
+  "ignore": [
+    "node_modules",
+    "bower_components"
+  ],
+  "homepage": "http://luckylooke.github.io/dragular/",
   "authors": [
-    "Nicolas Bevacqua <nicolasbevacqua@gmail.com>"
+    "Ctibor Laky <luckylooke@gmail.com>"
   ],
   "license": "MIT"
 }
