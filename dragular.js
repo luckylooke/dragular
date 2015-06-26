@@ -194,8 +194,8 @@ angular.module('dragularModule', []).factory('dragularService', function dragula
         return false;
       }
 
-      var container = item.parentElement;
-      var movable = o.moves(item, container, handle);
+      var container = item.parentElement,
+        movable = o.moves(item, container, handle);
       if (!movable) {
         return false;
       }
@@ -241,11 +241,11 @@ angular.module('dragularModule', []).factory('dragularService', function dragula
         return;
       }
 
-      var item = _copy || _item;
-      var clientX = getCoord('clientX', e);
-      var clientY = getCoord('clientY', e);
-      var elementBehindCursor = getElementBehindPoint(_mirror, clientX, clientY);
-      var dropTarget = findDropTarget(elementBehindCursor, clientX, clientY);
+      var item = _copy || _item,
+        clientX = getCoord('clientX', e),
+        clientY = getCoord('clientY', e),
+        elementBehindCursor = getElementBehindPoint(_mirror, clientX, clientY),
+        dropTarget = findDropTarget(elementBehindCursor, clientX, clientY);
       if (dropTarget && (o.copy === false || dropTarget !== _source)) {
         drop(item, dropTarget);
       } else if (o.removeOnSpill) {
@@ -268,8 +268,8 @@ angular.module('dragularModule', []).factory('dragularService', function dragula
       if (!api.dragging) {
         return;
       }
-      var item = _copy || _item;
-      var parent = item.parentElement;
+      var item = _copy || _item,
+        parent = item.parentElement;
       if (parent) {
         parent.removeChild(item);
       }
@@ -283,9 +283,9 @@ angular.module('dragularModule', []).factory('dragularService', function dragula
       if (!api.dragging) {
         return;
       }
-      var reverts = arguments.length > 0 ? revert : o.revertOnSpill;
-      var item = _copy || _item;
-      var parent = item.parentElement;
+      var reverts = arguments.length > 0 ? revert : o.revertOnSpill,
+        item = _copy || _item,
+        parent = item.parentElement;
       if (parent === _source && o.copy) {
         parent.removeChild(_copy);
       }
@@ -337,9 +337,9 @@ angular.module('dragularModule', []).factory('dragularService', function dragula
           return false;
         }
 
-        var immediate = getImmediateChild(target, elementBehindCursor);
-        var reference = getReference(target, immediate, clientX, clientY);
-        var initial = isInitialPlacement(target, reference);
+        var immediate = getImmediateChild(target, elementBehindCursor),
+          reference = getReference(target, immediate, clientX, clientY),
+          initial = isInitialPlacement(target, reference);
         if (initial) {
           return true; // should always be able to drop it right back where it was
         }
@@ -352,22 +352,22 @@ angular.module('dragularModule', []).factory('dragularService', function dragula
         return;
       }
 
-      var clientX = getCoord('clientX', e);
-      var clientY = getCoord('clientY', e);
-      var x = clientX - _offsetX;
-      var y = clientY - _offsetY;
+      var clientX = getCoord('clientX', e),
+        clientY = getCoord('clientY', e),
+        x = clientX - _offsetX,
+        y = clientY - _offsetY;
 
       _mirror.style.left = x + 'px';
       _mirror.style.top = y + 'px';
 
-      var elementBehindCursor = getElementBehindPoint(_mirror, clientX, clientY);
-      var dropTarget = findDropTarget(elementBehindCursor, clientX, clientY);
+      var elementBehindCursor = getElementBehindPoint(_mirror, clientX, clientY),
+        dropTarget = findDropTarget(elementBehindCursor, clientX, clientY);
       if (dropTarget === _source && o.copy) {
         return;
       }
-      var reference;
-      var item = _copy || _item;
-      var immediate = getImmediateChild(dropTarget, elementBehindCursor);
+      var reference,
+        item = _copy || _item,
+        immediate = getImmediateChild(dropTarget, elementBehindCursor);
       if (immediate !== null) {
         reference = getReference(dropTarget, immediate, clientX, clientY);
       } else if (o.revertOnSpill === true) {
@@ -424,15 +424,15 @@ angular.module('dragularModule', []).factory('dragularService', function dragula
     }
 
     function getReference(dropTarget, target, x, y) {
-      var horizontal = o.direction === 'horizontal';
-      var reference = target !== dropTarget ? inside() : outside();
+      var horizontal = o.direction === 'horizontal',
+        reference = target !== dropTarget ? inside() : outside();
       return reference;
 
       function outside() { // slower, but able to figure out any position
-        var len = dropTarget.children.length;
-        var i;
-        var el;
-        var rect;
+        var len = dropTarget.children.length,
+          i,
+          el,
+          rect;
         for (i = 0; i < len; i++) {
           el = dropTarget.children[i];
           rect = el.getBoundingClientRect();
@@ -481,9 +481,9 @@ angular.module('dragularModule', []).factory('dragularService', function dragula
       if (!x && !y) {
         return null;
       }
-      var p = point || {};
-      var state = p.className;
-      var el;
+      var p = point || {},
+        state = p.className,
+        el;
       p.className += ' ' + o.classes.hide;
       el = document.elementFromPoint(x, y);
       p.className = state;
@@ -494,15 +494,15 @@ angular.module('dragularModule', []).factory('dragularService', function dragula
   function regEvent(el, op, type, fn) {
     el = angular.element(el);
     var touch = {
-      mouseup: 'touchend',
-      mousedown: 'touchstart',
-      mousemove: 'touchmove'
-    };
-    var microsoft = {
-      mouseup: 'MSPointerUp',
-      mousedown: 'MSPointerDown',
-      mousemove: 'MSPointerMove'
-    };
+        mouseup: 'touchend',
+        mousedown: 'touchstart',
+        mousemove: 'touchmove'
+      },
+      microsoft = {
+        mouseup: 'MSPointerUp',
+        mousedown: 'MSPointerDown',
+        mousemove: 'MSPointerMove'
+      };
     if (window.navigator.msPointerEnabled) {
       el[op](microsoft[type], fn);
     }
@@ -551,22 +551,7 @@ angular.module('dragularModule', []).factory('dragularService', function dragula
   }
 
 }).directive('dragular', function(dragularService) {
-  // Runs during compile
-  return {
-    // name: '',
-    // priority: 1,
-    // terminal: true,
-    // scope: {}, // {} = isolate, true = child, false/undefined = no change
-    // controller: function($scope, $element, $attrs, $transclude) {},
-    // require: 'ngModel', // Array = multiple requires, ? = optional, ^ = check parent elements
-    // restrict: 'A', // E = Element, A = Attribute, C = Class, M = Comment
-    // template: '',
-    // templateUrl: '',
-    // replace: true,
-    // transclude: true,
-    // compile: function(tElement, tAttrs, function transclude(function(scope, cloneLinkingFn){ return function linking(scope, elm, attrs){}})),
-    link: function($scope, iElm, iAttrs) {
-      dragularService(iElm[0], $scope[iAttrs.dragular || 'undefined']);
-    }
+  return function($scope, iElm, iAttrs) {
+    dragularService(iElm[0], $scope[iAttrs.dragular || 'undefined']);
   };
 });
