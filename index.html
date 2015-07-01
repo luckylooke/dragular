@@ -182,7 +182,10 @@ option.classes = {
   mirror: 'gu-mirror',
   hide: 'gu-hide',
   unselectable: 'gu-unselectable',
-  transit: 'gu-transit'
+  transit: 'gu-transit',
+  overActive: 'gu-over-active',
+  overAccepts: 'gu-over-accept',
+  overDeclines: 'gu-over-decline'
 };
       </code>
     </pre>
@@ -296,15 +299,15 @@ dragularService([$element.children()[1], $element.children()[3]], {
   dragOverClasses: true
 });
 
-.container.gu-over-active.gu-over-accepts {
+.container.gu-over-active.gu-over-accept {
   background-color: green;
 }
 
-.container.gu-over-active.gu-over-declines {
+.container.gu-over-active.gu-over-decline {
   background-color: red;
 }
 
-code.gu-over-active.gu-over-declines {
+code.gu-over-active.gu-over-decline {
   background-color: yellow;
 }
       </code>
