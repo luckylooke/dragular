@@ -19,6 +19,8 @@ angular.module('dragularModule', []).factory('dragularService', function dragula
       _offsetY, // reference y
       _initialSibling, // reference sibling when grabbed
       _currentSibling, // reference sibling now
+      _lastOverElem, // last element behind the cursor (dragOverClasses feature)
+      _lastOverClass, // last overClass used (dragOverClasses feature)
       _copy, // item used for copying
       _containers = [], // containers managed by the drake
       o = { // options
@@ -26,13 +28,17 @@ angular.module('dragularModule', []).factory('dragularService', function dragula
           mirror: 'gu-mirror',
           hide: 'gu-hide',
           unselectable: 'gu-unselectable',
-          transit: 'gu-transit'
+          transit: 'gu-transit',
+          overActive: 'gu-over-active',
+          overAccepts: 'gu-over-accept',
+          overDeclines: 'gu-over-decline'
         },
         moves: always,
         accepts: always,
         copy: false,
         revertOnSpill: false,
-        removeOnSpill: false
+        removeOnSpill: false,
+        dragOverClasses: false
       };
 
     if (!angular.merge) { // angular.merge pollyfill for angular < 1.4.1
@@ -253,6 +259,9 @@ angular.module('dragularModule', []).factory('dragularService', function dragula
       } else {
         cancel();
       }
+      if (o.dragOverClasses && _lastOverElem) {
+        rmClass(_lastOverElem, _lastOverClass);
+      }
     }
 
     function drop(item, target) {
@@ -332,18 +341,28 @@ angular.module('dragularModule', []).factory('dragularService', function dragula
       return target;
 
       function accepted() {
-        var droppable = _containers.indexOf(target) !== -1;
-        if (droppable === false) {
-          return false;
+        var accepts = false;
+
+        if (_containers.indexOf(target) !== -1) { // is droppable?
+          var immediate = getImmediateChild(target, elementBehindCursor),
+            reference = getReference(target, immediate, clientX, clientY),
+            initial = isInitialPlacement(target, reference);
+          accepts = initial ? true : o.accepts(_item, target, _source, reference);
         }
 
-        var immediate = getImmediateChild(target, elementBehindCursor),
-          reference = getReference(target, immediate, clientX, clientY),
-          initial = isInitialPlacement(target, reference);
-        if (initial) {
-          return true; // should always be able to drop it right back where it was
+        if (o.dragOverClasses &&
+          hasClass(target, o.classes.overActive) &&
+          target !== _lastOverElem) {
+
+          if (_lastOverElem) {
+            rmClass(_lastOverElem, _lastOverClass);
+          }
+
+          _lastOverClass = accepts ? o.classes.overAccepts : o.classes.overDeclines;
+          addClass(target, _lastOverClass);
+          _lastOverElem = target;
         }
-        return o.accepts(_item, target, _source, reference);
+        return accepts;
       }
     }
 
@@ -362,6 +381,20 @@ angular.module('dragularModule', []).factory('dragularService', function dragula
 
       var elementBehindCursor = getElementBehindPoint(_mirror, clientX, clientY),
         dropTarget = findDropTarget(elementBehindCursor, clientX, clientY);
+
+      // if (o.dragOverClasses &&
+      //   elementBehindCursor &&
+      //   hasClass(elementBehindCursor, o.classes.overActive)
+      //   elementBehindCursor !== _lastOverElem) {
+      //   if (_lastOverElem) {
+      //     rmClass(_lastOverElem, _lastOverClass);
+      //     console.log('removed0', _lastOverClass);
+      //   }
+      //   _lastOverClass = o.classes.overDeclines;
+      //   addClass(elementBehindCursor, _lastOverClass);
+      //   _lastOverElem = elementBehindCursor;
+      // }
+
       if (dropTarget === _source && o.copy) {
         return;
       }
@@ -492,22 +525,15 @@ angular.module('dragularModule', []).factory('dragularService', function dragula
   };
 
   function regEvent(el, op, type, fn) {
-    el = angular.element(el);
     var touch = {
         mouseup: 'touchend',
         mousedown: 'touchstart',
         mousemove: 'touchmove'
       },
-      microsoft = {
-        mouseup: 'MSPointerUp',
-        mousedown: 'MSPointerDown',
-        mousemove: 'MSPointerMove'
-      };
-    if (window.navigator.msPointerEnabled) {
-      el[op](microsoft[type], fn);
-    }
-    el[op](touch[type], fn);
-    el[op](type, fn);
+      $el = angular.element(el);
+
+    $el[op](touch[type], fn);
+    $el[op](type, fn);
   }
 
   function always() {
@@ -533,7 +559,11 @@ angular.module('dragularModule', []).factory('dragularService', function dragula
   }
 
   function rmClass(el, className) {
-    el.className = el.className.replace(new RegExp(' ' + className, 'g'), '');
+    angular.element(el).removeClass(className);
+  }
+
+  function hasClass(el, className) {
+    return (' ' + el.className + ' ').indexOf(' ' + className + ' ') > -1;
   }
 
   function getCoord(coord, e) {

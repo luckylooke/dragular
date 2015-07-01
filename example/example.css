@@ -176,3 +176,15 @@ button:hover {
   margin: 0 !important;
   z-index: 9999 !important;
 }
+
+.container.width25.gu-over-active.gu-over-accept {
+  background-color: green !important;
+}
+
+.container.width25.gu-over-active.gu-over-decline {
+  background-color: red !important;
+}
+
+pre.gu-over-active.gu-over-decline {
+  background-color: yellow !important;
+}
