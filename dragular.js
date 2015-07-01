@@ -38,7 +38,9 @@ angular.module('dragularModule', []).factory('dragularService', function dragula
         copy: false,
         revertOnSpill: false,
         removeOnSpill: false,
-        dragOverClasses: false
+        dragOverClasses: false,
+        lockX: false,
+        lockY: false
       };
 
     if (!angular.merge) { // angular.merge pollyfill for angular < 1.4.1
@@ -176,6 +178,16 @@ angular.module('dragularModule', []).factory('dragularService', function dragula
       _offsetX = getCoord('pageX', e) - offset.left;
       _offsetY = getCoord('pageY', e) - offset.top;
       renderMirrorImage();
+
+      // init _mirror position
+      var clientX = getCoord('clientX', e),
+        clientY = getCoord('clientY', e),
+        x = clientX - _offsetX,
+        y = clientY - _offsetY;
+
+      _mirror.style.left = x + 'px';
+      _mirror.style.top = y + 'px';
+
       drag(e);
       e.preventDefault();
     }
@@ -376,24 +388,15 @@ angular.module('dragularModule', []).factory('dragularService', function dragula
         x = clientX - _offsetX,
         y = clientY - _offsetY;
 
-      _mirror.style.left = x + 'px';
-      _mirror.style.top = y + 'px';
+      if (!o.lockX) {
+        _mirror.style.left = x + 'px';
+      }
+      if (!o.lockY) {
+        _mirror.style.top = y + 'px';
+      }
 
       var elementBehindCursor = getElementBehindPoint(_mirror, clientX, clientY),
         dropTarget = findDropTarget(elementBehindCursor, clientX, clientY);
-
-      // if (o.dragOverClasses &&
-      //   elementBehindCursor &&
-      //   hasClass(elementBehindCursor, o.classes.overActive)
-      //   elementBehindCursor !== _lastOverElem) {
-      //   if (_lastOverElem) {
-      //     rmClass(_lastOverElem, _lastOverClass);
-      //     console.log('removed0', _lastOverClass);
-      //   }
-      //   _lastOverClass = o.classes.overDeclines;
-      //   addClass(elementBehindCursor, _lastOverClass);
-      //   _lastOverElem = elementBehindCursor;
-      // }
 
       if (dropTarget === _source && o.copy) {
         return;
