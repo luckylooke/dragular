@@ -273,6 +273,7 @@ angular.module('dragularModule', []).factory('dragularService', function dragula
       }
       if (o.dragOverClasses && _lastOverElem) {
         rmClass(_lastOverElem, _lastOverClass);
+        _lastOverElem = null;
       }
     }
 
