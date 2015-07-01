@@ -24,6 +24,32 @@ angular.module('example', ['dragularModule'])
         el.className += ' ex-moved';
       }, 0);
     });
+    $scope.$on('shadow', function highlightContainer(e, item, container) {
+      e.stopPropagation();
+      $timeout(function() {
+        container.className += ' highlighted';
+      }, 0);
+    });
+    $scope.$on('shadowRemoved', function highlightRemoval(e, item, container) {
+      e.stopPropagation();
+      container.className = container.className.replace(' highlighted', '');
+    });
+
+    // $scope.$on('cloned', myFn('cloned'));
+    // $scope.$on('drag', myFn('drag'));
+    // $scope.$on('cancel', myFn('cancel'));
+    // $scope.$on('drop', myFn('drop'));
+    // $scope.$on('remove', myFn('remove'));
+    // $scope.$on('dragend', myFn('dragend'));
+    // $scope.$on('shadow', myFn('shadow'));
+    // $scope.$on('shadowRemoved', myFn('shadow'));
+
+    // function myFn(eventName) {
+    //   return function() {
+    //     console.log(eventName, arguments);
+    //   };
+    // }
+
   }]).controller('Example3', ['$element', 'dragularService', function TodoCtrl($element, dragularService) {
     dragularService($element.children(), {
       removeOnSpill: true
@@ -63,31 +89,13 @@ angular.module('example', ['dragularModule'])
     dragularService([$element.children()[1], $element.children()[3]], {
       nameSpace: 'oranges'
     });
+  }]).controller('Example10', ['$element', 'dragularService', function TodoCtrl($element, dragularService) {
+    dragularService([$element.children()[0], $element.children()[2]], {
+      nameSpace: 'apples',
+      dragOverClasses: true
+    });
+    dragularService([$element.children()[1], $element.children()[3]], {
+      nameSpace: 'oranges',
+      dragOverClasses: true
+    });
   }]);
-
-// function $(id) {
-//   return document.getElementById(id);
-// }
-
-// dragular([$('left1'), $('right1')]);
-// dragular([$('left2'), $('right2')], {
-//   copy: true
-// });
-// dragular([$('left3'), $('right3')]).on('drag', function(el) {
-//   el.className = el.className.replace(' ex-moved', '');
-// }).on('drop', function(el) {
-//   setTimeout(function() {
-//     el.className += ' ex-moved';
-//   }, 0);
-// });
-// dragular([$('left4'), $('right4')], {
-//   revertOnSpill: true
-// });
-// dragular([$('left5'), $('right5')], {
-//   moves: function(el, container, handle) {
-//     return handle.className === 'handle';
-//   }
-// });
-// dragular([$('single1')], {
-//   removeOnSpill: true
-// });
