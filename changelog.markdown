@@ -1,3 +1,11 @@
+# 1.1.0 tadaaa
+
+- started correctly using Semantic Versioning 2.0.0 http://semver.org/
+- avoiding angular.merge, so polyfill part was removed
+- boundingBox (dragging element can me moved only in specific area)
+- lockX/Y (dragging element can me moved only in specific direction)
+- readded feature: automatic direction
+
 # 1.0.3 nameSpaced containers
 
 - allowing share of containers groups
