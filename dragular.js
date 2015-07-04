@@ -17,86 +17,48 @@ angular.module('dragularModule', []).factory('dragularService', function dragula
       _item, // item being dragged
       _offsetX, // reference x
       _offsetY, // reference y
+      _offsetXr, // reference x right for boundingBox feature
+      _offsetYb, // reference y bottom for boundingBox feature
+      _mirrorWidth, // mirror width for boundingBox feature
+      _mirrorHeight, // mirror height for boundingBox feature
       _initialSibling, // reference sibling when grabbed
       _currentSibling, // reference sibling now
       _lastOverElem, // last element behind the cursor (dragOverClasses feature)
       _lastOverClass, // last overClass used (dragOverClasses feature)
       _copy, // item used for copying
       _containers = [], // containers managed by the drake
+      defaultClasses = {
+        mirror: 'gu-mirror',
+        hide: 'gu-hide',
+        unselectable: 'gu-unselectable',
+        transit: 'gu-transit',
+        overActive: 'gu-over-active',
+        overAccepts: 'gu-over-accept',
+        overDeclines: 'gu-over-decline'
+      },
       o = { // options
-        classes: {
-          mirror: 'gu-mirror',
-          hide: 'gu-hide',
-          unselectable: 'gu-unselectable',
-          transit: 'gu-transit',
-          overActive: 'gu-over-active',
-          overAccepts: 'gu-over-accept',
-          overDeclines: 'gu-over-decline'
-        },
+        classes: defaultClasses,
         moves: always,
         accepts: always,
         copy: false,
         revertOnSpill: false,
         removeOnSpill: false,
-        dragOverClasses: false
+        dragOverClasses: false,
+        lockX: false,
+        lockY: false,
+        boundingBox: false
       };
 
-    if (!angular.merge) { // angular.merge pollyfill for angular < 1.4.1
-      angular.merge = (function mergePollyfill() {
-        function setHashKey(obj, h) {
-          if (h) {
-            obj.$$hashKey = h;
-          } else {
-            delete obj.$$hashKey;
-          }
-        }
-
-        function baseExtend(dst, objs, deep) {
-          var h = dst.$$hashKey;
-
-          for (var i = 0, ii = objs.length; i < ii; ++i) {
-            var obj = objs[i];
-            if (!angular.isObject(obj) && !angular.isFunction(obj)) {
-              continue;
-            }
-            var keys = Object.keys(obj);
-            for (var j = 0, jj = keys.length; j < jj; j++) {
-              var key = keys[j];
-              var src = obj[key];
-
-              if (deep && angular.isObject(src)) {
-                if (angular.isDate(src)) {
-                  dst[key] = new Date(src.valueOf());
-                } else {
-                  if (!angular.isObject(dst[key])) {
-                    dst[key] = angular.isArray(src) ? [] : {};
-                  }
-                  baseExtend(dst[key], [src], true);
-                }
-              } else {
-                dst[key] = src;
-              }
-            }
-          }
-
-          setHashKey(dst, h);
-          return dst;
-        }
-
-        return function merge(dst) {
-          return baseExtend(dst, [].slice.call(arguments, 1), true);
-        };
-      })();
+    if (!isElement(o.boundingBox)) {
+      o.boundingBox = null;
     }
 
-    if (options && options.scope) {
-      var temp = options.scope;
-      options.scope = undefined;
-      angular.merge(o, options);
-      options.scope = o.scope = temp;
-    } else {
-      angular.merge(o, options);
+    if (options && options.classes) {
+      angular.extend(defaultClasses, options.classes);
+      angular.extend(options.classes, defaultClasses);
     }
+
+    angular.extend(o, options);
 
     if (o.nameSpace) {
       if (!containersNameSpaced[o.nameSpace]) {
@@ -172,10 +134,34 @@ angular.module('dragularModule', []).factory('dragularService', function dragula
         return;
       }
 
+      if (!o.direction) {
+        var parent = item.parentElement,
+          parentHeight = parent.offsetHeight,
+          parentWidth = parent.offsetWidth,
+          childHeight = item.clientHeight,
+          childWidth = item.clientWidth;
+        o.direction = parentHeight / childHeight < parentWidth / childWidth ? 'horizontal' : 'vertical';
+      }
+
       var offset = getOffset(_item);
       _offsetX = getCoord('pageX', e) - offset.left;
       _offsetY = getCoord('pageY', e) - offset.top;
       renderMirrorImage();
+
+      // init _mirror position
+      var clientX = getCoord('clientX', e),
+        clientY = getCoord('clientY', e),
+        x = clientX - _offsetX,
+        y = clientY - _offsetY;
+
+      _mirror.style.left = x + 'px';
+      _mirror.style.top = y + 'px';
+
+      if (o.boundingBox) {
+        _offsetXr = getCoord('pageX', e) - offset.right;
+        _offsetYb = getCoord('pageY', e) - offset.bottom;
+      }
+
       drag(e);
       e.preventDefault();
     }
@@ -261,6 +247,7 @@ angular.module('dragularModule', []).factory('dragularService', function dragula
       }
       if (o.dragOverClasses && _lastOverElem) {
         rmClass(_lastOverElem, _lastOverClass);
+        _lastOverElem = null;
       }
     }
 
@@ -374,26 +361,42 @@ angular.module('dragularModule', []).factory('dragularService', function dragula
       var clientX = getCoord('clientX', e),
         clientY = getCoord('clientY', e),
         x = clientX - _offsetX,
-        y = clientY - _offsetY;
+        y = clientY - _offsetY,
+        pageX,
+        pageY,
+        offsetBox;
 
-      _mirror.style.left = x + 'px';
-      _mirror.style.top = y + 'px';
+      if (o.boundingBox) {
+        pageX = getCoord('pageX', e);
+        pageY = getCoord('pageY', e);
+        offsetBox = getOffset(o.boundingBox);
+      }
+
+      if (!o.lockY) {
+        if (!o.boundingBox || (pageX > offsetBox.left + _offsetX && pageX < offsetBox.right + _offsetXr)) {
+          _mirror.style.left = x + 'px';
+        } else if (o.boundingBox) { // in case user scroll
+          if (pageX < offsetBox.left + _offsetX) {
+            _mirror.style.left = clientX - (pageX - offsetBox.left) + 'px';
+          } else {
+            _mirror.style.left = clientX - _mirrorWidth - (pageX - offsetBox.right) + 'px';
+          }
+        }
+      }
+      if (!o.lockX) {
+        if (!o.boundingBox || (pageY > offsetBox.top + _offsetY && pageY < offsetBox.bottom + _offsetYb)) {
+          _mirror.style.top = y + 'px';
+        } else if (o.boundingBox) { // in case user scroll
+          if (pageY < offsetBox.top + _offsetY) {
+            _mirror.style.top = clientY - (pageY - offsetBox.top) + 'px';
+          } else {
+            _mirror.style.top = clientY - _mirrorHeight - (pageY - offsetBox.bottom) + 'px';
+          }
+        }
+      }
 
       var elementBehindCursor = getElementBehindPoint(_mirror, clientX, clientY),
         dropTarget = findDropTarget(elementBehindCursor, clientX, clientY);
-
-      // if (o.dragOverClasses &&
-      //   elementBehindCursor &&
-      //   hasClass(elementBehindCursor, o.classes.overActive)
-      //   elementBehindCursor !== _lastOverElem) {
-      //   if (_lastOverElem) {
-      //     rmClass(_lastOverElem, _lastOverClass);
-      //     console.log('removed0', _lastOverClass);
-      //   }
-      //   _lastOverClass = o.classes.overDeclines;
-      //   addClass(elementBehindCursor, _lastOverClass);
-      //   _lastOverElem = elementBehindCursor;
-      // }
 
       if (dropTarget === _source && o.copy) {
         return;
@@ -424,6 +427,8 @@ angular.module('dragularModule', []).factory('dragularService', function dragula
       }
       var rect = _item.getBoundingClientRect();
       _mirror = _item.cloneNode(true);
+      _mirrorWidth = rect.width;
+      _mirrorHeight = rect.height;
       _mirror.style.width = rect.width + 'px';
       _mirror.style.height = rect.height + 'px';
       rmClass(_mirror, o.classes.transit);
@@ -457,15 +462,15 @@ angular.module('dragularModule', []).factory('dragularService', function dragula
     }
 
     function getReference(dropTarget, target, x, y) {
-      var horizontal = o.direction === 'horizontal',
-        reference = target !== dropTarget ? inside() : outside();
+      var horizontal = o.direction === 'horizontal';
+      var reference = target !== dropTarget ? inside() : outside();
       return reference;
 
       function outside() { // slower, but able to figure out any position
-        var len = dropTarget.children.length,
-          i,
-          el,
-          rect;
+        var len = dropTarget.children.length;
+        var i;
+        var el;
+        var rect;
         for (i = 0; i < len; i++) {
           el = dropTarget.children[i];
           rect = el.getBoundingClientRect();
@@ -503,10 +508,14 @@ angular.module('dragularModule', []).factory('dragularService', function dragula
     }
 
     function getOffset(el) {
-      var rect = el.getBoundingClientRect();
+      var rect = el.getBoundingClientRect(),
+        scrollTop = getScroll('scrollTop', 'pageYOffset'),
+        scrollLeft = getScroll('scrollLeft', 'pageXOffset');
       return {
-        left: rect.left + getScroll('scrollLeft', 'pageXOffset'),
-        top: rect.top + getScroll('scrollTop', 'pageYOffset')
+        left: rect.left + scrollLeft,
+        right: rect.right + scrollLeft,
+        top: rect.top + scrollTop,
+        bottom: rect.bottom + scrollTop
       };
     }
 
@@ -550,6 +559,14 @@ angular.module('dragularModule', []).factory('dragularService', function dragula
       } while (sibling && sibling.nodeType !== 1);
       return sibling;
     }
+  }
+
+  //Cannot use angular.isElement because we need to check plain dom element, no jQlite encapsulated  
+  function isElement(o) {
+    return (
+      typeof HTMLElement === 'object' ? o instanceof HTMLElement : //DOM2
+      o && typeof o === 'object' && o !== null && o.nodeType === 1 && typeof o.nodeName === 'string'
+    );
   }
 
   function addClass(el, className) {
