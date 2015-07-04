@@ -24,16 +24,6 @@ angular.module('example', ['dragularModule'])
         el.className += ' ex-moved';
       }, 0);
     });
-    $scope.$on('shadow', function highlightContainer(e, item, container) {
-      e.stopPropagation();
-      $timeout(function() {
-        container.className += ' highlighted';
-      }, 0);
-    });
-    $scope.$on('shadowRemoved', function highlightRemoval(e, item, container) {
-      e.stopPropagation();
-      container.className = container.className.replace(' highlighted', '');
-    });
 
     // $scope.$on('cloned', myFn('cloned'));
     // $scope.$on('drag', myFn('drag'));
@@ -71,8 +61,7 @@ angular.module('example', ['dragularModule'])
   }]).controller('Example7', ['$element', 'dragularService', function TodoCtrl($element, dragularService) {
     dragularService($element.children(), {
       classes: {
-        mirror: 'custom-green-mirror',
-        nameSpace: 'same'
+        mirror: 'custom-green-mirror'
       }
     });
   }]).controller('Example8', ['$scope', 'dragularService', function TodoCtrl($scope) {
@@ -80,7 +69,7 @@ angular.module('example', ['dragularModule'])
       classes: {
         mirror: 'custom-green-mirror'
       },
-      nameSpace: 'same'
+      nameSpace: 'common' // just connecting left and right container
     };
   }]).controller('Example9', ['$element', 'dragularService', function TodoCtrl($element, dragularService) {
     dragularService([$element.children()[0], $element.children()[2]], {
@@ -97,5 +86,22 @@ angular.module('example', ['dragularModule'])
     dragularService([$element.children()[1], $element.children()[3]], {
       nameSpace: 'oranges',
       dragOverClasses: true
+    });
+  }]).controller('Example11', ['$element', 'dragularService', function TodoCtrl($element, dragularService) {
+    var boundingBox = $element[0];
+    dragularService($element.children(), {
+      boundingBox: boundingBox
+    });
+  }]).controller('Example12', ['$element', 'dragularService', function TodoCtrl($element, dragularService) {
+    var boundingBox = $element.children().children()[0];
+    dragularService(boundingBox, {
+      boundingBox: boundingBox,
+      lockY: true
+    });
+  }]).controller('Example13', ['$element', 'dragularService', function TodoCtrl($element, dragularService) {
+    var boundingBox = $element.children().children()[0];
+    dragularService(boundingBox, {
+      boundingBox: boundingBox,
+      lockX: true
     });
   }]);

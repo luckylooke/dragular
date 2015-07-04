@@ -122,6 +122,24 @@ button:hover {
   width: 50%;
 }
 
+.containerHorizontal {
+  display: table-row;
+  background-color: rgba(255, 255, 255, 0.2);
+}
+
+.containerHorizontal div {
+  border-spacing: 5px;
+  display: table-cell;
+  margin: 10px;
+  padding: 10px;
+  background-color: rgba(0, 0, 0, 0.2);
+  transition: opacity 0.4s ease-in-out;
+  cursor: move;
+  cursor: grab;
+  cursor: -moz-grab;
+  cursor: -webkit-grab;
+}
+
 .width25 {
   width: 25%;
 }
@@ -187,4 +205,10 @@ button:hover {
 
 pre.gu-over-active.gu-over-decline {
   background-color: yellow !important;
+}
+
+div.limitBox {
+  margin: 0;
+  padding: 0;
+  background: transparent;
 }
