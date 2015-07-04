@@ -25,11 +25,12 @@ Have you ever wanted a drag and drop library that just works? That actually unde
 - accepting arraylike objects as containers array
 - accepting custom classes via option.classes
 - namespaced containers groups available via option.nameSpace
+- boundingBox (dragging element can me moved only in specific area)
+- lockX/Y (dragging element can me moved only in specific direction)
 - more examples
 
 # Todo
 
-- npm/bower packaging
 - better workflow (gulp?)
 - publish more (blog?)
 
