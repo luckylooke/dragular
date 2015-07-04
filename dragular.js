@@ -134,6 +134,15 @@ angular.module('dragularModule', []).factory('dragularService', function dragula
         return;
       }
 
+      if (!o.direction) {
+        var parent = item.parentElement,
+          parentHeight = parent.offsetHeight,
+          parentWidth = parent.offsetWidth,
+          childHeight = item.clientHeight,
+          childWidth = item.clientWidth;
+        o.direction = parentHeight / childHeight < parentWidth / childWidth ? 'horizontal' : 'vertical';
+      }
+
       var offset = getOffset(_item);
       _offsetX = getCoord('pageX', e) - offset.left;
       _offsetY = getCoord('pageY', e) - offset.top;
@@ -453,15 +462,15 @@ angular.module('dragularModule', []).factory('dragularService', function dragula
     }
 
     function getReference(dropTarget, target, x, y) {
-      var horizontal = o.direction === 'horizontal',
-        reference = target !== dropTarget ? inside() : outside();
+      var horizontal = o.direction === 'horizontal';
+      var reference = target !== dropTarget ? inside() : outside();
       return reference;
 
       function outside() { // slower, but able to figure out any position
-        var len = dropTarget.children.length,
-          i,
-          el,
-          rect;
+        var len = dropTarget.children.length;
+        var i;
+        var el;
+        var rect;
         for (i = 0; i < len; i++) {
           el = dropTarget.children[i];
           rect = el.getBoundingClientRect();
