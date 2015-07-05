@@ -31,6 +31,9 @@ Have you ever wanted a drag and drop library that just works? That actually unde
 
 # Todo
 
+- accept JSON options in dragular directive (#2)
+- add/remove with ng-repeat
+- support selectors in service (#2)
 - better workflow (gulp?)
 - publish more (blog?)
 
@@ -74,7 +77,7 @@ DONE :)
 
 # Usage
 
-Dragula provides the easiest possible API to make drag and drop a breeze in your applications.
+Dragular provides the easiest possible API to make drag and drop a breeze in your applications. You can use it as service or as directive.
 
 ## As service `dragularService(containers, options?)`
 
@@ -86,6 +89,20 @@ The example below allows the user to drag elements from `left` into `right`, and
 
 ```js
 dragularService([document.querySelector('#left'), document.querySelector('#right')]);
+```
+
+## As directive `<div dragular="dragularOptions" ></div>`
+
+The dragularOptions can be any name of property where options object is located.
+
+```js
+$scope.dragularOptions = {
+  classes: {
+    mirror: 'custom-green-mirror'
+  },
+  nameSpace: 'common',
+  direction: 'horizontal'
+};
 ```
 
 You can also provide an `options` object. Here's an overview.
