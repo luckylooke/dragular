@@ -597,8 +597,20 @@ angular.module('dragularModule', []).factory('dragularService', function dragula
     );
   }
 
-}).directive('dragular', function(dragularService) {
-  return function($scope, iElm, iAttrs) {
-    dragularService(iElm[0], $scope[iAttrs.dragular || 'undefined']);
+}).directive('dragular', ['dragularService', function(dragularService) {
+  return {
+    restrict: 'A',
+    link: function($scope, iElm, iAttrs) {
+      dragularService(iElm[0], $scope[iAttrs.dragular || 'undefined'] || tryJson(iAttrs.dragular));
+
+      function tryJson(json) {
+        try {
+          return JSON.parse(json);
+        } catch (e) {
+          console.log(e, 'Dragular: not valid JSON for options!', iElm);
+          return undefined;
+        }
+      }
+    }
   };
-});
+}]);
