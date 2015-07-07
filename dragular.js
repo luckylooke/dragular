@@ -597,7 +597,7 @@ angular.module('dragularModule', []).factory('dragularService', function dragula
     );
   }
 
-}).directive('dragular', function(dragularService) {
+}).directive('dragular', ['dragularService', function(dragularService) {
   return {
     restrict: 'A',
     link: function($scope, iElm, iAttrs) {
@@ -613,4 +613,4 @@ angular.module('dragularModule', []).factory('dragularService', function dragula
       }
     }
   };
-});
+}]);
