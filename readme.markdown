@@ -108,7 +108,11 @@ dragularService(containers, {
 });
 ```
 
-## As directive `<div dragular="dragularOptions" ></div>`
+## As directive
+
+```html
+<div dragular="dragularOptions"></div>
+```
 
 The dragularOptions can be any name of property where options object is located.
 
@@ -121,7 +125,7 @@ $scope.dragularOptions = {
   direction: 'horizontal'
 };
 ```
-OR providing optoins as JSON
+OR providing options as JSON
 
 ```html
 <div dragular='{"classes":{"mirror":"custom-green-mirror"},"nameSpace":"common"}'></div>
