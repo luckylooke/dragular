@@ -28,10 +28,10 @@ Have you ever wanted a drag and drop library that just works? That actually unde
 - boundingBox (dragging element can me moved only in specific area)
 - lockX/Y (dragging element can me moved only in specific direction)
 - more examples
+- accept JSON options in dragular directive (#2)
 
 # Todo
 
-- accept JSON options in dragular directive (#2)
 - add/remove with ng-repeat
 - support selectors in service (#2)
 - better workflow (gulp?)
@@ -91,21 +91,7 @@ The example below allows the user to drag elements from `left` into `right`, and
 dragularService([document.querySelector('#left'), document.querySelector('#right')]);
 ```
 
-## As directive `<div dragular="dragularOptions" ></div>`
-
-The dragularOptions can be any name of property where options object is located.
-
-```js
-$scope.dragularOptions = {
-  classes: {
-    mirror: 'custom-green-mirror'
-  },
-  nameSpace: 'common',
-  direction: 'horizontal'
-};
-```
-
-You can also provide an `options` object. Here's an overview.
+You can also provide an `options` object into service.
 
 ```js
 dragularService(containers, {
@@ -121,6 +107,31 @@ dragularService(containers, {
   removeOnSpill: false   // spilling will `.remove` the element, if this is true
 });
 ```
+
+## As directive
+
+```html
+<div dragular="dragularOptions"></div>
+```
+
+The dragularOptions can be any name of property where options object is located.
+
+```js
+$scope.dragularOptions = {
+  classes: {
+    mirror: 'custom-green-mirror'
+  },
+  nameSpace: 'common',
+  direction: 'horizontal'
+};
+```
+OR providing options as JSON
+
+```html
+<div dragular='{"classes":{"mirror":"custom-green-mirror"},"nameSpace":"common"}'></div>
+```
+
+### Options
 
 The options are detailed below.
 
