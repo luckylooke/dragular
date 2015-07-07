@@ -188,7 +188,7 @@ option.classes = {
         <div>Item 3.</div>
         <div>Item 6.</div>
       </div>
-      <div id='right3' class='container' dragular="dragularOptions">
+      <div id='right3' class='container' dragular='{"classes":{"mirror":"custom-green-mirror"},"nameSpace":"common"}'>
         <div>You can drop me in the left container, otherwise I'll stay here.</div>
         <div>Item 4.</div>
         <div>Item 5.</div>
@@ -204,6 +204,8 @@ $scope.dragularOptions = {
   },
   nameSpace: 'common' // just connecting left and right container
 };
+
+&lt;div class='container' dragular='{&quot;classes&quot;:{&quot;mirror&quot;:&quot;custom-green-mirror&quot;},&quot;nameSpace&quot;:&quot;common&quot;}'&gt;
       </code>
     </pre>
   </div>
