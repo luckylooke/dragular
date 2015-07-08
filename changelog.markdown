@@ -1,3 +1,8 @@
+# 1.2.0 Directive
+
+- feat(directive): accept options as JSON string
+- fix(directive): minify-safe syntax added to directive, closes #3
+
 # 1.1.0 tadaaa
 
 - started correctly using Semantic Versioning 2.0.0 http://semver.org/
