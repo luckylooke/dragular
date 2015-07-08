@@ -1,3 +1,7 @@
+# 1.2.1 Damn build
+
+- forgot to build.. sorry
+
 # 1.2.0 Directive
 
 - feat(directive): accept options as JSON string
