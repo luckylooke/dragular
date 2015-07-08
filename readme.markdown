@@ -16,8 +16,8 @@ Have you ever wanted a drag and drop library that just works? That actually unde
 
 # What I have done
 
-- replaced crossvent by angulars event binding
-- replaced contra.emitter by $scope.$emit if scope provided in options (options.scope)
+- replaced crossvent with angulars event binding
+- replaced contra.emitter with $scope.$emit if scope provided in options (options.scope)
 - encapsulated the code into angular factory (dragularService)
 - created directive dragular where options can be passed providing scope property name
 - both service and directive provided as angular module (dragularModule)
@@ -29,10 +29,11 @@ Have you ever wanted a drag and drop library that just works? That actually unde
 - lockX/Y (dragging element can me moved only in specific direction)
 - more examples
 - accept JSON options in dragular directive (#2)
+- add/remove with ng-repeat
 
 # Todo
 
-- add/remove with ng-repeat
+- add syntax highlighter to example codes
 - support selectors in service (#2)
 - better workflow (gulp?)
 - publish more (blog?)
