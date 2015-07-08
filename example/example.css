@@ -93,7 +93,7 @@ button {
   background-color: #ecf0f1;
   color: #942A57;
   border: 0;
-  padding: 18px 12px;
+  padding: 2px 7px;
   margin-left: 6px;
   cursor: pointer;
   outline: none;
@@ -211,4 +211,8 @@ div.limitBox {
   margin: 0;
   padding: 0;
   background: transparent;
+}
+
+.cursorDefault {
+  cursor: default;
 }

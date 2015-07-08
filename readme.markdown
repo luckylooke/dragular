@@ -12,12 +12,12 @@ Browser support includes every sane browser and **IE7+**. <sub>_(Granted you pol
 
 Have you ever wanted a drag and drop library that just works? That actually understands where to place the elements when they are dropped? That doesn't need you to do a zillion things to get it to work? Well, so did [Nicolas Bevacqua](https://github.com/bevacqua) and I have forked it into angular module!
 
-<b>Actual version 1.1.0 is based on dragula 1.6.1 and tested with angular 1.4.1.</b>
+<b>Actual version 1.2.1 is based on dragula 1.6.1 and tested with angular 1.4.1.</b>
 
 # What I have done
 
-- replaced crossvent by angulars event binding
-- replaced contra.emitter by $scope.$emit if scope provided in options (options.scope)
+- replaced crossvent with angulars event binding
+- replaced contra.emitter with $scope.$emit if scope provided in options (options.scope)
 - encapsulated the code into angular factory (dragularService)
 - created directive dragular where options can be passed providing scope property name
 - both service and directive provided as angular module (dragularModule)
@@ -29,10 +29,11 @@ Have you ever wanted a drag and drop library that just works? That actually unde
 - lockX/Y (dragging element can me moved only in specific direction)
 - more examples
 - accept JSON options in dragular directive (#2)
+- add/remove with ng-repeat
 
 # Todo
 
-- add/remove with ng-repeat
+- add syntax highlighter to example codes
 - support selectors in service (#2)
 - better workflow (gulp?)
 - publish more (blog?)
