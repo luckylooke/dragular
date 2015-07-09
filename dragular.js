@@ -8,8 +8,17 @@
  */
 
 angular.module('dragularModule', []).factory('dragularService', function dragula() {
+
   var containersNameSpaced = []; // name-spaced containers managed by the drakes
+
   return function(initialContainers, options) {
+
+    if (arguments.length === 1 && !Array.isArray(initialContainers) && !angular.isElement(initialContainers) && !initialContainers[0]) {
+      // then containers are not provided, only options
+      options = initialContainers;
+      initialContainers = [];
+    }
+
     var body = document.body,
       documentElement = document.documentElement,
       _mirror, // mirror image
@@ -19,6 +28,8 @@ angular.module('dragularModule', []).factory('dragularService', function dragula
       _offsetY, // reference y
       _offsetXr, // reference x right for boundingBox feature
       _offsetYb, // reference y bottom for boundingBox feature
+      _clientX, // cache client x, init at grab, update at drag
+      _clientY, // cache client y, init at grab, update at drag
       _mirrorWidth, // mirror width for boundingBox feature
       _mirrorHeight, // mirror height for boundingBox feature
       _initialSibling, // reference sibling when grabbed
@@ -26,7 +37,8 @@ angular.module('dragularModule', []).factory('dragularService', function dragula
       _lastOverElem, // last element behind the cursor (dragOverClasses feature)
       _lastOverClass, // last overClass used (dragOverClasses feature)
       _copy, // item used for copying
-      _containers = [], // containers managed by the drake
+      _containers = initialContainers ? makeArray(initialContainers) : [], // containers managed by the drake
+      _renderTimer, // timer for setTimeout renderMirrorImage
       defaultClasses = {
         mirror: 'gu-mirror',
         hide: 'gu-hide',
@@ -38,9 +50,13 @@ angular.module('dragularModule', []).factory('dragularService', function dragula
       },
       o = { // options
         classes: defaultClasses,
+        containers: false,
         moves: always,
         accepts: always,
+        isContainer: never,
         copy: false,
+        delay: false,
+        invalid: invalidTarget,
         revertOnSpill: false,
         removeOnSpill: false,
         dragOverClasses: false,
@@ -60,16 +76,32 @@ angular.module('dragularModule', []).factory('dragularService', function dragula
 
     angular.extend(o, options);
 
+    if (o.delay === true) {
+      o.delay = 300;
+    }
+
+    _containers = o.containers || _containers;
+
     if (o.nameSpace) {
       if (!containersNameSpaced[o.nameSpace]) {
-        containersNameSpaced[o.nameSpace] = [];
+        containersNameSpaced[o.nameSpace] = _containers;
+        events();
+      } else {
+        var i = _containers.length;
+        while (i) {
+          i--;
+          containersNameSpaced[o.nameSpace].push(_containers[i]);
+        }
+        _containers = containersNameSpaced[o.nameSpace];
       }
-      _containers = containersNameSpaced[o.nameSpace];
+    }else{
+      events();
     }
 
     var api = {
       addContainer: manipulateContainers('add'),
       removeContainer: manipulateContainers('remove'),
+      containers: _containers,
       start: start,
       end: end,
       cancel: cancel,
@@ -78,11 +110,25 @@ angular.module('dragularModule', []).factory('dragularService', function dragula
       dragging: false
     };
 
-    events();
-    api.addContainer(initialContainers);
-
     return api;
 
+
+    function makeArray(all) {
+      if (Array.isArray(all)) {
+        return all;
+      }
+      if (all.length) { // is array-like
+        var iAll = all.length,
+          newArray = [];
+        while (iAll) {
+          iAll--;
+          newArray.push(all[iAll]);
+        }
+        return newArray;
+      } else { // is one element
+        return [all];
+      }
+    }
 
     function manipulateContainers(op) {
       return function addOrRemove(all) {
@@ -90,31 +136,22 @@ angular.module('dragularModule', []).factory('dragularService', function dragula
         changes.forEach(function forEachContainer(container) {
           if (op === 'add') {
             _containers.push(container);
-            regEvent(container, 'on', 'mousedown', grab);
+            console.warn && console.warn('drake.addContainer is deprecated. please access drake.containers directly, instead');
           } else {
             _containers.splice(_containers.indexOf(container), 1);
-            regEvent(container, 'off', 'mousedown', grab);
+            console.warn && console.warn('drake.removeContainer is deprecated. please access drake.containers directly, instead');
           }
         });
-
-        function makeArray(all) {
-          if (all.length) {
-            var iAll = all.length,
-              newArray = [];
-            while (iAll) {
-              iAll--;
-              newArray.push(all[iAll]);
-            }
-            return newArray;
-          } else {
-            return [all];
-          }
-        }
       };
+    }
+
+    function isContainer(el) {
+      return api.containers.indexOf(el) !== -1 || o.isContainer(el);
     }
 
     function events(rem) {
       var op = rem ? 'off' : 'on';
+      regEvent(documentElement, op, 'mousedown', grab);
       regEvent(documentElement, op, 'mouseup', release);
     }
 
@@ -125,6 +162,7 @@ angular.module('dragularModule', []).factory('dragularService', function dragula
     }
 
     function grab(e) {
+      e = e || window.event;
       var item = e.target;
 
       if ((e.which !== 0 && e.which !== 1) || e.metaKey || e.ctrlKey) {
@@ -146,25 +184,33 @@ angular.module('dragularModule', []).factory('dragularService', function dragula
       var offset = getOffset(_item);
       _offsetX = getCoord('pageX', e) - offset.left;
       _offsetY = getCoord('pageY', e) - offset.top;
-      renderMirrorImage();
-
-      // init _mirror position
-      var clientX = getCoord('clientX', e),
-        clientY = getCoord('clientY', e),
-        x = clientX - _offsetX,
-        y = clientY - _offsetY;
-
-      _mirror.style.left = x + 'px';
-      _mirror.style.top = y + 'px';
-
+      _clientX = getCoord('clientX', e);
+      _clientY = getCoord('clientY', e);
       if (o.boundingBox) {
         _offsetXr = getCoord('pageX', e) - offset.right;
         _offsetYb = getCoord('pageY', e) - offset.bottom;
       }
 
-      drag(e);
+      if (typeof o.delay === 'number') {
+        _renderTimer = setTimeout(function() {
+          renderMirrorAndDrag(e);
+        }, o.delay);
+      } else {
+        renderMirrorAndDrag(e);
+      }
+
       e.preventDefault();
     }
+
+    function renderMirrorAndDrag(e) {
+      renderMirrorImage();
+      // initial position
+      _mirror.style.left = _clientX - _offsetX + 'px';
+      _mirror.style.top = _clientY - _offsetY + 'px';
+
+      drag(e);
+    }
+
 
     function start(item) {
       var handle = item;
@@ -173,16 +219,20 @@ angular.module('dragularModule', []).factory('dragularService', function dragula
         return false;
       }
 
-      if (_containers.indexOf(item) !== -1) {
+      if (isContainer(item)) {
         return false; // don't drag container itself
       }
-      while (_containers.indexOf(item.parentElement) === -1) {
-        if (invalidTarget(item)) {
+      while (!isContainer(item.parentElement)) {
+        if (o.invalid(item, handle)) {
           return false;
         }
         item = item.parentElement; // drag target should be a top element
+        if (!item) {
+          return;
+        }
+
       }
-      if (invalidTarget(item)) {
+      if (o.invalid(item, handle)) {
         return false;
       }
 
@@ -232,12 +282,14 @@ angular.module('dragularModule', []).factory('dragularService', function dragula
       if (!api.dragging) {
         return;
       }
+      e = e || window.event;
+
+      _clientX = getCoord('clientX', e);
+      _clientY = getCoord('clientY', e);
 
       var item = _copy || _item,
-        clientX = getCoord('clientX', e),
-        clientY = getCoord('clientY', e),
-        elementBehindCursor = getElementBehindPoint(_mirror, clientX, clientY),
-        dropTarget = findDropTarget(elementBehindCursor, clientX, clientY);
+        elementBehindCursor = getElementBehindPoint(_mirror, _clientX, _clientY),
+        dropTarget = findDropTarget(elementBehindCursor, _clientX, _clientY);
       if (dropTarget && (o.copy === false || dropTarget !== _source)) {
         drop(item, dropTarget);
       } else if (o.removeOnSpill) {
@@ -300,8 +352,14 @@ angular.module('dragularModule', []).factory('dragularService', function dragula
     function cleanup() {
       var item = _copy || _item;
       removeMirrorImage();
-      rmClass(item, o.classes.transit);
-      _source = _item = _copy = _initialSibling = _currentSibling = null;
+      if (item) {
+        rmClass(item, o.classes.transit);
+      }
+      if (_renderTimer) {
+        clearTimeout(_renderTimer);
+      }
+      _source = _item = _copy = _initialSibling = _currentSibling = _renderTimer = null;
+
       api.dragging = false;
       if (o.scope) {
         o.scope.$emit('dragend', item);
@@ -330,7 +388,7 @@ angular.module('dragularModule', []).factory('dragularService', function dragula
       function accepted() {
         var accepts = false;
 
-        if (_containers.indexOf(target) !== -1) { // is droppable?
+        if (isContainer(target)) { // is droppable?
           var immediate = getImmediateChild(target, elementBehindCursor),
             reference = getReference(target, immediate, clientX, clientY),
             initial = isInitialPlacement(target, reference);
@@ -357,11 +415,13 @@ angular.module('dragularModule', []).factory('dragularService', function dragula
       if (!_mirror) {
         return;
       }
+      e = e || window.event;
 
-      var clientX = getCoord('clientX', e),
-        clientY = getCoord('clientY', e),
-        x = clientX - _offsetX,
-        y = clientY - _offsetY,
+      _clientX = getCoord('clientX', e);
+      _clientY = getCoord('clientY', e);
+
+      var x = _clientX - _offsetX,
+        y = _clientY - _offsetY,
         pageX,
         pageY,
         offsetBox;
@@ -377,9 +437,9 @@ angular.module('dragularModule', []).factory('dragularService', function dragula
           _mirror.style.left = x + 'px';
         } else if (o.boundingBox) { // in case user scroll
           if (pageX < offsetBox.left + _offsetX) {
-            _mirror.style.left = clientX - (pageX - offsetBox.left) + 'px';
+            _mirror.style.left = _clientX - (pageX - offsetBox.left) + 'px';
           } else {
-            _mirror.style.left = clientX - _mirrorWidth - (pageX - offsetBox.right) + 'px';
+            _mirror.style.left = _clientX - _mirrorWidth - (pageX - offsetBox.right) + 'px';
           }
         }
       }
@@ -388,28 +448,31 @@ angular.module('dragularModule', []).factory('dragularService', function dragula
           _mirror.style.top = y + 'px';
         } else if (o.boundingBox) { // in case user scroll
           if (pageY < offsetBox.top + _offsetY) {
-            _mirror.style.top = clientY - (pageY - offsetBox.top) + 'px';
+            _mirror.style.top = _clientY - (pageY - offsetBox.top) + 'px';
           } else {
-            _mirror.style.top = clientY - _mirrorHeight - (pageY - offsetBox.bottom) + 'px';
+            _mirror.style.top = _clientY - _mirrorHeight - (pageY - offsetBox.bottom) + 'px';
           }
         }
       }
 
-      var elementBehindCursor = getElementBehindPoint(_mirror, clientX, clientY),
-        dropTarget = findDropTarget(elementBehindCursor, clientX, clientY);
+      var item = _copy || _item,
+        elementBehindCursor = getElementBehindPoint(_mirror, _clientX, _clientY),
+        dropTarget = findDropTarget(elementBehindCursor, _clientX, _clientY);
 
       if (dropTarget === _source && o.copy) {
         return;
       }
       var reference,
-        item = _copy || _item,
         immediate = getImmediateChild(dropTarget, elementBehindCursor);
       if (immediate !== null) {
-        reference = getReference(dropTarget, immediate, clientX, clientY);
-      } else if (o.revertOnSpill === true) {
+        reference = getReference(dropTarget, immediate, _clientX, _clientY);
+      } else if (o.revertOnSpill === true && !o.copy) {
         reference = _initialSibling;
         dropTarget = _source;
       } else {
+        if ((o.copy || o.removeOnSpill === true) && item.parentElement !== null) {
+          item.parentElement.removeChild(item);
+        }
         return;
       }
       if (reference === null || reference !== item && reference !== nextEl(item)) {
@@ -429,8 +492,8 @@ angular.module('dragularModule', []).factory('dragularService', function dragula
       _mirror = _item.cloneNode(true);
       _mirrorWidth = rect.width;
       _mirrorHeight = rect.height;
-      _mirror.style.width = rect.width + 'px';
-      _mirror.style.height = rect.height + 'px';
+      _mirror.style.width = getRectWidth(rect) + 'px';
+      _mirror.style.height = getRectHeight(rect) + 'px';
       rmClass(_mirror, o.classes.transit);
       addClass(_mirror, o.classes.mirror);
       body.appendChild(_mirror);
@@ -487,9 +550,9 @@ angular.module('dragularModule', []).factory('dragularService', function dragula
       function inside() { // faster, but only available if dropped inside a child element
         var rect = target.getBoundingClientRect();
         if (horizontal) {
-          return resolve(x > rect.left + rect.width / 2);
+          return resolve(x > rect.left + getRectWidth(rect) / 2);
         }
-        return resolve(y > rect.top + rect.height / 2);
+        return resolve(y > rect.top + getRectHeight(rect) / 2);
       }
 
       function resolve(after) {
@@ -545,6 +608,10 @@ angular.module('dragularModule', []).factory('dragularService', function dragula
     $el[op](type, fn);
   }
 
+  function never() {
+    return false;
+  }
+
   function always() {
     return true;
   }
@@ -561,7 +628,7 @@ angular.module('dragularModule', []).factory('dragularService', function dragula
     }
   }
 
-  //Cannot use angular.isElement because we need to check plain dom element, no jQlite encapsulated  
+  //Cannot use angular.isElement because we need to check plain dom element, no jQlite wrapped  
   function isElement(o) {
     return (
       typeof HTMLElement === 'object' ? o instanceof HTMLElement : //DOM2
@@ -583,18 +650,37 @@ angular.module('dragularModule', []).factory('dragularService', function dragula
     return (' ' + el.className + ' ').indexOf(' ' + className + ' ') > -1;
   }
 
-  function getCoord(coord, e) {
-    if (typeof e.targetTouches === 'undefined') {
-      return e[coord];
-    }
+  function getEventHost(e) {
     // on touchend event, we have to use `e.changedTouches`
     // see http://stackoverflow.com/questions/7192563/touchend-event-properties
     // see https://github.com/bevacqua/dragula/issues/34
-    return (
-      (e.targetTouches && e.targetTouches.length && e.targetTouches[0][coord]) ||
-      (e.changedTouches && e.changedTouches.length && e.changedTouches[0][coord]) ||
-      0
-    );
+    if (e.targetTouches && e.targetTouches.length) {
+      return e.targetTouches[0];
+    }
+    if (e.changedTouches && e.changedTouches.length) {
+      return e.changedTouches[0];
+    }
+    return e;
+  }
+
+  function getCoord(coord, e) {
+    var host = getEventHost(e);
+    var missMap = {
+      pageX: 'clientX', // IE8
+      pageY: 'clientY' // IE8
+    };
+    if (coord in missMap && !(coord in host) && missMap[coord] in host) {
+      coord = missMap[coord];
+    }
+    return host[coord];
+  }
+
+  function getRectWidth(rect) {
+    return rect.width || (rect.right - rect.left);
+  }
+
+  function getRectHeight(rect) {
+    return rect.height || (rect.bottom - rect.top);
   }
 
 }).directive('dragular', ['dragularService', function(dragularService) {
