@@ -1,4 +1,4 @@
-# 2.0.0 Dragula203
+# 1.3.0 Dragula203
 
 - changes of dragula 2.0.3 against 1.6.1 implemented
 
