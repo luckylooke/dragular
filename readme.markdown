@@ -4,13 +4,13 @@
 
 Browser support includes every sane browser and **IE7+**. <sub>_(Granted you polyfill the functional `Array` methods in ES5)_</sub>
 
-# Demo
+# [Demo][2]
 
 [![demo.png][1]][2]
 
 # Inspiration
 
-Have you ever wanted a drag and drop library that just works? That actually understands where to place the elements when they are dropped? That doesn't need you to do a zillion things to get it to work? Well, so did [Nicolas Bevacqua](https://github.com/bevacqua) and I have forked it into angular module!
+Have you ever wanted a drag and drop library that just works? That actually understands where to place the elements when they are dropped? That doesn't need you to do a zillion things to get it to work? Well, so did [Nicolas Bevacqua](https://github.com/bevacqua) and I have forked it into angular module and also put some features!
 
 <b>Actual version 1.3.0 is based on dragula 2.0.3 and tested with angular 1.4.1.</b>
 
@@ -30,16 +30,18 @@ Have you ever wanted a drag and drop library that just works? That actually unde
 - more examples
 - accept JSON options in dragular directive (#2)
 - add/remove with ng-repeat
+- add syntax highlighter to example codes
 
 # Todo
 
-- add syntax highlighter to example codes
+- example of nested draggables
 - support selectors in service (#2)
 - better workflow (gulp?)
 - publish more (blog?)
 
 # Features
 
+- provided as service and also as directive
 - Super easy to set up
 - No bloated dependencies
 - **Figures out sort order** on its own
@@ -78,9 +80,9 @@ DONE :)
 
 # Usage
 
-Dragular provides the easiest possible API to make drag and drop a breeze in your applications. You can use it as service or as directive.
+Dragular provides the easiest possible API to make drag and drop a breeze in your applications. You can use it as service or as directive. Both arguments are optional. But you need to tell dragular what element(s) to use as container(s)<b>(container is closest wrapping element of draggables and also it serves as droppable area)</b>. In service you can provide them in forst argument or in second via options.containers. <b>Options.containers property is higher priority!</b>
 
-## As service `dragularService(containers, options?)`
+## As service `dragularService(containers?, options?)`
 
 By default, `dragular` will allow the user to drag an element in any of the `containers` and drop it in any other container in the list. If the element is dropped anywhere that's not one of the `containers`, the event will be gracefully cancelled according to the `revertOnSpill` and `removeOnSpill` options.
 
@@ -111,6 +113,7 @@ dragularService(containers, {
 
 ## As directive
 
+For now just as attribute (restrict: A)!
 ```html
 <div dragular="dragularOptions"></div>
 ```
