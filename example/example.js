@@ -80,11 +80,11 @@ angular.module('example', ['dragularModule'])
     });
   }]).controller('Example10', ['$element', 'dragularService', function TodoCtrl($element, dragularService) {
     dragularService([$element.children()[0], $element.children()[2]], {
-      nameSpace: 'apples',
+      nameSpace: 'apples2',
       dragOverClasses: true
     });
     dragularService([$element.children()[1], $element.children()[3]], {
-      nameSpace: 'oranges',
+      nameSpace: 'oranges2',
       dragOverClasses: true
     });
   }]).controller('Example11', ['$element', 'dragularService', function TodoCtrl($element, dragularService) {
