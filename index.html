@@ -419,6 +419,21 @@ $scope.removeItem = function removeItem () {
       </code>
     </pre>
   </div>
+  <div class='parent'>
+    <h2>Example 15 - nested ngRepeat (advanced)</h2>
+    <label for='hy'><b>Old IE doesnt support Flexible Box Layout</b> so it can look weird. But in modern browsers it is awsome! Dragular will be working well also in old IE but you have to use different css for layout.</label>
+    <div class='width100' ng-controller="Example15">
+      <div ng-repeat="item in items" class='row'>
+        <div class="row-handle">Row {{$index}}</div>
+        <div ng-repeat="item in item.items" class="cell">{{item.content}}</div>
+      </div>
+    </div>
+    <pre>
+      <code>
+xxx
+      </code>
+    </pre>
+  </div>
 </div>
 <h3>Get it on GitHub! <a href='https://github.com/luckylooke/dragular'>luckylooke/dragular</a></h3>
 <script src='dist/angular.min.js'></script>
