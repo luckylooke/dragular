@@ -421,8 +421,12 @@ $scope.removeItem = function removeItem () {
   </div>
   <div class='parent'>
     <h2>Example 15 - nested ngRepeat (advanced)</h2>
-    <label for='hy'><b>Old IE doesnt support Flexible Box Layout</b> so it can look weird. But in modern browsers it is awsome! Dragular will be working well also in old IE but you have to use different css for layout.</label>
-    <div class='width100' ng-controller="Example15">
+    <label for='hy'> You can move whole rows by grabing row title, all items it selves. Try it out!
+      <hr/>
+      <b>Old IE doesnt support Flexible Box Layout</b> so it can look weird. But in modern browsers it is awsome! Dragular will be working well also in old IE but you have to use different css for layout.
+      <hr/>
+    </label>
+    <div ng-controller="Example15">
       <div ng-repeat="item in items" class='row'>
         <div class="row-handle">Row {{$index}}</div>
         <div ng-repeat="item in item.items" class="cell">{{item.content}}</div>
@@ -430,7 +434,84 @@ $scope.removeItem = function removeItem () {
     </div>
     <pre>
       <code>
-xxx
+// HTML
+
+&lt;div ng-controller=&quot;Example15&quot;&gt;
+  &lt;div ng-repeat=&quot;item in items&quot; class='row'&gt;
+    &lt;div class=&quot;row-handle&quot;&gt;Row {{$index}}&lt;/div&gt;
+    &lt;div ng-repeat=&quot;item in item.items&quot; class=&quot;cell&quot;&gt;{{item.content}}&lt;/div&gt;
+  &lt;/div&gt;
+&lt;/div&gt;
+      </code>
+    </pre>
+    <pre>
+      <code>
+// CSS
+
+.row {
+  display: flex;
+  flex-direction: row;
+}
+
+.cell {
+  flex-grow: 1;
+}
+
+.row,
+.cell {
+  margin: 10px;
+  padding: 10px;
+  background-color: rgba(0, 0, 0, 0.2);
+}
+      </code>
+    </pre>
+    <pre>
+      <code>
+// JS
+
+$timeout(function() { // timeount due to ngRepeat to be ready
+  dragularService($element, {
+    moves: function(el, container, handle) {
+      return handle.classList.contains('row-handle');
+    }
+  });
+  dragularService($element.children(), {
+    moves: function(el, container, handle) {
+      return !handle.classList.contains('row-handle');
+    }
+  });
+}, 0);
+$scope.items = [{
+  items: [{
+    content: 'Item a1'
+  }, {
+    content: 'Item a2'
+  }, {
+    content: 'Item a3'
+  }, {
+    content: 'Item a4'
+  }]
+}, {
+  items: [{
+    content: 'Item b1'
+  }, {
+    content: 'Item b2'
+  }, {
+    content: 'Item b3'
+  }, {
+    content: 'Item b4'
+  }]
+}, {
+  items: [{
+    content: 'Item c1'
+  }, {
+    content: 'Item c2'
+  }, {
+    content: 'Item c3'
+  }, {
+    content: 'Item c4'
+  }]
+}];
       </code>
     </pre>
   </div>

@@ -45,6 +45,7 @@ a:hover {
 
 pre {
   white-space: pre-wrap;
+  margin: 5px 5px -30px 5px;
 }
 
 pre code {
@@ -142,10 +143,6 @@ button:hover {
 
 .width25 {
   width: 25%;
-}
-
-.width100 {
-  width: 100%;
 }
 
 .container:nth-child(odd) {

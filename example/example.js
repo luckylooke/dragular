@@ -169,14 +169,4 @@ angular.module('example', ['dragularModule'])
         content: 'Item c4'
       }]
     }];
-    $scope.addItem = function addItem() {
-      var index = this.items.indexOf(this.item) + 1;
-      this.items.splice(index, 0, {
-        content: this.item.content + '-copy'
-      });
-    };
-    $scope.removeItem = function removeItem() {
-      var index = this.items.indexOf(this.item);
-      this.items.splice(index, 1);
-    };
   }]);
