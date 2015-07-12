@@ -9,7 +9,8 @@
 
 angular.module('dragularModule', []).factory('dragularService', function dragula() {
 
-  var containersNameSpaced = []; // name-spaced containers managed by the drakes
+  var containersNameSpaced = [], // name-spaced containers managed by the drakes
+      _mirror; // mirror image
 
   return function(initialContainers, options) {
 
@@ -21,7 +22,6 @@ angular.module('dragularModule', []).factory('dragularService', function dragula
 
     var body = document.body,
       documentElement = document.documentElement,
-      _mirror, // mirror image
       _source, // source container
       _item, // item being dragged
       _offsetX, // reference x
@@ -94,9 +94,9 @@ angular.module('dragularModule', []).factory('dragularService', function dragula
         }
         _containers = containersNameSpaced[o.nameSpace];
       }
-    }else{
-      events();
     }
+
+    events();
 
     var api = {
       addContainer: manipulateContainers('add'),
