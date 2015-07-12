@@ -87,11 +87,7 @@ angular.module('dragularModule', []).factory('dragularService', function dragula
         containersNameSpaced[o.nameSpace] = _containers;
         events();
       } else {
-        var i = _containers.length;
-        while (i) {
-          i--;
-          containersNameSpaced[o.nameSpace].push(_containers[i]);
-        }
+        Array.prototype.push.apply(containersNameSpaced[o.nameSpace], _containers);
         _containers = containersNameSpaced[o.nameSpace];
       }
     }
