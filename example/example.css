@@ -45,6 +45,7 @@ a:hover {
 
 pre {
   white-space: pre-wrap;
+  margin: 5px 5px -30px 5px;
 }
 
 pre code {
@@ -215,4 +216,20 @@ div.limitBox {
 
 .cursorDefault {
   cursor: default;
+}
+
+.row {
+  display: flex;
+  flex-direction: row;
+}
+
+.cell {
+  flex-grow: 1;
+}
+
+.row,
+.cell {
+  margin: 10px;
+  padding: 10px;
+  background-color: rgba(0, 0, 0, 0.2);
 }

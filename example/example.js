@@ -80,11 +80,11 @@ angular.module('example', ['dragularModule'])
     });
   }]).controller('Example10', ['$element', 'dragularService', function TodoCtrl($element, dragularService) {
     dragularService([$element.children()[0], $element.children()[2]], {
-      nameSpace: 'apples',
+      nameSpace: 'apples2',
       dragOverClasses: true
     });
     dragularService([$element.children()[1], $element.children()[3]], {
-      nameSpace: 'oranges',
+      nameSpace: 'oranges2',
       dragOverClasses: true
     });
   }]).controller('Example11', ['$element', 'dragularService', function TodoCtrl($element, dragularService) {
@@ -108,19 +108,65 @@ angular.module('example', ['dragularModule'])
     dragularService($element.children());
     $scope.items = [{
       content: 'Try to add or remove some elements (click on +- buttons), you will see that it is not problem for dragular.'
-    },{
+    }, {
       content: 'Item 2'
-    },{
+    }, {
       content: 'Item 3'
-    },{
+    }, {
       content: 'Item 4'
     }];
-    $scope.addItem = function addItem () {
+    $scope.addItem = function addItem() {
       var index = $scope.items.indexOf(this.item) + 1;
-      $scope.items.splice(index, 0,{content: this.item.content + '-copy'});
+      $scope.items.splice(index, 0, {
+        content: this.item.content + '-copy'
+      });
     };
-    $scope.removeItem = function removeItem () {
+    $scope.removeItem = function removeItem() {
       var index = $scope.items.indexOf(this.item);
       $scope.items.splice(index, 1);
     };
+  }]).controller('Example15', ['$timeout', '$scope', '$element', 'dragularService', function TodoCtrl($timeout, $scope, $element, dragularService) {
+    $timeout(function() { // timeount due to ngRepeat to be ready
+      dragularService($element, {
+        moves: function(el, container, handle) {
+          return handle.classList.contains('row-handle');
+        }
+      });
+      dragularService($element.children(), {
+        moves: function(el, container, handle) {
+          return !handle.classList.contains('row-handle');
+        }
+      });
+    }, 0);
+    $scope.items = [{
+      items: [{
+        content: 'Item a1'
+      }, {
+        content: 'Item a2'
+      }, {
+        content: 'Item a3'
+      }, {
+        content: 'Item a4'
+      }]
+    }, {
+      items: [{
+        content: 'Item b1'
+      }, {
+        content: 'Item b2'
+      }, {
+        content: 'Item b3'
+      }, {
+        content: 'Item b4'
+      }]
+    }, {
+      items: [{
+        content: 'Item c1'
+      }, {
+        content: 'Item c2'
+      }, {
+        content: 'Item c3'
+      }, {
+        content: 'Item c4'
+      }]
+    }];
   }]);
