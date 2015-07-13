@@ -82,10 +82,13 @@ angular.module('dragularModule', []).factory('dragularService', function dragula
 
     _containers = o.containers || _containers;
 
+    angular.forEach(_containers, function addMouseDown (container) {
+      regEvent(container, 'on', 'mousedown', grab);
+    });
+
     if (o.nameSpace) {
       if (!containersNameSpaced[o.nameSpace]) {
         containersNameSpaced[o.nameSpace] = _containers;
-        events();
       } else {
         Array.prototype.push.apply(containersNameSpaced[o.nameSpace], _containers);
         _containers = containersNameSpaced[o.nameSpace];
@@ -147,7 +150,6 @@ angular.module('dragularModule', []).factory('dragularService', function dragula
 
     function events(rem) {
       var op = rem ? 'off' : 'on';
-      regEvent(documentElement, op, 'mousedown', grab);
       regEvent(documentElement, op, 'mouseup', release);
     }
 
