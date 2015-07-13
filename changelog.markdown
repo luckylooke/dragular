@@ -1,3 +1,7 @@
+# 1.3.2 Buggydown
+
+- mousedown handlers moved from document to containers, due to bugs in namespacing-multiple-instances enviroment
+
 # 1.3.1 Fix6
 
 - fixes #6
