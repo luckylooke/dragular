@@ -14,12 +14,17 @@ var stylus = require('gulp-stylus');
 var minifyCss = require('gulp-minify-css');
 var autoprefixer = require('gulp-autoprefixer');
 var nib = require('nib');
+var browserSync = require('browser-sync');
 
 var config = {
   paths: {
     js: '',
     styles: '',
     dest: 'dist'
+  },
+  browserSync: {
+    port: '3000',
+    server: '.'
   },
   isProd: false
 };
@@ -61,7 +66,8 @@ function buildScript(file) {
       .pipe(size({
         title: 'Scripts: '
       }))
-      .pipe(gulp.dest(config.paths.dest));
+      .pipe(gulp.dest(config.paths.dest))
+      .pipe(browserSync.stream());
   }
 
   return rebundle();
@@ -72,6 +78,7 @@ gulp.task('browserify', function() {
 });
 
 gulp.task('styles', function() {
+
   return gulp.src(config.paths.styles + 'dragular.styl')
     .pipe(stylus({
       use: nib()
@@ -87,12 +94,31 @@ gulp.task('styles', function() {
     .pipe(size({
       title: 'Styles: '
     }))
-    .pipe(gulp.dest(config.paths.dest));
+    .pipe(gulp.dest(config.paths.dest))
+    .pipe(gulpif(browserSync.active, browserSync.stream()));
+});
+
+gulp.task('serve', function () {
+
+  browserSync({
+    port: config.browserSync.port,
+    server: {
+      baseDir: config.browserSync.server,
+    },
+    logConnections: true,
+    logFileChanges: true,
+    notify: true
+  });
+
+});
+
+gulp.task('watch', ['serve'], function() {
+  gulp.watch(config.paths.styles + '*.styl',  ['styles']);
 });
 
 gulp.task('dev', function() {
   config.isProd = false;
-  sequence(['browserify', 'styles']);
+  sequence(['browserify', 'styles'], 'watch');
 });
 
 gulp.task('build', function() {
