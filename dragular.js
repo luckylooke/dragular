@@ -37,7 +37,7 @@ angular.module('dragularModule', []).factory('dragularService', function dragula
       _lastOverElem, // last element behind the cursor (dragOverClasses feature)
       _lastOverClass, // last overClass used (dragOverClasses feature)
       _copy, // item used for copying
-      _containers = initialContainers ? makeArray(initialContainers) : [], // containers managed by the drake
+      _containers = {}, // containers managed by the drake
       _renderTimer, // timer for setTimeout renderMirrorImage
       defaultClasses = {
         mirror: 'gu-mirror',
@@ -80,19 +80,25 @@ angular.module('dragularModule', []).factory('dragularService', function dragula
       o.delay = 300;
     }
 
-    _containers = o.containers || _containers;
+    initialContainers = o.containers || (initialContainers ? makeArray(initialContainers) : []);
 
-    angular.forEach(_containers, function addMouseDown (container) {
+    angular.forEach(initialContainers, function addMouseDown (container) {
       regEvent(container, 'on', 'mousedown', grab);
     });
 
     if (o.nameSpace) {
-      if (!containersNameSpaced[o.nameSpace]) {
-        containersNameSpaced[o.nameSpace] = _containers;
-      } else {
-        Array.prototype.push.apply(containersNameSpaced[o.nameSpace], _containers);
-        _containers = containersNameSpaced[o.nameSpace];
-      }
+       if (!Array.isArray(o.nameSpace)) {
+          o.nameSpace = [o.nameSpace];
+       }
+      angular.forEach(o.nameSpace, function eachNameSpace (nameSpace) {
+        if (!containersNameSpaced[nameSpace]) {
+          containersNameSpaced[nameSpace] = [];
+        }
+        Array.prototype.push.apply(containersNameSpaced[nameSpace], initialContainers);
+        Array.prototype.push.apply(_containers[nameSpace], containersNameSpaced[nameSpace]);
+      });
+    }else{
+      _containers = initialContainers;
     }
 
     events();
@@ -145,7 +151,11 @@ angular.module('dragularModule', []).factory('dragularService', function dragula
     }
 
     function isContainer(el) {
-      return api.containers.indexOf(el) !== -1 || o.isContainer(el);
+      if(Array.isArray(api.containers)){
+        return api.containers.indexOf(el) !== -1 || o.isContainer(el);
+      }else{
+        return 'not finished'
+      }
     }
 
     function events(rem) {
