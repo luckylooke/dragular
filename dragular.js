@@ -9,7 +9,7 @@
 
 angular.module('dragularModule', []).factory('dragularService', function dragula() {
 
-  var containersNameSpaced = [], // name-spaced containers managed by the drakes
+  var containersNameSpaced = {}, // name-spaced containers managed by the drakes
       _mirror; // mirror image
 
   return function(initialContainers, options) {
@@ -170,12 +170,13 @@ angular.module('dragularModule', []).factory('dragularService', function dragula
     }
 
     function isContainerNameSpaced(el) {
+      var result = false;
       angular.forEach(api.containers,function isContainerNameSpacedLoop (containers, nameSpace) {
-        if(containers.indexOf(el) !== -1 || o.isContainer(el)){
-          return true;
+        if(!result && containers.indexOf(el) !== -1 || o.isContainer(el)){
+          result = true;
         }
       });
-      return false;
+      return result;
     }
 
     function events(rem) {
@@ -247,10 +248,10 @@ angular.module('dragularModule', []).factory('dragularService', function dragula
         return false;
       }
 
-      if (isContainer(item)) {
+      if (_isContainer(item)) {
         return false; // don't drag container itself
       }
-      while (!isContainer(item.parentElement)) {
+      while (!_isContainer(item.parentElement)) {
         if (o.invalid(item, handle)) {
           return false;
         }
@@ -416,7 +417,7 @@ angular.module('dragularModule', []).factory('dragularService', function dragula
       function accepted() {
         var accepts = false;
 
-        if (isContainer(target)) { // is droppable?
+        if (_isContainer(target)) { // is droppable?
           var immediate = getImmediateChild(target, elementBehindCursor),
             reference = getReference(target, immediate, clientX, clientY),
             initial = isInitialPlacement(target, reference);

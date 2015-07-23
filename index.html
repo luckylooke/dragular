@@ -212,10 +212,10 @@ $scope.dragularOptions = {
   </div>
   <div class='parent'>
     <h2>Example 9 - namespaces</h2>
-    <label for='hy'>Try name-spaces not to mix apples and oranges.</label>
+    <label for='hy'>Try to mix apples and oranges. You cannot place apples into oranges, but notice that you can place it into mixed. Mixed can be placed into apples and oranges. Notice that mixed becomes orange or apple if placed into their container. So remember if you are using namespacing, items namespaced according to actual container it is placed in. If you need to item preserve thier state you need to use classes in combination with options.accepts and optionally options.isContainer. It depends on setup. See [issue #9](https://github.com/luckylooke/dragular/issues/9)</label>
     <div class='wrapper' ng-controller="Example9">
       <div class='container width25'>
-        <div>apples and oranges cannot be mixed</div>
+        <div>try to mix oranges and apples</div>
         <div>apple 2</div>
         <div>apple 3</div>
         <div>apple 4</div>
@@ -233,10 +233,10 @@ $scope.dragularOptions = {
         <div>apple 8</div>
       </div>
       <div class='container width25'>
-        <div>orange 5</div>
-        <div>orange 6</div>
-        <div>orange 7</div>
-        <div>orange 8</div>
+        <div>mixed 1</div>
+        <div>mixed 2</div>
+        <div>mixed 3</div>
+        <div>mixed 4</div>
       </div>
     </div>
     <pre>
@@ -244,8 +244,11 @@ $scope.dragularOptions = {
 dragularService([$element.children()[0], $element.children()[2]], {
   nameSpace: 'apples'
 });
-dragularService([$element.children()[1], $element.children()[3]], {
+dragularService($element.children()[1], {
   nameSpace: 'oranges'
+});
+dragularService($element.children()[3], { // mixed
+  nameSpace: ['oranges', 'apples']
 });
       </code>
     </pre>

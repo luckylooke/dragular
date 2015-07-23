@@ -75,8 +75,11 @@ angular.module('example', ['dragularModule'])
     dragularService([$element.children()[0], $element.children()[2]], {
       nameSpace: 'apples'
     });
-    dragularService([$element.children()[1], $element.children()[3]], {
+    dragularService($element.children()[1], {
       nameSpace: 'oranges'
+    });
+    dragularService($element.children()[3], { // mixed
+      nameSpace: ['oranges', 'apples']
     });
   }]).controller('Example10', ['$element', 'dragularService', function TodoCtrl($element, dragularService) {
     dragularService([$element.children()[0], $element.children()[2]], {
