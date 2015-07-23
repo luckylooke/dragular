@@ -170,13 +170,16 @@ angular.module('dragularModule', []).factory('dragularService', function dragula
     }
 
     function isContainerNameSpaced(el) {
-      var result = false;
-      angular.forEach(api.containers,function isContainerNameSpacedLoop (containers, nameSpace) {
-        if(!result && containers.indexOf(el) !== -1 || o.isContainer(el)){
-          result = true;
-        }
-      });
-      return result;
+      var nameSpace;
+      for (nameSpace in api.containers) {
+          if (api.containers.hasOwnProperty(nameSpace) && api.containers[nameSpace].indexOf(el) !== -1) {
+              return true;
+          }
+      }
+      if(o.isContainer(el)){
+        return true;
+      }
+      return false;
     }
 
     function events(rem) {
