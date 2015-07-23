@@ -39,6 +39,7 @@ angular.module('dragularModule', []).factory('dragularService', function dragula
       _copy, // item used for copying
       _containers = {}, // containers managed by the drake
       _renderTimer, // timer for setTimeout renderMirrorImage
+      _isContainer, // internal isContainer
       defaultClasses = {
         mirror: 'gu-mirror',
         hide: 'gu-hide',
@@ -95,10 +96,12 @@ angular.module('dragularModule', []).factory('dragularService', function dragula
           containersNameSpaced[nameSpace] = [];
         }
         Array.prototype.push.apply(containersNameSpaced[nameSpace], initialContainers);
-        Array.prototype.push.apply(_containers[nameSpace], containersNameSpaced[nameSpace]);
+        _containers[nameSpace] = containersNameSpaced[nameSpace];
       });
+      _isContainer = isContainerNameSpaced;
     }else{
       _containers = initialContainers;
+      _isContainer = isContainer;
     }
 
     events();
@@ -139,23 +142,40 @@ angular.module('dragularModule', []).factory('dragularService', function dragula
       return function addOrRemove(all) {
         var changes = Array.isArray(all) ? all : makeArray(all);
         changes.forEach(function forEachContainer(container) {
-          if (op === 'add') {
-            _containers.push(container);
-            console.warn && console.warn('drake.addContainer is deprecated. please access drake.containers directly, instead');
-          } else {
-            _containers.splice(_containers.indexOf(container), 1);
-            console.warn && console.warn('drake.removeContainer is deprecated. please access drake.containers directly, instead');
+          if(o.nameSpace){
+            angular.forEach(o.nameSpace, function addRemoveNamespaced (containers, nameSpace) {
+              if (op === 'add') {
+                _containers[nameSpace].push(container);
+                console.warn && console.warn('drake.addContainer is deprecated. please access drake.containers directly, instead');
+              } else {
+                _containers[nameSpace].splice(_containers.indexOf(container), 1);
+                console.warn && console.warn('drake.removeContainer is deprecated. please access drake.containers directly, instead');
+              }
+            });
+          }else{
+            if (op === 'add') {
+              _containers.push(container);
+              console.warn && console.warn('drake.addContainer is deprecated. please access drake.containers directly, instead');
+            } else {
+              _containers.splice(_containers.indexOf(container), 1);
+              console.warn && console.warn('drake.removeContainer is deprecated. please access drake.containers directly, instead');
+            }
           }
         });
       };
     }
 
     function isContainer(el) {
-      if(Array.isArray(api.containers)){
-        return api.containers.indexOf(el) !== -1 || o.isContainer(el);
-      }else{
-        return 'not finished'
-      }
+      return api.containers.indexOf(el) !== -1 || o.isContainer(el);
+    }
+
+    function isContainerNameSpaced(el) {
+      angular.forEach(api.containers,function isContainerNameSpacedLoop (containers, nameSpace) {
+        if(containers.indexOf(el) !== -1 || o.isContainer(el)){
+          return true;
+        }
+      });
+      return false;
     }
 
     function events(rem) {
