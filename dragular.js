@@ -40,6 +40,7 @@ angular.module('dragularModule', []).factory('dragularService', function dragula
       _containers = {}, // containers managed by the drake
       _renderTimer, // timer for setTimeout renderMirrorImage
       _isContainer, // internal isContainer
+      _dropContainer, // droppable container under drag item
       defaultClasses = {
         mirror: 'gu-mirror',
         hide: 'gu-hide',
@@ -331,6 +332,7 @@ angular.module('dragularModule', []).factory('dragularService', function dragula
       }
       if (o.dragOverClasses && _lastOverElem) {
         rmClass(_lastOverElem, _lastOverClass);
+        _dropContainer = null;
         _lastOverElem = null;
       }
     }
@@ -437,6 +439,7 @@ angular.module('dragularModule', []).factory('dragularService', function dragula
 
           _lastOverClass = accepts ? o.classes.overAccepts : o.classes.overDeclines;
           addClass(target, _lastOverClass);
+          _dropContainer = accepts ? target : null;
           _lastOverElem = target;
         }
         return accepts;
@@ -516,6 +519,10 @@ angular.module('dragularModule', []).factory('dragularService', function dragula
       }
     }
 
+    function scrollContainer(e){   
+      _dropContainer.scrollTop += e.deltaY;
+    }
+
     function renderMirrorImage() {
       if (_mirror) {
         return;
@@ -531,6 +538,7 @@ angular.module('dragularModule', []).factory('dragularService', function dragula
       body.appendChild(_mirror);
       regEvent(documentElement, 'on', 'mousemove', drag);
       addClass(body, o.classes.unselectable);
+      regEvent(_mirror, 'on', 'wheel', scrollContainer);
       if (o.scope) {
         o.scope.$emit('cloned', _mirror, _item);
       }
@@ -540,6 +548,7 @@ angular.module('dragularModule', []).factory('dragularService', function dragula
       if (_mirror) {
         rmClass(body, o.classes.unselectable);
         regEvent(documentElement, 'off', 'mousemove', drag);
+        regEvent(_mirror, 'off', 'wheel', scrollContainer);
         _mirror.parentElement.removeChild(_mirror);
         _mirror = null;
       }
@@ -636,7 +645,7 @@ angular.module('dragularModule', []).factory('dragularService', function dragula
       },
       $el = angular.element(el);
 
-    $el[op](touch[type], fn);
+    if(type !== scroll){$el[op](touch[type], fn)};
     $el[op](type, fn);
   }
 

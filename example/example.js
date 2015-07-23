@@ -172,4 +172,6 @@ angular.module('example', ['dragularModule'])
         content: 'Item c4'
       }]
     }];
+  }]).controller('Example16', ['$element', 'dragularService', function TodoCtrl($element, dragularService) {
+    dragularService($element.children());
   }]);
