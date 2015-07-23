@@ -37,8 +37,9 @@ angular.module('dragularModule', []).factory('dragularService', function dragula
       _lastOverElem, // last element behind the cursor (dragOverClasses feature)
       _lastOverClass, // last overClass used (dragOverClasses feature)
       _copy, // item used for copying
-      _containers, // containers managed by the drake
+      _containers = {}, // containers managed by the drake
       _renderTimer, // timer for setTimeout renderMirrorImage
+      _isContainer, // internal isContainer
       defaultClasses = {
         mirror: 'gu-mirror',
         hide: 'gu-hide',
@@ -80,20 +81,27 @@ angular.module('dragularModule', []).factory('dragularService', function dragula
       o.delay = 300;
     }
 
-      initialContainers = o.containers || (initialContainers ? makeArray(initialContainers) : []);
+    initialContainers = o.containers || (initialContainers ? makeArray(initialContainers) : []);
 
     angular.forEach(initialContainers, function addMouseDown (container) {
       regEvent(container, 'on', 'mousedown', grab);
     });
 
     if (o.nameSpace) {
-      if (!containersNameSpaced[o.nameSpace]) {
-        containersNameSpaced[o.nameSpace] = [];
-      }
-      Array.prototype.push.apply(containersNameSpaced[o.nameSpace], initialContainers);
-      _containers = containersNameSpaced[o.nameSpace]; 
+       if (!Array.isArray(o.nameSpace)) {
+          o.nameSpace = [o.nameSpace];
+       }
+      angular.forEach(o.nameSpace, function eachNameSpace (nameSpace) {
+        if (!containersNameSpaced[nameSpace]) {
+          containersNameSpaced[nameSpace] = [];
+        }
+        Array.prototype.push.apply(containersNameSpaced[nameSpace], initialContainers);
+        _containers[nameSpace] = containersNameSpaced[nameSpace];
+      });
+      _isContainer = isContainerNameSpaced;
     }else{
       _containers = initialContainers;
+      _isContainer = isContainer;
     }
 
     events();
@@ -134,12 +142,24 @@ angular.module('dragularModule', []).factory('dragularService', function dragula
       return function addOrRemove(all) {
         var changes = Array.isArray(all) ? all : makeArray(all);
         changes.forEach(function forEachContainer(container) {
-          if (op === 'add') {
-            _containers.push(container);
-            console.warn && console.warn('drake.addContainer is deprecated. please access drake.containers directly, instead');
-          } else {
-            _containers.splice(_containers.indexOf(container), 1);
-            console.warn && console.warn('drake.removeContainer is deprecated. please access drake.containers directly, instead');
+          if(o.nameSpace){
+            angular.forEach(o.nameSpace, function addRemoveNamespaced (containers, nameSpace) {
+              if (op === 'add') {
+                _containers[nameSpace].push(container);
+                console.warn && console.warn('drake.addContainer is deprecated. please access drake.containers directly, instead');
+              } else {
+                _containers[nameSpace].splice(_containers.indexOf(container), 1);
+                console.warn && console.warn('drake.removeContainer is deprecated. please access drake.containers directly, instead');
+              }
+            });
+          }else{
+            if (op === 'add') {
+              _containers.push(container);
+              console.warn && console.warn('drake.addContainer is deprecated. please access drake.containers directly, instead');
+            } else {
+              _containers.splice(_containers.indexOf(container), 1);
+              console.warn && console.warn('drake.removeContainer is deprecated. please access drake.containers directly, instead');
+            }
           }
         });
       };
@@ -147,6 +167,16 @@ angular.module('dragularModule', []).factory('dragularService', function dragula
 
     function isContainer(el) {
       return api.containers.indexOf(el) !== -1 || o.isContainer(el);
+    }
+
+    function isContainerNameSpaced(el) {
+      var result = false;
+      angular.forEach(api.containers,function isContainerNameSpacedLoop (containers, nameSpace) {
+        if(!result && containers.indexOf(el) !== -1 || o.isContainer(el)){
+          result = true;
+        }
+      });
+      return result;
     }
 
     function events(rem) {
@@ -218,10 +248,10 @@ angular.module('dragularModule', []).factory('dragularService', function dragula
         return false;
       }
 
-      if (isContainer(item)) {
+      if (_isContainer(item)) {
         return false; // don't drag container itself
       }
-      while (!isContainer(item.parentElement)) {
+      while (!_isContainer(item.parentElement)) {
         if (o.invalid(item, handle)) {
           return false;
         }
@@ -387,7 +417,7 @@ angular.module('dragularModule', []).factory('dragularService', function dragula
       function accepted() {
         var accepts = false;
 
-        if (isContainer(target)) { // is droppable?
+        if (_isContainer(target)) { // is droppable?
           var immediate = getImmediateChild(target, elementBehindCursor),
             reference = getReference(target, immediate, clientX, clientY),
             initial = isInitialPlacement(target, reference);
