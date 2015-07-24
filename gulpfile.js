@@ -16,6 +16,7 @@ var autoprefixer = require('gulp-autoprefixer');
 var nib = require('nib');
 var browserSync = require('browser-sync');
 var jshint = require('gulp-jshint');
+var sourcemaps = require('gulp-sourcemaps');
 
 var config = {
   paths: {
@@ -58,6 +59,7 @@ function buildScript() {
     return stream.on('error', handleErrors)
       .pipe(source('dragular.js'))
       .pipe(buffer())
+      .pipe(sourcemaps.init())
       .pipe(gulpif(config.isProd, uglify({
         compress: { drop_console: true }
       })))
@@ -67,6 +69,7 @@ function buildScript() {
       .pipe(size({
         title: 'Scripts: '
       }))
+      .pipe(sourcemaps.write('./'))
       .pipe(gulp.dest(config.paths.dest))
       .pipe(browserSync.stream());
   }
@@ -117,7 +120,6 @@ gulp.task('serve', function () {
     logFileChanges: true,
     notify: true
   });
-
 });
 
 gulp.task('watch', ['serve'], function() {
