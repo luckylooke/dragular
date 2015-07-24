@@ -9,7 +9,7 @@
 
 angular.module('dragularModule', []).factory('dragularService', function dragula() {
 
-  var containersNameSpaced = {}, // name-spaced containers managed by the drakes
+  var containersNameSpaced = {}, // name-spaced containers
       _mirror; // mirror image
 
   return function(initialContainers, options) {
@@ -24,6 +24,8 @@ angular.module('dragularModule', []).factory('dragularService', function dragula
       documentElement = document.documentElement,
       _source, // source container
       _item, // item being dragged
+      _sourceModel, // source container model
+      _itemModel, // item-model being dragged
       _offsetX, // reference x
       _offsetY, // reference y
       _offsetXr, // reference x right for boundingBox feature
@@ -34,9 +36,12 @@ angular.module('dragularModule', []).factory('dragularService', function dragula
       _mirrorHeight, // mirror height for boundingBox feature
       _initialSibling, // reference sibling when grabbed
       _currentSibling, // reference sibling now
+      _initialIndex, // reference model index when grabbed
+      _currentIndex, // reference model index now
       _lastOverElem, // last element behind the cursor (dragOverClasses feature)
       _lastOverClass, // last overClass used (dragOverClasses feature)
       _copy, // item used for copying
+      _copyModel, // item-model used for copying
       _containers = {}, // containers managed by the drake
       _renderTimer, // timer for setTimeout renderMirrorImage
       _isContainer, // internal isContainer
@@ -64,7 +69,8 @@ angular.module('dragularModule', []).factory('dragularService', function dragula
         dragOverClasses: false,
         lockX: false,
         lockY: false,
-        boundingBox: false
+        boundingBox: false,
+        containersModel: false
       };
 
     if (!isElement(o.boundingBox)) {
@@ -83,8 +89,14 @@ angular.module('dragularModule', []).factory('dragularService', function dragula
     }
 
     initialContainers = o.containers || (initialContainers ? makeArray(initialContainers) : []);
+    if(o.containers){
+      initialContainers = makeArray(initialContainers);
+    }
+    if(o.containersModel){
+      o.containersModel = makeArray(o.containersModel);
+    }
 
-    angular.forEach(initialContainers, function addMouseDown (container) {
+    initialContainers.forEach(function addMouseDown (container) {
       regEvent(container, 'on', 'mousedown', grab);
     });
 
@@ -92,7 +104,7 @@ angular.module('dragularModule', []).factory('dragularService', function dragula
        if (!Array.isArray(o.nameSpace)) {
           o.nameSpace = [o.nameSpace];
        }
-      angular.forEach(o.nameSpace, function eachNameSpace (nameSpace) {
+      o.nameSpace.forEach(function eachNameSpace (nameSpace) {
         if (!containersNameSpaced[nameSpace]) {
           containersNameSpaced[nameSpace] = [];
         }
@@ -277,6 +289,18 @@ angular.module('dragularModule', []).factory('dragularService', function dragula
 
       end();
 
+      if (o.containersModel){
+        var containerIndex = initialContainers.indexOf(container),
+          itemIndex = Array.prototype.indexOf.call(angular.element(item.parentElement).children(), item);
+
+        _initialIndex = _currentIndex = itemIndex;
+        _sourceModel = o.containersModel[containerIndex];
+        _itemModel = _sourceModel[itemIndex];
+        if(o.copy){
+          _copyModel = angular.copy(_itemModel);
+        }
+      }
+
       if (o.copy) {
         _copy = item.cloneNode(true);
         addClass(_copy, o.classes.transit);
@@ -355,6 +379,9 @@ angular.module('dragularModule', []).factory('dragularService', function dragula
       if (parent) {
         parent.removeChild(item);
       }
+      if(o.containersModel && !o.copy){
+        _sourceModel.splice(_sourceModel.indexOf(_itemModel),1);
+      }
       if (o.scope) {
         o.scope.$emit(o.copy ? 'cancel' : 'remove', item, parent);
       }
@@ -374,6 +401,9 @@ angular.module('dragularModule', []).factory('dragularService', function dragula
       var initial = isInitialPlacement(parent);
       if (initial === false && o.copy === false && reverts) {
         _source.insertBefore(item, _initialSibling);
+        if(o.containersModel){
+          _sourceModel.splice(_initialIndex, 1, _itemModel);
+        }
       }
       if (o.scope && (initial || reverts)) {
         o.scope.$emit('cancel', item, _source);
@@ -392,7 +422,7 @@ angular.module('dragularModule', []).factory('dragularService', function dragula
       if (_renderTimer) {
         clearTimeout(_renderTimer);
       }
-      _source = _item = _copy = _initialSibling = _currentSibling = _renderTimer = null;
+      _source = _item = _copy = _initialSibling = _currentSibling = _sourceModel = _itemModel = _copyModel = _initialIndex = _currentIndex = _renderTimer = null;
 
       api.dragging = false;
       if (o.scope) {
@@ -426,7 +456,7 @@ angular.module('dragularModule', []).factory('dragularService', function dragula
           var immediate = getImmediateChild(target, elementBehindCursor),
             reference = getReference(target, immediate, clientX, clientY),
             initial = isInitialPlacement(target, reference);
-          accepts = initial ? true : o.accepts(_item, target, _source, reference);
+          accepts = initial ? true : o.accepts(_item, target, _source, reference, _itemModel, _sourceModel);
         }
 
         if (o.dragOverClasses &&
@@ -444,6 +474,29 @@ angular.module('dragularModule', []).factory('dragularService', function dragula
         }
         return accepts;
       }
+    }
+
+    function findDropTargetModel(target) {
+      var targetModel = false;
+      if(o.nameSpace){
+        o.nameSpace.forEach(function findDropTargetModelInNameSpace (nameSpace) {
+          if(!targetModel && _containers[nameSpace].indexOf(target) !== -1){
+            targetModel = _containers[nameSpace][_containers[nameSpace].indexOf(target)];
+          }
+        });
+      }else{
+        if(_containers.indexOf(target) !== -1){
+            targetModel = _containers[_containers.indexOf(target)];
+          }
+      }
+
+      if(!targetModel && o.isContainerModel){
+        var scope = angular.element(target).scope() || angular.element(target).isolateScope();
+        if(scope){
+          targetModel = scope[o.isContainerModel];
+        }
+      }
+      return targetModel;
     }
 
     function drag(e) {
@@ -497,22 +550,43 @@ angular.module('dragularModule', []).factory('dragularService', function dragula
       if (dropTarget === _source && o.copy) {
         return;
       }
+
       var reference,
         immediate = getImmediateChild(dropTarget, elementBehindCursor);
+
+      if(o.containersModel){
+        var itemModel = _copyModel || _itemModel,
+          targetModel = findDropTargetModel(target),
+          referenceIndex = targetModel ? targetModel.indexOf(_itemModel) : 0;
+      }
+
       if (immediate !== null) {
         reference = getReference(dropTarget, immediate, _clientX, _clientY);
       } else if (o.revertOnSpill === true && !o.copy) {
         reference = _initialSibling;
         dropTarget = _source;
+        if(o.containersModel){
+          referenceIndex = _initialIndex;
+          targetModel = _sourceModel;
+        }
       } else {
         if ((o.copy || o.removeOnSpill === true) && item.parentElement !== null) {
           item.parentElement.removeChild(item);
+          if(o.containersModel){
+            targetModel.splice(referenceIndex, 1);
+          }
         }
         return;
       }
       if (reference === null || reference !== item && reference !== nextEl(item)) {
         _currentSibling = reference;
         dropTarget.insertBefore(item, reference);
+
+        if(o.containersModel){
+          _currentIndex = referenceIndex;
+          targetModel.splice(referenceIndex, 1, _itemModel);
+        }
+
         if (o.scope) {
           o.scope.$emit('shadow', item, dropTarget);
         }
@@ -645,7 +719,7 @@ angular.module('dragularModule', []).factory('dragularService', function dragula
       },
       $el = angular.element(el);
 
-    if(type !== scroll){$el[op](touch[type], fn)};
+    if(type !== 'wheel'){$el[op](touch[type], fn)};
     $el[op](type, fn);
   }
 
