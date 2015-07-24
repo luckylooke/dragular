@@ -208,39 +208,80 @@
     },
     nameSpace: 'common' // just connecting left and right container
   };
-
-  &lt;div class='container' dragular='{&quot;classes&quot;:{&quot;mirror&quot;:&quot;custom-green-mirror&quot;},&quot;nameSpace&quot;:&quot;common&quot;}'&gt;
-        </code>
-      </pre>
+&lt;div class='container' dragular='{&quot;classes&quot;:{&quot;mirror&quot;:&quot;custom-green-mirror&quot;},&quot;nameSpace&quot;:&quot;common&quot;}'&gt;
+      </code>
+    </pre>
+  </div>
+  <div class='parent'>
+    <h2>Example 9 - namespaces</h2>
+    <label for='hy'>Try to mix apples and oranges. You cannot place apples into oranges, but notice that you can place it into mixed. Mixed can be placed into apples and oranges. Notice that mixed becomes orange or apple if placed into their container. <b>So remember if you are using namespacing, then item is namespaced according to actual container it is placed in. If you need to item preserve thier state you need to use classes in combination with options.accepts and optionally options.isContainer.</b> It depends on setup. (See <a href="https://github.com/luckylooke/dragular/issues/9">issue #9</a>.)</label>
+    <div class='wrapper' ng-controller="Example9">
+      <div class='container width25'>
+        <div>try to mix oranges and apples</div>
+        <div>apple 2</div>
+        <div>apple 3</div>
+        <div>apple 4</div>
+      </div>
+      <div class='container width25'>
+        <div>orange 1</div>
+        <div>orange 2</div>
+        <div>orange 3</div>
+        <div>orange 4</div>
+      </div>
+      <div class='container width25'>
+        <div>apple 5</div>
+        <div>apple 6</div>
+        <div>apple 7</div>
+        <div>apple 8</div>
+      </div>
+      <div class='container width25'>
+        <div>mixed 1</div>
+        <div>mixed 2</div>
+        <div>mixed 3</div>
+        <div>mixed 4</div>
+      </div>
     </div>
-    <div class='parent'>
-      <h2>Example 9 - namespaces</h2>
-      <label for='hy'>Try name-spaces not to mix apples and oranges.</label>
-      <div class='wrapper' ng-controller="Example9">
-        <div class='container width25'>
-          <div>apples and oranges cannot be mixed</div>
-          <div>apple 2</div>
-          <div>apple 3</div>
-          <div>apple 4</div>
-        </div>
-        <div class='container width25'>
-          <div>orange 1</div>
-          <div>orange 2</div>
-          <div>orange 3</div>
-          <div>orange 4</div>
-        </div>
-        <div class='container width25'>
-          <div>apple 5</div>
-          <div>apple 6</div>
-          <div>apple 7</div>
-          <div>apple 8</div>
-        </div>
-        <div class='container width25'>
-          <div>orange 5</div>
-          <div>orange 6</div>
-          <div>orange 7</div>
-          <div>orange 8</div>
-        </div>
+    <pre>
+      <code>
+dragularService([$element.children()[0], $element.children()[2]], {
+  nameSpace: 'apples'
+});
+dragularService($element.children()[1], {
+  nameSpace: 'oranges'
+});
+dragularService($element.children()[3], { // mixed
+  nameSpace: ['oranges', 'apples']
+});
+      </code>
+    </pre>
+  </div>
+  <div class='parent'>
+    <h2>Example 10 - dragOverClasses</h2>
+    <label for='hy'>You can interact with dragging element by setting dragOverClasses:true in options and adding pointer class (default is: 'gu-over-active') to element you want to be interactive (getting classes). Usually you want to containers show wheather they accepts element or not, but you can use it anywhere. Try to drag over the example code too.</label>
+    <div class='wrapper' ng-controller="Example10">
+      <div class='container width25 gu-over-active'>
+        <div>apples and oranges cannot be mixed</div>
+        <div>apple 2</div>
+        <div>apple 3</div>
+        <div>apple 4</div>
+      </div>
+      <div class='container width25 gu-over-active'>
+        <div>orange 1</div>
+        <div>orange 2</div>
+        <div>orange 3</div>
+        <div>orange 4</div>
+      </div>
+      <div class='container width25 gu-over-active'>
+        <div>apple 5</div>
+        <div>apple 6</div>
+        <div>apple 7</div>
+        <div>apple 8</div>
+      </div>
+      <div class='container width25 gu-over-active'>
+        <div>orange 5</div>
+        <div>orange 6</div>
+        <div>orange 7</div>
+        <div>orange 8</div>
       </div>
       <pre>
         <code>
@@ -519,16 +560,38 @@
       </pre>
     </div>
   </div>
-  <h3>Get it on GitHub! <a href='https://github.com/luckylooke/dragular'>luckylooke/dragular</a></h3>
-  <script src='dist/angular.min.js'></script>
-  <script src='dist/dragular.js'></script>
-  <script src='example/example.js'></script>
-  <script src='highlight.pack.js'></script>
-  <script type="text/javascript">
-  hljs.initHighlightingOnLoad();
-  var _gaq = _gaq || [];
-  _gaq.push(['_setAccount', 'UA-64333581-1']);
-  _gaq.push(['_trackPageview']);
+  <div class='parent'>
+    <h2>Example 16 - scrolling drag</h2>
+    <label for='hy'> fsdfdsfsdf
+    </label>
+    <div ng-controller="Example16">
+        <div class="container heightLimit">
+            <div>Item 1</div>
+            <div>Item 2</div>
+            <div>Item 3.</div>
+            <div>Item 4.</div>
+            <div>Item 5.</div>
+            <div>Item 6.</div>
+            <div>Item 7.</div>
+            <div>Item 9.</div>
+            <div>Item 10.</div>
+            <div>Item 11.</div>
+            <div>Item 12.</div>
+            <div>Item 13.</div>
+        </div>
+    </div>    
+  </div>
+</div>
+<h3>Get it on GitHub! <a href='https://github.com/luckylooke/dragular'>luckylooke/dragular</a></h3>
+<script src='dist/angular.min.js'></script>
+<script src='dist/dragular.js'></script>
+<script src='example/example.js'></script>
+<script src='highlight.pack.js'></script>
+<script type="text/javascript">
+hljs.initHighlightingOnLoad();
+var _gaq = _gaq || [];
+_gaq.push(['_setAccount', 'UA-64333581-1']);
+_gaq.push(['_trackPageview']);
 
   (function() {
     var ga = document.createElement('script');
