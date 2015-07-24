@@ -1,538 +1,542 @@
 <!doctype html>
-<link href='dist/dragular.css' rel='stylesheet' type='text/css' />
-<link href='example/example.css' rel='stylesheet' type='text/css' />
-<link href='highlight.monokai_sublime.css' rel='stylesheet' type='text/css' />
-<title>dragular</title>
-<h1>=== DRAGULAR ===</h1>
-<h3>Angular drag&drop based on <a href="http://github.com/bevacqua/dragula">dragula</a></h3>
-<a href='http://github.com/luckylooke/dragular'>
-  <img class='gh-fork' src='https://camo.githubusercontent.com/52760788cde945287fbb584134c4cbc2bc36f904/68747470733a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f72696768745f77686974655f6666666666662e706e67' alt='Fork me on GitHub' data-canonical-src='https://s3.amazonaws.com/github/ribbons/forkme_right_white_ffffff.png' />
-</a>
-<div class='examples' ng-app="example">
-  <div class='parent'>
-    <h2>Example 1 - basics</h2>
-    <label for='hy'>Move stuff between these two containers. Note how the stuff gets inserted near the mouse pointer? Great stuff.</label>
-    <div class='wrapper' ng-controller="Example1">
-      <div id='left1' class='container'>
-        <div>Move me, but you can only drop me in one of these containers.</div>
-        <div>If you try to drop me somewhere other than these containers, I'll just come back.</div>
-        <div>Item 3.</div>
-        <div>Item 6.</div>
+<head>
+  <link href='dist/dragular.css' rel='stylesheet' type='text/css' />
+  <link href='example/example.css' rel='stylesheet' type='text/css' />
+  <link href='highlight.monokai_sublime.css' rel='stylesheet' type='text/css' />
+  <title>dragular</title>
+</head>
+<body>
+  <h1>=== DRAGULAR ===</h1>
+  <h3>Angular drag&drop based on <a href="http://github.com/bevacqua/dragula">dragula</a></h3>
+  <a href='http://github.com/luckylooke/dragular'>
+    <img class='gh-fork' src='https://camo.githubusercontent.com/52760788cde945287fbb584134c4cbc2bc36f904/68747470733a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f72696768745f77686974655f6666666666662e706e67' alt='Fork me on GitHub' data-canonical-src='https://s3.amazonaws.com/github/ribbons/forkme_right_white_ffffff.png' />
+  </a>
+  <div class='examples' ng-app="example">
+    <div class='parent'>
+      <h2>Example 1 - basics</h2>
+      <label for='hy'>Move stuff between these two containers. Note how the stuff gets inserted near the mouse pointer? Great stuff.</label>
+      <div class='wrapper' ng-controller="Example1">
+        <div id='left1' class='container'>
+          <div>Move me, but you can only drop me in one of these containers.</div>
+          <div>If you try to drop me somewhere other than these containers, I'll just come back.</div>
+          <div>Item 3.</div>
+          <div>Item 6.</div>
+        </div>
+        <div id='right1' class='container'>
+          <div>You can drop me in the left container, otherwise I'll stay here.</div>
+          <div>Item 4.</div>
+          <div>Item 5.</div>
+        </div>
       </div>
-      <div id='right1' class='container'>
-        <div>You can drop me in the left container, otherwise I'll stay here.</div>
-        <div>Item 4.</div>
-        <div>Item 5.</div>
-      </div>
+      <pre>
+        <code>
+  dragularService([document.getElementById(left), document.getElementById(right)]);
+        </code>
+      </pre>
     </div>
-    <pre>
-      <code>
-dragularService([document.getElementById(left), document.getElementById(right)]);
-      </code>
-    </pre>
-  </div>
-  <div class='parent'>
-    <h2>Example 2 - events</h2>
-    <label for='hy'>Add some fantastic events!</label>
-    <div class='wrapper' ng-controller="Example2">
-      <div id='left3' class='container'>
-        <div>Move me, but you can only drop me in one of these containers.</div>
-        <div>If you try to drop me somewhere other than these containers, I'll just come back.</div>
-        <div>Item 3.</div>
-        <div>Item 6.</div>
+    <div class='parent'>
+      <h2>Example 2 - events</h2>
+      <label for='hy'>Add some fantastic events!</label>
+      <div class='wrapper' ng-controller="Example2">
+        <div id='left3' class='container'>
+          <div>Move me, but you can only drop me in one of these containers.</div>
+          <div>If you try to drop me somewhere other than these containers, I'll just come back.</div>
+          <div>Item 3.</div>
+          <div>Item 6.</div>
+        </div>
+        <div id='right3' class='container'>
+          <div>You can drop me in the left container, otherwise I'll stay here.</div>
+          <div>Item 4.</div>
+          <div>Item 5.</div>
+        </div>
       </div>
-      <div id='right3' class='container'>
-        <div>You can drop me in the left container, otherwise I'll stay here.</div>
-        <div>Item 4.</div>
-        <div>Item 5.</div>
-      </div>
+      <pre>
+        <code>
+  dragularService([document.getElementById(left), document.getElementById(right)], {
+    scope: $scope
+  });
+  $scope.$on('drag', function(e, el) {
+    e.stopPropagation();
+    el.className = el.className.replace(' ex-moved', '');
+  });
+  $scope.$on('drop', function(e, el) {
+    e.stopPropagation();
+    $timeout(function() {
+      el.className += ' ex-moved';
+    }, 0);
+  });
+        </code>
+      </pre>
     </div>
-    <pre>
-      <code>
-dragularService([document.getElementById(left), document.getElementById(right)], {
-  scope: $scope
-});
-$scope.$on('drag', function(e, el) {
-  e.stopPropagation();
-  el.className = el.className.replace(' ex-moved', '');
-});
-$scope.$on('drop', function(e, el) {
-  e.stopPropagation();
-  $timeout(function() {
-    el.className += ' ex-moved';
-  }, 0);
-});
-      </code>
-    </pre>
-  </div>
-  <div class='parent'>
-    <h2>Example 3 - remove on spill</h2>
-    <label for='hy'>Need to be able to quickly delete stuff when it spills out of the chosen containers?</label>
-    <div class='wrapper' ng-controller="Example3">
-      <div id='single1' class='container'>
-        <div>Move me, but you can only drop me somewhere in this container.</div>
-        <div>If you try to drop me somewhere other than here, I'll die a fiery death.</div>
-        <div>Item 3.</div>
-        <div>Item 6.</div>
-        <div>Item 4.</div>
-        <div>Item 5.</div>
+    <div class='parent'>
+      <h2>Example 3 - remove on spill</h2>
+      <label for='hy'>Need to be able to quickly delete stuff when it spills out of the chosen containers?</label>
+      <div class='wrapper' ng-controller="Example3">
+        <div id='single1' class='container'>
+          <div>Move me, but you can only drop me somewhere in this container.</div>
+          <div>If you try to drop me somewhere other than here, I'll die a fiery death.</div>
+          <div>Item 3.</div>
+          <div>Item 6.</div>
+          <div>Item 4.</div>
+          <div>Item 5.</div>
+        </div>
       </div>
+      <pre>
+        <code>
+  dragularService([document.getElementById(single)], { removeOnSpill: true });
+        </code>
+      </pre>
     </div>
-    <pre>
-      <code>
-dragularService([document.getElementById(single)], { removeOnSpill: true });
-      </code>
-    </pre>
-  </div>
-  <div class='parent'>
-    <h2>Example 4 - revert on spill</h2>
-    <label for='hy'>By default, dropping an element outside of any known containers will keep the element in the last place it hovered over. You can make elements go back home if they're dropped outside of known containers, too.</label>
-    <div class='wrapper' ng-controller="Example4">
-      <div id='left4' class='container'>
-        <div>Move me, but you can only drop me in one of these containers.</div>
-        <div>If you try to drop me somewhere other than these containers, I'll just come back.</div>
-        <div>Item 3.</div>
-        <div>Item 6.</div>
+    <div class='parent'>
+      <h2>Example 4 - revert on spill</h2>
+      <label for='hy'>By default, dropping an element outside of any known containers will keep the element in the last place it hovered over. You can make elements go back home if they're dropped outside of known containers, too.</label>
+      <div class='wrapper' ng-controller="Example4">
+        <div id='left4' class='container'>
+          <div>Move me, but you can only drop me in one of these containers.</div>
+          <div>If you try to drop me somewhere other than these containers, I'll just come back.</div>
+          <div>Item 3.</div>
+          <div>Item 6.</div>
+        </div>
+        <div id='right4' class='container'>
+          <div>You can drop me in the left container, otherwise I'll stay here.</div>
+          <div>Item 4.</div>
+          <div>Item 5.</div>
+        </div>
       </div>
-      <div id='right4' class='container'>
-        <div>You can drop me in the left container, otherwise I'll stay here.</div>
-        <div>Item 4.</div>
-        <div>Item 5.</div>
-      </div>
+      <pre>
+        <code>
+  dragularService([document.getElementById(left), document.getElementById(right)], { revertOnSpill: true });
+        </code>
+      </pre>
     </div>
-    <pre>
-      <code>
-dragularService([document.getElementById(left), document.getElementById(right)], { revertOnSpill: true });
-      </code>
-    </pre>
-  </div>
-  <div class='parent'>
-    <h2>Example 5 - copy</h2>
-    <label for='hy'>Copying stuff is great too</label>
-    <div class='wrapper' ng-controller="Example5">
-      <div id='left2' class='container'>
-        <div>Move me, and make copy on drop.</div>
-        <div>If you try to drop me somewhere other than these containers, I'll just come back.</div>
+    <div class='parent'>
+      <h2>Example 5 - copy</h2>
+      <label for='hy'>Copying stuff is great too</label>
+      <div class='wrapper' ng-controller="Example5">
+        <div id='left2' class='container'>
+          <div>Move me, and make copy on drop.</div>
+          <div>If you try to drop me somewhere other than these containers, I'll just come back.</div>
+        </div>
+        <div id='right2' class='container'>
+          <div>You can drop me in the left container, otherwise I'll stay here.</div>
+        </div>
       </div>
-      <div id='right2' class='container'>
-        <div>You can drop me in the left container, otherwise I'll stay here.</div>
-      </div>
+      <pre>
+        <code>
+  dragularService([document.getElementById(left), document.getElementById(right)], { copy: true });
+        </code>
+      </pre>
     </div>
-    <pre>
-      <code>
-dragularService([document.getElementById(left), document.getElementById(right)], { copy: true });
-      </code>
-    </pre>
-  </div>
-  <div class='parent'>
-    <h2>Example 6 - handle</h2>
-    <label for='hy'>Drag handles float your cruise?</label>
-    <div class='wrapper' ng-controller="Example6">
-      <div id='left5' class='container'>
-        <div><span class='handle'>+</span>Move me, but you can use the plus sign to drag me around.</div>
+    <div class='parent'>
+      <h2>Example 6 - handle</h2>
+      <label for='hy'>Drag handles float your cruise?</label>
+      <div class='wrapper' ng-controller="Example6">
+        <div id='left5' class='container'>
+          <div><span class='handle'>+</span>Move me, but you can use the plus sign to drag me around.</div>
+        </div>
+        <div id='right5' class='container'>
+        </div>
       </div>
-      <div id='right5' class='container'>
-      </div>
+      <pre>
+        <code>
+  dragularService([document.getElementById(left), document.getElementById(right)], {
+    moves: function (el, container, handle) {
+      return handle.className === 'handle';
+    }
+  });
+        </code>
+      </pre>
     </div>
-    <pre>
-      <code>
-dragularService([document.getElementById(left), document.getElementById(right)], {
-  moves: function (el, container, handle) {
-    return handle.className === 'handle';
-  }
-});
-      </code>
-    </pre>
-  </div>
-  <div class='parent'>
-    <h2>Example 7 - custom classes</h2>
-    <label for='hy'>You can overwrite buildin classes by providing classes names in object via options.classes.</label>
-    <div class='wrapper' ng-controller="Example7">
-      <div id='left4' class='container'>
-        <div>Move me, but you can only drop me in one of these containers.</div>
-        <div>If you try to drop me somewhere other than these containers, I'll just come back.</div>
-        <div>Item 3.</div>
-        <div>Item 6.</div>
+    <div class='parent'>
+      <h2>Example 7 - custom classes</h2>
+      <label for='hy'>You can overwrite buildin classes by providing classes names in object via options.classes.</label>
+      <div class='wrapper' ng-controller="Example7">
+        <div id='left4' class='container'>
+          <div>Move me, but you can only drop me in one of these containers.</div>
+          <div>If you try to drop me somewhere other than these containers, I'll just come back.</div>
+          <div>Item 3.</div>
+          <div>Item 6.</div>
+        </div>
+        <div id='right3' class='container'>
+          <div>You can drop me in the left container, otherwise I'll stay here.</div>
+          <div>Item 4.</div>
+          <div>Item 5.</div>
+        </div>
       </div>
-      <div id='right3' class='container'>
-        <div>You can drop me in the left container, otherwise I'll stay here.</div>
-        <div>Item 4.</div>
-        <div>Item 5.</div>
-      </div>
-    </div>
-    <pre>
-      <code>
-dragularService([document.getElementById(left), document.getElementById(right)], { classes: {
-  mirror: 'custom-green-mirror'
-} });
-
-// Default classes are:
-option.classes = {
-  mirror: 'gu-mirror',
-  hide: 'gu-hide',
-  unselectable: 'gu-unselectable',
-  transit: 'gu-transit',
-  overActive: 'gu-over-active',
-  overAccepts: 'gu-over-accept',
-  overDeclines: 'gu-over-decline'
-};
-      </code>
-    </pre>
-  </div>
-  <div class='parent'>
-    <h2>Example 8 - directive</h2>
-    <label for='hy'>Same as previous example, but using directive.</label>
-    <div class='wrapper' ng-controller="Example8">
-      <div id='left4' class='container' dragular="dragularOptions">
-        <div>Move me, but you can only drop me in one of these containers.</div>
-        <div>If you try to drop me somewhere other than these containers, I'll just come back.</div>
-        <div>Item 3.</div>
-        <div>Item 6.</div>
-      </div>
-      <div id='right3' class='container' dragular='{"classes":{"mirror":"custom-green-mirror"},"nameSpace":"common"}'>
-        <div>You can drop me in the left container, otherwise I'll stay here.</div>
-        <div>Item 4.</div>
-        <div>Item 5.</div>
-      </div>
-    </div>
-    <pre>
-      <code>
-&lt;div class='container' dragular=&quot;dragularOptions&quot;&gt;
-
-$scope.dragularOptions = {
-  classes: {
+      <pre>
+        <code>
+  dragularService([document.getElementById(left), document.getElementById(right)], { classes: {
     mirror: 'custom-green-mirror'
-  },
-  nameSpace: 'common' // just connecting left and right container
-};
+  } });
 
-&lt;div class='container' dragular='{&quot;classes&quot;:{&quot;mirror&quot;:&quot;custom-green-mirror&quot;},&quot;nameSpace&quot;:&quot;common&quot;}'&gt;
-      </code>
-    </pre>
-  </div>
-  <div class='parent'>
-    <h2>Example 9 - namespaces</h2>
-    <label for='hy'>Try name-spaces not to mix apples and oranges.</label>
-    <div class='wrapper' ng-controller="Example9">
-      <div class='container width25'>
-        <div>apples and oranges cannot be mixed</div>
-        <div>apple 2</div>
-        <div>apple 3</div>
-        <div>apple 4</div>
-      </div>
-      <div class='container width25'>
-        <div>orange 1</div>
-        <div>orange 2</div>
-        <div>orange 3</div>
-        <div>orange 4</div>
-      </div>
-      <div class='container width25'>
-        <div>apple 5</div>
-        <div>apple 6</div>
-        <div>apple 7</div>
-        <div>apple 8</div>
-      </div>
-      <div class='container width25'>
-        <div>orange 5</div>
-        <div>orange 6</div>
-        <div>orange 7</div>
-        <div>orange 8</div>
-      </div>
+  // Default classes are:
+  option.classes = {
+    mirror: 'gu-mirror',
+    hide: 'gu-hide',
+    unselectable: 'gu-unselectable',
+    transit: 'gu-transit',
+    overActive: 'gu-over-active',
+    overAccepts: 'gu-over-accept',
+    overDeclines: 'gu-over-decline'
+  };
+        </code>
+      </pre>
     </div>
-    <pre>
-      <code>
-dragularService([$element.children()[0], $element.children()[2]], {
-  nameSpace: 'apples'
-});
-dragularService([$element.children()[1], $element.children()[3]], {
-  nameSpace: 'oranges'
-});
-      </code>
-    </pre>
-  </div>
-  <div class='parent'>
-    <h2>Example 10 - dragOverClasses</h2>
-    <label for='hy'>You can interact with dragging element by setting dragOverClasses:true in options and adding pointer class (default is: 'gu-over-active') to element you want to be interactive (getting classes). Usually you want to containers show wheather they accepts element or not, but you can use it anywhere. Try to drag over the example code too.</label>
-    <div class='wrapper' ng-controller="Example10">
-      <div class='container width25 gu-over-active'>
-        <div>apples and oranges cannot be mixed</div>
-        <div>apple 2</div>
-        <div>apple 3</div>
-        <div>apple 4</div>
-      </div>
-      <div class='container width25 gu-over-active'>
-        <div>orange 1</div>
-        <div>orange 2</div>
-        <div>orange 3</div>
-        <div>orange 4</div>
-      </div>
-      <div class='container width25 gu-over-active'>
-        <div>apple 5</div>
-        <div>apple 6</div>
-        <div>apple 7</div>
-        <div>apple 8</div>
-      </div>
-      <div class='container width25 gu-over-active'>
-        <div>orange 5</div>
-        <div>orange 6</div>
-        <div>orange 7</div>
-        <div>orange 8</div>
-      </div>
-    </div>
-    <pre class="gu-over-active">
-      <code>
-dragularService([$element.children()[0], $element.children()[2]], {
-  nameSpace: 'apples',
-  dragOverClasses: true
-});
-dragularService([$element.children()[1], $element.children()[3]], {
-  nameSpace: 'oranges',
-  dragOverClasses: true
-});
-
-.container.gu-over-active.gu-over-accept {
-  background-color: green;
-}
-
-.container.gu-over-active.gu-over-decline {
-  background-color: red;
-}
-
-code.gu-over-active.gu-over-decline {
-  background-color: yellow;
-}
-      </code>
-    </pre>
-  </div>
-  <div class='parent'>
-    <h2>Example 11 - boundingBox</h2>
-    <label for='hy'>You can provide element in options.boundingBox to limit crossing element borders.</label>
-    <div class='wrapper' ng-controller="Example11">
-      <div class='container'>
-        <div>This items cannot cross its example element, just try it your selves.</div>
-        <div>Item 2.</div>
-        <div>Item 3.</div>
-        <div>Item 6.</div>
-      </div>
-      <div class='container'>
-        <div>This items cannot cross its example element, just try it your selves.</div>
-        <div>Item 4.</div>
-        <div>Item 5.</div>
-      </div>
-    </div>
-    <pre>
-      <code>
-dragularService([$element.children(), {
-  boundingBox: $element
-});
-      </code>
-    </pre>
-  </div>
-  <div class='parent'>
-    <h2>Example 12 - boundingBox and lockY</h2>
-    <label for='hy'>Movement can be locked to X or Y axis and also you can provide element in options.boundingBox to limit crossing element borders.</label>
-    <div class='wrapper' ng-controller="Example12">
-      <div class='container'>
-        <div class='boundingBox'>
-          <div>Items are locked in Y axis movement and cannot cross its closest parent div.boundingBox, just try it your selves.</div>
-          <div>item 2</div>
-          <div>item 3</div>
-          <div>item 4</div>
-          <div>item 5</div>
-          <div>item 6</div>
+    <div class='parent'>
+      <h2>Example 8 - directive</h2>
+      <label for='hy'>Same as previous example, but using directive.</label>
+      <div class='wrapper' ng-controller="Example8">
+        <div id='left4' class='container' dragular="dragularOptions">
+          <div>Move me, but you can only drop me in one of these containers.</div>
+          <div>If you try to drop me somewhere other than these containers, I'll just come back.</div>
+          <div>Item 3.</div>
+          <div>Item 6.</div>
+        </div>
+        <div id='right3' class='container' dragular='{"classes":{"mirror":"custom-green-mirror"},"nameSpace":"common"}'>
+          <div>You can drop me in the left container, otherwise I'll stay here.</div>
+          <div>Item 4.</div>
+          <div>Item 5.</div>
         </div>
       </div>
+      <pre>
+        <code>
+  &lt;div class='container' dragular=&quot;dragularOptions&quot;&gt;
+
+  $scope.dragularOptions = {
+    classes: {
+      mirror: 'custom-green-mirror'
+    },
+    nameSpace: 'common' // just connecting left and right container
+  };
+
+  &lt;div class='container' dragular='{&quot;classes&quot;:{&quot;mirror&quot;:&quot;custom-green-mirror&quot;},&quot;nameSpace&quot;:&quot;common&quot;}'&gt;
+        </code>
+      </pre>
     </div>
-    <pre>
-      <code>
-dragularService([$element.children()[0].children(), {
-  boundingBox: $element.children()[0],
-  lockY: true
-});
-      </code>
-    </pre>
-  </div>
-  <div class='parent'>
-    <h2>Example 13 - boundingBox and lockX</h2>
-    <label for='hy'>Movement can be locked to X or Y axis and also you can provide element in options.boundingBox to limit crossing element borders.</label>
-    <div class='wrapper' ng-controller="Example13">
-      <div class='containerHorizontal'>
-        <div class='boundingBox'>
-          <div class="width25">Items are locked in X axis movement and cannot cross its closest parent div.boundingBox, just try it your selves.</div>
-          <div class="width25">item 2</div>
-          <div class="width25">item 3</div>
-          <div class="width25">item 4</div>
+    <div class='parent'>
+      <h2>Example 9 - namespaces</h2>
+      <label for='hy'>Try name-spaces not to mix apples and oranges.</label>
+      <div class='wrapper' ng-controller="Example9">
+        <div class='container width25'>
+          <div>apples and oranges cannot be mixed</div>
+          <div>apple 2</div>
+          <div>apple 3</div>
+          <div>apple 4</div>
+        </div>
+        <div class='container width25'>
+          <div>orange 1</div>
+          <div>orange 2</div>
+          <div>orange 3</div>
+          <div>orange 4</div>
+        </div>
+        <div class='container width25'>
+          <div>apple 5</div>
+          <div>apple 6</div>
+          <div>apple 7</div>
+          <div>apple 8</div>
+        </div>
+        <div class='container width25'>
+          <div>orange 5</div>
+          <div>orange 6</div>
+          <div>orange 7</div>
+          <div>orange 8</div>
         </div>
       </div>
-    </div>
-    <pre>
-      <code>
-dragularService([$element.children()[0].children(), {
-  boundingBox: $element.children()[0],
-  lockX: true
-});
-      </code>
-    </pre>
-  </div>
-  <div class='parent'>
-    <h2>Example 14 - ngRepeat</h2>
-    <label for='hy'>Example of using ng-repeat with dragular and adding/removing items dynamicaly.</label>
-    <div class='wrapper' ng-controller="Example14">
-      <div class='container'>
-        <div ng-repeat="item in items">
-          {{item.content}}
-          <button class='cursorDefault' ng-click="addItem()">+</button>
-          <button class='cursorDefault' ng-click="removeItem()">x</button>
-        </div>
-      </div>
-    </div>
-    <pre>
-      <code>
-// HTML:
-&lt;div class='container'&gt;
-  &lt;div ng-repeat=&quot;item in items&quot;&gt;
-    {{item.content}}
-    &lt;button class='cursorDefault' ng-click=&quot;addItem()&quot;&gt;+&lt;/button&gt;
-    &lt;button class='cursorDefault' ng-click=&quot;removeItem()&quot;&gt;x&lt;/button&gt;
-  &lt;/div&gt;
-&lt;/div&gt;
-
-// JS:
-dragularService($element.children());
-$scope.items = [{
-  content: 'Try to add or remove some elements (click on +- buttons), you will see that it is not problem for dragular.'
-},{
-  content: 'Item 2'
-},{
-  content: 'Item 3'
-},{
-  content: 'Item 4'
-}];
-$scope.addItem = function addItem () {
-  var index = $scope.items.indexOf(this.item) + 1;
-  $scope.items.splice(index, 0,{content: this.item.content + '-copy'});
-}
-$scope.removeItem = function removeItem () {
-  var index = $scope.items.indexOf(this.item);
-  $scope.items.splice(index, 1);
-}
-      </code>
-    </pre>
-  </div>
-  <div class='parent'>
-    <h2>Example 15 - nested ngRepeat (advanced)</h2>
-    <label for='hy'> You can move whole rows by grabing row title, all items it selves. Try it out!
-      <hr/>
-      <b>Old IE doesnt support Flexible Box Layout</b> so it can look weird. But in modern browsers it is awsome! Dragular will be working well also in old IE but you have to use different css for layout.
-      <hr/>
-    </label>
-    <div ng-controller="Example15">
-      <div ng-repeat="item in items" class='row'>
-        <div class="row-handle">Row {{$index}}</div>
-        <div ng-repeat="item in item.items" class="cell">{{item.content}}</div>
-      </div>
-    </div>
-    <pre>
-      <code>
-// HTML
-
-&lt;div ng-controller=&quot;Example15&quot;&gt;
-  &lt;div ng-repeat=&quot;item in items&quot; class='row'&gt;
-    &lt;div class=&quot;row-handle&quot;&gt;Row {{$index}}&lt;/div&gt;
-    &lt;div ng-repeat=&quot;item in item.items&quot; class=&quot;cell&quot;&gt;{{item.content}}&lt;/div&gt;
-  &lt;/div&gt;
-&lt;/div&gt;
-      </code>
-    </pre>
-    <pre>
-      <code>
-// CSS
-
-.row {
-  display: flex;
-  flex-direction: row;
-}
-
-.cell {
-  flex-grow: 1;
-}
-
-.row,
-.cell {
-  margin: 10px;
-  padding: 10px;
-  background-color: rgba(0, 0, 0, 0.2);
-}
-      </code>
-    </pre>
-    <pre>
-      <code>
-// JS
-
-$timeout(function() { // timeount due to ngRepeat to be ready
-  dragularService($element, {
-    moves: function(el, container, handle) {
-      return handle.classList.contains('row-handle');
-    }
+      <pre>
+        <code>
+  dragularService([$element.children()[0], $element.children()[2]], {
+    nameSpace: 'apples'
   });
-  dragularService($element.children(), {
-    moves: function(el, container, handle) {
-      return !handle.classList.contains('row-handle');
-    }
+  dragularService([$element.children()[1], $element.children()[3]], {
+    nameSpace: 'oranges'
   });
-}, 0);
-$scope.items = [{
-  items: [{
-    content: 'Item a1'
-  }, {
-    content: 'Item a2'
-  }, {
-    content: 'Item a3'
-  }, {
-    content: 'Item a4'
-  }]
-}, {
-  items: [{
-    content: 'Item b1'
-  }, {
-    content: 'Item b2'
-  }, {
-    content: 'Item b3'
-  }, {
-    content: 'Item b4'
-  }]
-}, {
-  items: [{
-    content: 'Item c1'
-  }, {
-    content: 'Item c2'
-  }, {
-    content: 'Item c3'
-  }, {
-    content: 'Item c4'
-  }]
-}];
-      </code>
-    </pre>
-  </div>
-</div>
-<h3>Get it on GitHub! <a href='https://github.com/luckylooke/dragular'>luckylooke/dragular</a></h3>
-<script src='dist/angular.min.js'></script>
-<script src='dist/dragular.js'></script>
-<script src='example/example.js'></script>
-<script src='highlight.pack.js'></script>
-<script type="text/javascript">
-hljs.initHighlightingOnLoad();
-var _gaq = _gaq || [];
-_gaq.push(['_setAccount', 'UA-64333581-1']);
-_gaq.push(['_trackPageview']);
+        </code>
+      </pre>
+    </div>
+    <div class='parent'>
+      <h2>Example 10 - dragOverClasses</h2>
+      <label for='hy'>You can interact with dragging element by setting dragOverClasses:true in options and adding pointer class (default is: 'gu-over-active') to element you want to be interactive (getting classes). Usually you want to containers show wheather they accepts element or not, but you can use it anywhere. Try to drag over the example code too.</label>
+      <div class='wrapper' ng-controller="Example10">
+        <div class='container width25 gu-over-active'>
+          <div>apples and oranges cannot be mixed</div>
+          <div>apple 2</div>
+          <div>apple 3</div>
+          <div>apple 4</div>
+        </div>
+        <div class='container width25 gu-over-active'>
+          <div>orange 1</div>
+          <div>orange 2</div>
+          <div>orange 3</div>
+          <div>orange 4</div>
+        </div>
+        <div class='container width25 gu-over-active'>
+          <div>apple 5</div>
+          <div>apple 6</div>
+          <div>apple 7</div>
+          <div>apple 8</div>
+        </div>
+        <div class='container width25 gu-over-active'>
+          <div>orange 5</div>
+          <div>orange 6</div>
+          <div>orange 7</div>
+          <div>orange 8</div>
+        </div>
+      </div>
+      <pre class="gu-over-active">
+        <code>
+  dragularService([$element.children()[0], $element.children()[2]], {
+    nameSpace: 'apples',
+    dragOverClasses: true
+  });
+  dragularService([$element.children()[1], $element.children()[3]], {
+    nameSpace: 'oranges',
+    dragOverClasses: true
+  });
 
-(function() {
-  var ga = document.createElement('script');
-  ga.type = 'text/javascript';
-  ga.async = true;
-  ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-  var s = document.getElementsByTagName('script')[0];
-  s.parentNode.insertBefore(ga, s);
-})();
-</script>
+  .container.gu-over-active.gu-over-accept {
+    background-color: green;
+  }
+
+  .container.gu-over-active.gu-over-decline {
+    background-color: red;
+  }
+
+  code.gu-over-active.gu-over-decline {
+    background-color: yellow;
+  }
+        </code>
+      </pre>
+    </div>
+    <div class='parent'>
+      <h2>Example 11 - boundingBox</h2>
+      <label for='hy'>You can provide element in options.boundingBox to limit crossing element borders.</label>
+      <div class='wrapper' ng-controller="Example11">
+        <div class='container'>
+          <div>This items cannot cross its example element, just try it your selves.</div>
+          <div>Item 2.</div>
+          <div>Item 3.</div>
+          <div>Item 6.</div>
+        </div>
+        <div class='container'>
+          <div>This items cannot cross its example element, just try it your selves.</div>
+          <div>Item 4.</div>
+          <div>Item 5.</div>
+        </div>
+      </div>
+      <pre>
+        <code>
+  dragularService([$element.children(), {
+    boundingBox: $element
+  });
+        </code>
+      </pre>
+    </div>
+    <div class='parent'>
+      <h2>Example 12 - boundingBox and lockY</h2>
+      <label for='hy'>Movement can be locked to X or Y axis and also you can provide element in options.boundingBox to limit crossing element borders.</label>
+      <div class='wrapper' ng-controller="Example12">
+        <div class='container'>
+          <div class='boundingBox'>
+            <div>Items are locked in Y axis movement and cannot cross its closest parent div.boundingBox, just try it your selves.</div>
+            <div>item 2</div>
+            <div>item 3</div>
+            <div>item 4</div>
+            <div>item 5</div>
+            <div>item 6</div>
+          </div>
+        </div>
+      </div>
+      <pre>
+        <code>
+  dragularService([$element.children()[0].children(), {
+    boundingBox: $element.children()[0],
+    lockY: true
+  });
+        </code>
+      </pre>
+    </div>
+    <div class='parent'>
+      <h2>Example 13 - boundingBox and lockX</h2>
+      <label for='hy'>Movement can be locked to X or Y axis and also you can provide element in options.boundingBox to limit crossing element borders.</label>
+      <div class='wrapper' ng-controller="Example13">
+        <div class='containerHorizontal'>
+          <div class='boundingBox'>
+            <div class="width25">Items are locked in X axis movement and cannot cross its closest parent div.boundingBox, just try it your selves.</div>
+            <div class="width25">item 2</div>
+            <div class="width25">item 3</div>
+            <div class="width25">item 4</div>
+          </div>
+        </div>
+      </div>
+      <pre>
+        <code>
+  dragularService([$element.children()[0].children(), {
+    boundingBox: $element.children()[0],
+    lockX: true
+  });
+        </code>
+      </pre>
+    </div>
+    <div class='parent'>
+      <h2>Example 14 - ngRepeat</h2>
+      <label for='hy'>Example of using ng-repeat with dragular and adding/removing items dynamicaly.</label>
+      <div class='wrapper' ng-controller="Example14">
+        <div class='container'>
+          <div ng-repeat="item in items">
+            {{item.content}}
+            <button class='cursorDefault' ng-click="addItem()">+</button>
+            <button class='cursorDefault' ng-click="removeItem()">x</button>
+          </div>
+        </div>
+      </div>
+      <pre>
+        <code>
+  // HTML:
+  &lt;div class='container'&gt;
+    &lt;div ng-repeat=&quot;item in items&quot;&gt;
+      {{item.content}}
+      &lt;button class='cursorDefault' ng-click=&quot;addItem()&quot;&gt;+&lt;/button&gt;
+      &lt;button class='cursorDefault' ng-click=&quot;removeItem()&quot;&gt;x&lt;/button&gt;
+    &lt;/div&gt;
+  &lt;/div&gt;
+
+  // JS:
+  dragularService($element.children());
+  $scope.items = [{
+    content: 'Try to add or remove some elements (click on +- buttons), you will see that it is not problem for dragular.'
+  },{
+    content: 'Item 2'
+  },{
+    content: 'Item 3'
+  },{
+    content: 'Item 4'
+  }];
+  $scope.addItem = function addItem () {
+    var index = $scope.items.indexOf(this.item) + 1;
+    $scope.items.splice(index, 0,{content: this.item.content + '-copy'});
+  }
+  $scope.removeItem = function removeItem () {
+    var index = $scope.items.indexOf(this.item);
+    $scope.items.splice(index, 1);
+  }
+        </code>
+      </pre>
+    </div>
+    <div class='parent'>
+      <h2>Example 15 - nested ngRepeat (advanced)</h2>
+      <label for='hy'> You can move whole rows by grabing row title, all items it selves. Try it out!
+        <hr/>
+        <b>Old IE doesnt support Flexible Box Layout</b> so it can look weird. But in modern browsers it is awsome! Dragular will be working well also in old IE but you have to use different css for layout.
+        <hr/>
+      </label>
+      <div ng-controller="Example15">
+        <div ng-repeat="item in items" class='row'>
+          <div class="row-handle">Row {{$index}}</div>
+          <div ng-repeat="item in item.items" class="cell">{{item.content}}</div>
+        </div>
+      </div>
+      <pre>
+        <code>
+  // HTML
+
+  &lt;div ng-controller=&quot;Example15&quot;&gt;
+    &lt;div ng-repeat=&quot;item in items&quot; class='row'&gt;
+      &lt;div class=&quot;row-handle&quot;&gt;Row {{$index}}&lt;/div&gt;
+      &lt;div ng-repeat=&quot;item in item.items&quot; class=&quot;cell&quot;&gt;{{item.content}}&lt;/div&gt;
+    &lt;/div&gt;
+  &lt;/div&gt;
+        </code>
+      </pre>
+      <pre>
+        <code>
+  // CSS
+
+  .row {
+    display: flex;
+    flex-direction: row;
+  }
+
+  .cell {
+    flex-grow: 1;
+  }
+
+  .row,
+  .cell {
+    margin: 10px;
+    padding: 10px;
+    background-color: rgba(0, 0, 0, 0.2);
+  }
+        </code>
+      </pre>
+      <pre>
+        <code>
+  // JS
+
+  $timeout(function() { // timeount due to ngRepeat to be ready
+    dragularService($element, {
+      moves: function(el, container, handle) {
+        return handle.classList.contains('row-handle');
+      }
+    });
+    dragularService($element.children(), {
+      moves: function(el, container, handle) {
+        return !handle.classList.contains('row-handle');
+      }
+    });
+  }, 0);
+  $scope.items = [{
+    items: [{
+      content: 'Item a1'
+    }, {
+      content: 'Item a2'
+    }, {
+      content: 'Item a3'
+    }, {
+      content: 'Item a4'
+    }]
+  }, {
+    items: [{
+      content: 'Item b1'
+    }, {
+      content: 'Item b2'
+    }, {
+      content: 'Item b3'
+    }, {
+      content: 'Item b4'
+    }]
+  }, {
+    items: [{
+      content: 'Item c1'
+    }, {
+      content: 'Item c2'
+    }, {
+      content: 'Item c3'
+    }, {
+      content: 'Item c4'
+    }]
+  }];
+        </code>
+      </pre>
+    </div>
+  </div>
+  <h3>Get it on GitHub! <a href='https://github.com/luckylooke/dragular'>luckylooke/dragular</a></h3>
+  <script src='dist/angular.min.js'></script>
+  <script src='dist/dragular.js'></script>
+  <script src='example/example.js'></script>
+  <script src='highlight.pack.js'></script>
+  <script type="text/javascript">
+  hljs.initHighlightingOnLoad();
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-64333581-1']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script');
+    ga.type = 'text/javascript';
+    ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0];
+    s.parentNode.insertBefore(ga, s);
+  })();
+  </script>
+</body>
