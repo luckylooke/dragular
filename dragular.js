@@ -10,6 +10,7 @@
 angular.module('dragularModule', []).factory('dragularService', function dragula() {
 
   var containersNameSpaced = {}, // name-spaced containers
+    containersNameSpacedModel = {}, // name-spaced containers models
       _mirror; // mirror image
 
   return function(initialContainers, options) {
@@ -43,6 +44,7 @@ angular.module('dragularModule', []).factory('dragularService', function dragula
       _copy, // item used for copying
       _copyModel, // item-model used for copying
       _containers = {}, // containers managed by the drake
+      _containersModel = {}, // containers model
       _renderTimer, // timer for setTimeout renderMirrorImage
       _isContainer, // internal isContainer
       _dropContainer, // droppable container under drag item
@@ -104,17 +106,27 @@ angular.module('dragularModule', []).factory('dragularService', function dragula
        if (!Array.isArray(o.nameSpace)) {
           o.nameSpace = [o.nameSpace];
        }
-      o.nameSpace.forEach(function eachNameSpace (nameSpace) {
+       function proceedNameSpaces(_containers, containersNameSpaced, nameSpace, initialContainers){
         if (!containersNameSpaced[nameSpace]) {
           containersNameSpaced[nameSpace] = [];
         }
         Array.prototype.push.apply(containersNameSpaced[nameSpace], initialContainers);
         _containers[nameSpace] = containersNameSpaced[nameSpace];
+       }
+      o.nameSpace.forEach(function eachNameSpace (nameSpace) {
+        proceedNameSpaces(_containers, containersNameSpaced, nameSpace, initialContainers);
+        if(o.containersModel){
+          proceedNameSpaces(_containersModel, containersNameSpacedModel, nameSpace, o.containersModel)
+        }
       });
       _isContainer = isContainerNameSpaced;
+      _isContainerModel = isContainerNameSpacedModel;
     }else{
       _containers = initialContainers;
       _isContainer = isContainer;
+      if(o.containersModel){
+          _containersModel = o.containersModel;
+        }
     }
 
     events();
@@ -480,13 +492,13 @@ angular.module('dragularModule', []).factory('dragularService', function dragula
       var targetModel = false;
       if(o.nameSpace){
         o.nameSpace.forEach(function findDropTargetModelInNameSpace (nameSpace) {
-          if(!targetModel && _containers[nameSpace].indexOf(target) !== -1){
-            targetModel = _containers[nameSpace][_containers[nameSpace].indexOf(target)];
+          if(!targetModel && _containersModel[nameSpace].indexOf(target) !== -1){
+            targetModel = _containersModel[nameSpace][_containersModel[nameSpace].indexOf(target)];
           }
         });
       }else{
-        if(_containers.indexOf(target) !== -1){
-            targetModel = _containers[_containers.indexOf(target)];
+        if(_containersModel.indexOf(target) !== -1){
+            targetModel = _containersModel[_containersModel.indexOf(target)];
           }
       }
 
