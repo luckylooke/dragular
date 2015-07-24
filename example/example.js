@@ -8,9 +8,33 @@
  */
 angular.module('example', ['dragularModule'])
   .controller('Example1', ['$element', 'dragularService', function TodoCtrl($element, dragularService) {
-    // dragularService([$element.children();
     dragularService($element.children());
-  }]).controller('Example2', ['$scope', '$element', 'dragularService', '$timeout', function TodoCtrl($scope, $element, dragularService, $timeout) {
+  }])
+  .controller('Example1model', ['$scope', '$element', 'dragularService', function TodoCtrl($scope, $element, dragularService) {
+    $scope.items1 = [{
+      content: 'Move me, but you can only drop me in one of these containers.'
+    }, {
+      content: 'If you try to drop me somewhere other than these containers, I\'ll just come back.'
+    }, {
+      content: 'Item 3'
+    }, {
+      content: 'Item 4'
+    }];
+    $scope.items2 = [{
+      content: 'Item 5'
+    }, {
+      content: 'Item 6'
+    }, {
+      content: 'Item 7'
+    }, {
+      content: 'Item 8'
+    }];
+    var containers = $element.children().children();
+    dragularService([containers[0],containers[1]],{
+      containersModel: [$scope.items1, $scope.items2]
+    });
+  }])
+  .controller('Example2', ['$scope', '$element', 'dragularService', '$timeout', function TodoCtrl($scope, $element, dragularService, $timeout) {
     dragularService($element.children(), {
       scope: $scope
     });
@@ -40,38 +64,45 @@ angular.module('example', ['dragularModule'])
     //   };
     // }
 
-  }]).controller('Example3', ['$element', 'dragularService', function TodoCtrl($element, dragularService) {
+  }])
+  .controller('Example3', ['$element', 'dragularService', function TodoCtrl($element, dragularService) {
     dragularService($element.children(), {
       removeOnSpill: true
     });
-  }]).controller('Example4', ['$element', 'dragularService', function TodoCtrl($element, dragularService) {
+  }])
+  .controller('Example4', ['$element', 'dragularService', function TodoCtrl($element, dragularService) {
     dragularService($element.children(), {
       revertOnSpill: true
     });
-  }]).controller('Example5', ['$element', 'dragularService', function TodoCtrl($element, dragularService) {
+  }])
+  .controller('Example5', ['$element', 'dragularService', function TodoCtrl($element, dragularService) {
     dragularService($element.children(), {
       copy: true
     });
-  }]).controller('Example6', ['$element', 'dragularService', function TodoCtrl($element, dragularService) {
+  }])
+  .controller('Example6', ['$element', 'dragularService', function TodoCtrl($element, dragularService) {
     dragularService($element.children(), {
       moves: function(el, container, handle) {
         return handle.className === 'handle';
       }
     });
-  }]).controller('Example7', ['$element', 'dragularService', function TodoCtrl($element, dragularService) {
+  }])
+  .controller('Example7', ['$element', 'dragularService', function TodoCtrl($element, dragularService) {
     dragularService($element.children(), {
       classes: {
         mirror: 'custom-green-mirror'
       }
     });
-  }]).controller('Example8', ['$scope', 'dragularService', function TodoCtrl($scope) {
+  }])
+  .controller('Example8', ['$scope', 'dragularService', function TodoCtrl($scope) {
     $scope.dragularOptions = {
       classes: {
         mirror: 'custom-green-mirror'
       },
       nameSpace: 'common' // just connecting left and right container
     };
-  }]).controller('Example9', ['$element', 'dragularService', function TodoCtrl($element, dragularService) {
+  }])
+  .controller('Example9', ['$element', 'dragularService', function TodoCtrl($element, dragularService) {
     dragularService([$element.children()[0], $element.children()[2]], {
       nameSpace: 'apples'
     });
@@ -81,7 +112,8 @@ angular.module('example', ['dragularModule'])
     dragularService($element.children()[3], { // mixed
       nameSpace: ['oranges', 'apples']
     });
-  }]).controller('Example10', ['$element', 'dragularService', function TodoCtrl($element, dragularService) {
+  }])
+  .controller('Example10', ['$element', 'dragularService', function TodoCtrl($element, dragularService) {
     dragularService([$element.children()[0], $element.children()[2]], {
       nameSpace: 'apples',
       dragOverClasses: true
@@ -90,24 +122,28 @@ angular.module('example', ['dragularModule'])
       nameSpace: 'oranges',
       dragOverClasses: true
     });
-  }]).controller('Example11', ['$element', 'dragularService', function TodoCtrl($element, dragularService) {
+  }])
+  .controller('Example11', ['$element', 'dragularService', function TodoCtrl($element, dragularService) {
     var boundingBox = $element[0];
     dragularService($element.children(), {
       boundingBox: boundingBox
     });
-  }]).controller('Example12', ['$element', 'dragularService', function TodoCtrl($element, dragularService) {
+  }])
+  .controller('Example12', ['$element', 'dragularService', function TodoCtrl($element, dragularService) {
     var boundingBox = $element.children().children()[0];
     dragularService(boundingBox, {
       boundingBox: boundingBox,
       lockY: true
     });
-  }]).controller('Example13', ['$element', 'dragularService', function TodoCtrl($element, dragularService) {
+  }])
+  .controller('Example13', ['$element', 'dragularService', function TodoCtrl($element, dragularService) {
     var boundingBox = $element.children().children()[0];
     dragularService(boundingBox, {
       boundingBox: boundingBox,
       lockX: true
     });
-  }]).controller('Example14', ['$scope', '$element', 'dragularService', function TodoCtrl($scope, $element, dragularService) {
+  }])
+  .controller('Example14', ['$scope', '$element', 'dragularService', function TodoCtrl($scope, $element, dragularService) {
     dragularService($element.children());
     $scope.items = [{
       content: 'Try to add or remove some elements (click on +- buttons), you will see that it is not problem for dragular.'
@@ -128,7 +164,8 @@ angular.module('example', ['dragularModule'])
       var index = $scope.items.indexOf(this.item);
       $scope.items.splice(index, 1);
     };
-  }]).controller('Example15', ['$timeout', '$scope', '$element', 'dragularService', function TodoCtrl($timeout, $scope, $element, dragularService) {
+  }])
+  .controller('Example15', ['$timeout', '$scope', '$element', 'dragularService', function TodoCtrl($timeout, $scope, $element, dragularService) {
     $timeout(function() { // timeount due to ngRepeat to be ready
       dragularService($element, {
         moves: function(el, container, handle) {
@@ -172,6 +209,7 @@ angular.module('example', ['dragularModule'])
         content: 'Item c4'
       }]
     }];
-  }]).controller('Example16', ['$element', 'dragularService', function TodoCtrl($element, dragularService) {
+  }])
+.controller('Example16', ['$element', 'dragularService', function TodoCtrl($element, dragularService) {
     dragularService($element.children());
   }]);

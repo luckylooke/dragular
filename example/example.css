@@ -244,3 +244,7 @@ div.limitBox {
   max-height: 300px;
   overflow-y: auto;
 }
+
+.tableRow{
+  display: table-row;
+}
