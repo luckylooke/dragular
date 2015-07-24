@@ -15,11 +15,12 @@ var minifyCss = require('gulp-minify-css');
 var autoprefixer = require('gulp-autoprefixer');
 var nib = require('nib');
 var browserSync = require('browser-sync');
+var jshint = require('gulp-jshint');
 
 var config = {
   paths: {
-    js: '',
-    styles: '',
+    js: '.',
+    styles: '.',
     dest: 'dist'
   },
   browserSync: {
@@ -31,13 +32,13 @@ var config = {
 
 function handleErrors(err) {
   gutil.log(err.toString());
-  this.emit("end");
+  this.emit('end');
 }
 
-function buildScript(file) {
+function buildScript() {
 
   var bundler = browserify({
-    entries: config.paths.js + 'dragular.js',
+    entries: config.paths.js + '/dragular.js',
     debug: true,
     cache: {},
     packageCache: {},
@@ -79,7 +80,7 @@ gulp.task('browserify', function() {
 
 gulp.task('styles', function() {
 
-  return gulp.src(config.paths.styles + 'dragular.styl')
+  return gulp.src(config.paths.styles + '/dragular.styl')
     .pipe(stylus({
       use: nib()
     }))
@@ -96,6 +97,13 @@ gulp.task('styles', function() {
     }))
     .pipe(gulp.dest(config.paths.dest))
     .pipe(gulpif(browserSync.active, browserSync.stream()));
+});
+
+gulp.task('lint', function() {
+
+  return gulp.src([config.paths.js + '/dragular.js', './gulpfile.js'])
+    .pipe(jshint())
+    .pipe(jshint.reporter('jshint-stylish'));
 });
 
 gulp.task('serve', function () {
