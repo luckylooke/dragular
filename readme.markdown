@@ -34,9 +34,9 @@ Have you ever wanted a drag and drop library that just works? That actually unde
 
 # Todo
 
-- example of nested draggables
+- example10 show html code instead of js
+- more comments in code for better cotributors insights
 - support selectors in service (#2)
-- better workflow (gulp?)
 - publish more (blog?)
 
 # Features
