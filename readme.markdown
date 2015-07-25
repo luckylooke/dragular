@@ -35,7 +35,8 @@ Have you ever wanted a drag and drop library that just works? That actually unde
 # Todo
 
 - example10 show html code instead of js
-- more comments in code for better cotributors insights
+- replace timeout timer with $timeout
+- debouncing functionality to prevent flickering
 - support selectors in service (#2)
 - publish more (blog?)
 
