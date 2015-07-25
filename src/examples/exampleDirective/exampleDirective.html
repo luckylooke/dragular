@@ -1,0 +1,30 @@
+  <div class='parent'>
+            <h2>Example 8 - directive</h2>
+            <label for='hy'>Same as previous example, but using directive.</label>
+            <div class='wrapper' ng-controller="Example8">
+                <div id='left4' class='container' dragular="dragularOptions">
+                    <div>Move me, but you can only drop me in one of these containers.</div>
+                    <div>If you try to drop me somewhere other than these containers, I'll just come back.</div>
+                    <div>Item 3.</div>
+                    <div>Item 6.</div>
+                </div>
+                <div id='right3' class='container' dragular='{"classes":{"mirror":"custom-green-mirror"},"nameSpace":"common"}'>
+                    <div>You can drop me in the left container, otherwise I'll stay here.</div>
+                    <div>Item 4.</div>
+                    <div>Item 5.</div>
+                </div>
+            </div>
+            <pre>
+        <code>
+  &lt;div class='container' dragular=&quot;dragularOptions&quot;&gt;
+
+  $scope.dragularOptions = {
+    classes: {
+      mirror: 'custom-green-mirror'
+    },
+    nameSpace: 'common' // just connecting left and right container
+  };
+&lt;div class='container' dragular='{&quot;classes&quot;:{&quot;mirror&quot;:&quot;custom-green-mirror&quot;},&quot;nameSpace&quot;:&quot;common&quot;}'&gt;
+      </code>
+    </pre>
+        </div>

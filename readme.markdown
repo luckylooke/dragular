@@ -34,6 +34,7 @@ Have you ever wanted a drag and drop library that just works? That actually unde
 
 # Todo
 
+- examples ui-router
 - example10 show html code instead of js
 - replace timeout timer with $timeout
 - debouncing functionality to prevent flickering

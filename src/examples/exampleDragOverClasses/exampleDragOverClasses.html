@@ -1,0 +1,54 @@
+       <div class='parent'>
+            <h2>Example 10 - dragOverClasses</h2>
+            <label for='hy'>You can interact with dragging element by setting dragOverClasses:true in options and adding pointer class (default is: 'gu-over-active') to element you want to be interactive (getting classes). Usually you want to containers show wheather they accepts element or not, but you can use it anywhere. Try to drag over the example code too.</label>
+            <div class='wrapper' ng-controller="Example10">
+                <div class='container width25 gu-over-active'>
+                    <div>apples and oranges cannot be mixed</div>
+                    <div>apple 2</div>
+                    <div>apple 3</div>
+                    <div>apple 4</div>
+                </div>
+                <div class='container width25 gu-over-active'>
+                    <div>orange 1</div>
+                    <div>orange 2</div>
+                    <div>orange 3</div>
+                    <div>orange 4</div>
+                </div>
+                <div class='container width25 gu-over-active'>
+                    <div>apple 5</div>
+                    <div>apple 6</div>
+                    <div>apple 7</div>
+                    <div>apple 8</div>
+                </div>
+                <div class='container width25 gu-over-active'>
+                    <div>orange 5</div>
+                    <div>orange 6</div>
+                    <div>orange 7</div>
+                    <div>orange 8</div>
+                </div>
+            </div>
+            <pre class="gu-over-active">
+        <code>
+  dragularService([$element.children()[0], $element.children()[2]], {
+    nameSpace: 'apples',
+    dragOverClasses: true
+  });
+  dragularService([$element.children()[1], $element.children()[3]], {
+    nameSpace: 'oranges',
+    dragOverClasses: true
+  });
+
+  .container.gu-over-active.gu-over-accept {
+    background-color: green;
+  }
+
+  .container.gu-over-active.gu-over-decline {
+    background-color: red;
+  }
+
+  code.gu-over-active.gu-over-decline {
+    background-color: yellow;
+  }
+        </code>
+      </pre>
+        </div>

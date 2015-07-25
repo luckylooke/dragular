@@ -1,0 +1,43 @@
+<div class='parent'>
+    <h2>Example 1 - basics</h2>
+    <label for='hy'>Move stuff between these two containers. Note how the stuff gets inserted near the mouse pointer? Great stuff.</label>
+    <div class='wrapper' ng-controller="Example1" ng-hide="true">
+        <div class='container'>
+            <div>Move me, but you can only drop me in one of these containers.</div>
+            <div>If you try to drop me somewhere other than these containers, I'll just come back.</div>
+            <div>Item 3.</div>
+            <div>Item 6.</div>
+        </div>
+        <div class='container'>
+            <div>You can drop me in the left container, otherwise I'll stay here.</div>
+            <div>Item 4.</div>
+            <div>Item 5.</div>
+        </div>
+    </div>
+    <br/>
+    <div class='wrapper' ng-controller="Example1model">
+        <div class='tableRow'>
+            <div class='container'>
+                <div ng-repeat="item in items1">{{item.content}}</div>
+            </div>
+            <div class='container'>
+                <div ng-repeat="item in items2">{{item.content}}</div>
+            </div>
+        </div>
+        <div class="tableRow">
+            <div class="container">
+                <div>Items1:
+                    <br/>{{items1 | json}}</div>
+            </div>
+            <div class="container">
+                <div>Items2:
+                    <br/>{{items2 | json}}</div>
+            </div>
+        </div>
+    </div>
+    <pre>
+        <code>
+  dragularService([document.getElementById(left), document.getElementById(right)]);
+        </code>
+      </pre>
+</div>

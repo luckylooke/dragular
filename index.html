@@ -2,7 +2,7 @@
 
 <head>
     <link href='dist/dragular.css' rel='stylesheet' type='text/css' />
-    <link href='example/example.css' rel='stylesheet' type='text/css' />
+    <link href='examples/examples.css' rel='stylesheet' type='text/css' />
     <link href='highlight.monokai_sublime.css' rel='stylesheet' type='text/css' />
     <title>dragular</title>
 </head>
@@ -13,14 +13,16 @@
     <a href='http://github.com/luckylooke/dragular'>
         <img class='gh-fork' src='https://camo.githubusercontent.com/52760788cde945287fbb584134c4cbc2bc36f904/68747470733a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f72696768745f77686974655f6666666666662e706e67' alt='Fork me on GitHub' data-canonical-src='https://s3.amazonaws.com/github/ribbons/forkme_right_white_ffffff.png' />
     </a>
-    <div class='examples' ng-app="example">
-        
-        
+    <div class='examples' ng-app="examplesApp" ng-controller="ExAppCtrl">
+        <select ng-model="exampleTemplate">
+          <option value="{{example.template}}">{{example.title}}</option>
+        </select>
+        <div ng-include="exampleTemplate"></div>        
     </div>
     <h3>Get it on GitHub! <a href='https://github.com/luckylooke/dragular'>luckylooke/dragular</a></h3>
     <script src='dist/angular.min.js'></script>
     <script src='dist/dragular.js'></script>
-    <script src='example/example.js'></script>
+    <script src='examples/examples.js'></script>
     <script src='highlight.pack.js'></script>
     <script type="text/javascript">
     hljs.initHighlightingOnLoad();

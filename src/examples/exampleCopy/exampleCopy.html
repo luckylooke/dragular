@@ -1,0 +1,18 @@
+<div class='parent'>
+    <h2>Example 5 - copy</h2>
+    <label for='hy'>Copying stuff is great too</label>
+    <div class='wrapper' ng-controller="Example5">
+        <div id='left2' class='container'>
+            <div>Move me, and make copy on drop.</div>
+            <div>If you try to drop me somewhere other than these containers, I'll just come back.</div>
+        </div>
+        <div id='right2' class='container'>
+            <div>You can drop me in the left container, otherwise I'll stay here.</div>
+        </div>
+    </div>
+    <pre>
+        <code>
+  dragularService([document.getElementById(left), document.getElementById(right)], { copy: true });
+        </code>
+      </pre>
+</div>

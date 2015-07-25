@@ -17,11 +17,12 @@ var nib = require('nib');
 var browserSync = require('browser-sync');
 var jshint = require('gulp-jshint');
 var sourcemaps = require('gulp-sourcemaps');
+var concat = require('gulp-concat');
 
 var config = {
   paths: {
-    js: '.',
-    styles: '.',
+    js: 'src',
+    styles: 'src',
     dest: 'dist'
   },
   browserSync: {
@@ -84,9 +85,7 @@ gulp.task('browserify', function() {
 gulp.task('styles', function() {
 
   return gulp.src(config.paths.styles + '/dragular.styl')
-    .pipe(stylus({
-      use: nib()
-    }))
+    .pipe()
     .pipe(autoprefixer({
       browsers: [ 'last 15 versions', '> 1%', 'ie 8', 'ie 7' ],
       cascade: false
@@ -104,7 +103,7 @@ gulp.task('styles', function() {
 
 gulp.task('lint', function() {
 
-  return gulp.src([config.paths.js + '/dragular.js', './gulpfile.js'])
+  return gulp.src([config.paths.js + '/**/*.js', './gulpfile.js'])
     .pipe(jshint())
     .pipe(jshint.reporter('jshint-stylish'));
 });
