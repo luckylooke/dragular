@@ -5,8 +5,13 @@
  * dragular Directive by Luckylooke https://github.com/luckylooke/dragular
  * Angular version of dragula https://github.com/bevacqua/dragula
  */
+ var dragularModule = require('./dragularModule');
 
-angular.module('dragularModule').directive('dragular', ['dragularService', function(dragularService) {
+/**
+* @ngInject
+*/
+
+dragularModule.directive('dragular', ['dragularService', function(dragularService) {
   return {
     restrict: 'A',
     link: function($scope, iElm, iAttrs) {

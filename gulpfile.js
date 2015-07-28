@@ -18,6 +18,7 @@ var browserSync = require('browser-sync');
 var jshint = require('gulp-jshint');
 var sourcemaps = require('gulp-sourcemaps');
 var concat = require('gulp-concat');
+var ngAnnotate = require('browserify-ngannotate');
 
 var config = {
   paths: {
@@ -27,7 +28,11 @@ var config = {
   },
   browserSync: {
     port: '3000',
-    server: '.'
+    server: './docs'
+  },
+  browserify: {
+    entryPoint: 'src/dragularModule.js',
+    output: 'dragular.js',
   },
   isProd: false
 };
@@ -40,12 +45,18 @@ function handleErrors(err) {
 function buildScript() {
 
   var bundler = browserify({
-    entries: config.paths.js + '/dragular.js',
+    entries: config.browserify.entryPoint,
     debug: true,
     cache: {},
     packageCache: {},
     fullPaths: true
   }, watchify.args);
+
+  var transforms = [
+    'brfs',
+    'bulkify',
+    ngAnnotate
+  ];
 
   if (!config.isProd) {
     bundler = watchify(bundler);
@@ -54,11 +65,15 @@ function buildScript() {
     });
   }
 
+  transforms.forEach(function(transform) {
+    bundler.transform(transform);
+  });
+
   function rebundle() {
     var stream = bundler.bundle();
 
     return stream.on('error', handleErrors)
-      .pipe(source('dragular.js'))
+      .pipe(source(config.browserify.output))
       .pipe(buffer())
       .pipe(sourcemaps.init())
       .pipe(gulpif(config.isProd, uglify({
@@ -85,7 +100,6 @@ gulp.task('browserify', function() {
 gulp.task('styles', function() {
 
   return gulp.src(config.paths.styles + '/dragular.styl')
-    .pipe()
     .pipe(autoprefixer({
       browsers: [ 'last 15 versions', '> 1%', 'ie 8', 'ie 7' ],
       cascade: false
