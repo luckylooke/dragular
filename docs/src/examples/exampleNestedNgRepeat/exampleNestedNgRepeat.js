@@ -1,6 +1,13 @@
 /* global angular */
 'use strict';
-angular.module('examplesApp')
+
+var examplesAppModule = require('../examplesApp');
+
+/**
+* @ngInject
+*/
+
+examplesAppModule
   .controller('Example15', ['$timeout', '$scope', '$element', 'dragularService', function TodoCtrl($timeout, $scope, $element, dragularService) {
     $timeout(function() { // timeount due to ngRepeat to be ready
       dragularService($element, {
@@ -45,4 +52,4 @@ angular.module('examplesApp')
         content: 'Item c4'
       }]
     }];
-  }])
+  }]);

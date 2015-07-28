@@ -19,20 +19,24 @@ var jshint = require('gulp-jshint');
 var sourcemaps = require('gulp-sourcemaps');
 var concat = require('gulp-concat');
 var ngAnnotate = require('browserify-ngannotate');
+var templateCache = require('gulp-angular-templatecache');
 
 var config = {
   paths: {
-    js: 'src',
-    styles: 'src',
-    dest: 'dist'
+    js: './src',
+    styles: './src',
+    dest: './dist',
+    docs: {
+      src: './docs/src/examples',
+    }
   },
   browserSync: {
     port: '3000',
     server: './docs'
   },
   browserify: {
-    entryPoint: 'src/dragularModule.js',
-    output: 'dragular.js',
+    entryPoint: './src/dragularModule.js',
+    outputFile: 'dragular.js',
   },
   isProd: false
 };
@@ -73,7 +77,7 @@ function buildScript() {
     var stream = bundler.bundle();
 
     return stream.on('error', handleErrors)
-      .pipe(source(config.browserify.output))
+      .pipe(source(config.browserify.outputFile))
       .pipe(buffer())
       .pipe(sourcemaps.init())
       .pipe(gulpif(config.isProd, uglify({
@@ -135,13 +139,41 @@ gulp.task('serve', function () {
   });
 });
 
+gulp.task('templates', function() {
+  return gulp.src(config.paths.docs.src + '/**/*.html')
+   .pipe(templateCache({
+     moduleSystem: 'Browserify',
+     standalone: true,
+   }))
+   .pipe(gulp.dest(config.paths.docs.src));
+});
+
 gulp.task('watch', ['serve'], function() {
   gulp.watch(config.paths.styles + '*.styl',  ['styles']);
 });
 
 gulp.task('dev', function() {
   config.isProd = false;
+  config.browserify = {
+    entryPoint: './src/dragularModule.js',
+    outputFile: 'dragular.js',
+  };
+
+  config.paths.dest = './dist';
+
   sequence(['browserify', 'styles'], 'watch');
+});
+
+gulp.task('dev:docs', function() {
+  config.isProd = false;
+  config.browserify = {
+    entryPoint: './docs/src/examples/examplesApp.js',
+    outputFile: 'examples.js',
+  };
+
+  config.paths.dest = './docs/dist';
+
+  sequence(['browserify', 'styles', 'templates'], 'watch');
 });
 
 gulp.task('build', function() {

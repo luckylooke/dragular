@@ -1,6 +1,13 @@
 /* global angular */
 'use strict';
-angular.module('examplesApp')
-.controller('Example16', ['$element', 'dragularService', function TodoCtrl($element, dragularService) {
+
+var examplesAppModule = require('../examplesApp');
+
+/**
+* @ngInject
+*/
+
+examplesAppModule
+  .controller('Example16', ['$element', 'dragularService', function TodoCtrl($element, dragularService) {
     dragularService($element.children());
   }]);

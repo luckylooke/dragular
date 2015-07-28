@@ -1,6 +1,13 @@
 /* global angular */
 'use strict';
-angular.module('examplesApp')
+
+var examplesAppModule = require('../examplesApp');
+
+/**
+* @ngInject
+*/
+
+examplesAppModule
   .controller('Example2', ['$scope', '$element', 'dragularService', '$timeout', function TodoCtrl($scope, $element, dragularService, $timeout) {
     dragularService($element.children(), {
       scope: $scope
@@ -31,4 +38,4 @@ angular.module('examplesApp')
     //   };
     // }
 
-  }])
+  }]);

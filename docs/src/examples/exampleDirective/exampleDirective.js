@@ -1,6 +1,13 @@
 /* global angular */
 'use strict';
-angular.module('examplesApp')
+
+var examplesAppModule = require('../examplesApp');
+
+/**
+* @ngInject
+*/
+
+examplesAppModule
   .controller('Example8', ['$scope', 'dragularService', function TodoCtrl($scope) {
     $scope.dragularOptions = {
       classes: {
@@ -8,4 +15,4 @@ angular.module('examplesApp')
       },
       nameSpace: 'common' // just connecting left and right container
     };
-  }])
+  }]);
