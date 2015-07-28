@@ -15,7 +15,7 @@
     </a>
     <div class='examples' ng-app="examplesApp" ng-controller="ExAppCtrl">
         <select ng-model="exampleTemplate">
-          <option value="{{example.template}}">{{example.title}}</option>
+          <option ng-repeat="example in examplesList" value="{{example.template}}">{{example.title}}</option>
         </select>
         <div ng-include="exampleTemplate"></div>        
     </div>
