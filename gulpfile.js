@@ -153,7 +153,7 @@ gulp.task('serve', function () {
   });
 });
 
-gulp.task('templates', function() {
+gulp.task('templates:docs', function() {
   return gulp.src(config.paths.docs.app + '/**/*.html')
    .pipe(templateCache({
      moduleSystem: 'Browserify',
@@ -163,7 +163,12 @@ gulp.task('templates', function() {
 });
 
 gulp.task('watch', ['serve'], function() {
-  gulp.watch(config.paths.styles + '*.styl',  ['styles']);
+  gulp.watch(config.paths.styles + '*.css',  ['styles']);
+});
+
+gulp.task('watch:docs', ['serve'], function() {
+  gulp.watch(config.paths.docs.src + '/**/*.css',  ['styles:docs']);
+  gulp.watch(config.paths.docs.app + '/**/*.html',  ['templates:docs']);
 });
 
 gulp.task('dev', function() {
@@ -187,7 +192,7 @@ gulp.task('dev:docs', function() {
 
   config.paths.dest = './docs/dist';
 
-  sequence(['browserify', 'styles', 'templates'], 'watch');
+  sequence(['browserify', 'styles:docs', 'templates:docs'], 'watch:docs');
 });
 
 gulp.task('build', function() {
