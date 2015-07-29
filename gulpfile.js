@@ -27,7 +27,9 @@ var config = {
     styles: './src',
     dest: './dist',
     docs: {
-      src: './docs/src/examples',
+      src: './docs/src/',
+      app: './docs/src/examples',
+      dest: './docs/dist',
     }
   },
   browserSync: {
@@ -103,20 +105,32 @@ gulp.task('browserify', function() {
 
 gulp.task('styles', function() {
 
-  return gulp.src(config.paths.styles + '/dragular.styl')
+  return gulp.src(config.paths.styles + '/*.css')
     .pipe(autoprefixer({
       browsers: [ 'last 15 versions', '> 1%', 'ie 8', 'ie 7' ],
       cascade: false
     }))
+    .pipe(concat('dragular.css'))
     .pipe(gulpif(config.isProd, minifyCss()))
-    .pipe(gulpif(config.isProd, rename({
-      suffix: '.min'
-    })))
     .pipe(size({
       title: 'Styles: '
     }))
     .pipe(gulp.dest(config.paths.dest))
     .pipe(gulpif(browserSync.active, browserSync.stream()));
+});
+
+gulp.task('styles:docs', function() {
+  return gulp.src([
+    config.paths.docs.src + '/**/*.css',
+    config.paths.styles + '/**/*.css'
+  ])
+  .pipe(autoprefixer({
+    browsers: [ 'last 15 versions', '> 1%', 'ie 8', 'ie 7' ],
+    cascade: false
+  }))
+  .pipe(concat('examples.css'))
+  .pipe(gulp.dest(config.paths.docs.dest))
+  .pipe(gulpif(browserSync.active, browserSync.stream()));
 });
 
 gulp.task('lint', function() {
@@ -140,12 +154,12 @@ gulp.task('serve', function () {
 });
 
 gulp.task('templates', function() {
-  return gulp.src(config.paths.docs.src + '/**/*.html')
+  return gulp.src(config.paths.docs.app + '/**/*.html')
    .pipe(templateCache({
      moduleSystem: 'Browserify',
      standalone: true,
    }))
-   .pipe(gulp.dest(config.paths.docs.src));
+   .pipe(gulp.dest(config.paths.docs.app));
 });
 
 gulp.task('watch', ['serve'], function() {
