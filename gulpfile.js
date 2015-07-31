@@ -123,6 +123,9 @@ gulp.task('styles', function() {
     }))
     .pipe(concat('dragular.css'))
     .pipe(gulpif(config.isProd, minifyCss()))
+    .pipe(gulpif(config.isProd, rename({
+      suffix: '.min'
+    })))
     .pipe(size({
       title: 'Styles: '
     }))
