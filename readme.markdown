@@ -38,6 +38,7 @@ Have you ever wanted a drag and drop library that just works? That actually unde
 - examples ui-router
 - example delay
 - example dragOverClasses show html code instead of js
+- remove npm workflow
 - replace timeout timer with $timeout
 - debouncing functionality to prevent flickering
 - support selectors in service (#2)
