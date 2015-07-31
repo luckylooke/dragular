@@ -34,6 +34,7 @@ Have you ever wanted a drag and drop library that just works? That actually unde
 
 # Todo
 
+- if one model provided, make array from it
 - examples ui-router
 - example delay
 - example dragOverClasses show html code instead of js
