@@ -484,6 +484,7 @@ dragularModule.factory('dragularService', function dragula() {
         if(!o.containersModel){
           parent.removeChild(_copy);
         }else{
+          console.log('_copyModel');
           _targetModel.splice(_targetModel.indexOf(_copyModel), 1, _copyModel);
         }
       }
@@ -697,11 +698,12 @@ dragularModule.factory('dragularService', function dragula() {
     }
 
     function moveInContainersModel (referenceIndex) {
+      console.log(_lastTargetModel[_currentIndex]);
       if(_lastTargetModel === _targetModel){
         _targetModel.splice(referenceIndex, 0, _lastTargetModel.splice(_currentIndex, 1)[0]);
       }else{
         _lastTargetModel.splice(_currentIndex, 1);
-        _targetModel.splice(referenceIndex, 1, _copyModel || _itemModel);
+        _targetModel.splice(referenceIndex, 0, _copyModel || _itemModel);
         _lastTargetScope.$apply();
       }
       _targetScope.$apply();
