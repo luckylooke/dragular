@@ -92,7 +92,7 @@ function buildScript() {
     return stream.on('error', handleErrors)
       .pipe(source(browserifyDefaults.bundleName))
       .pipe(buffer())
-      .pipe(gulpif(config.isProd, sourcemaps.init()))
+      .pipe(gulpif(config.isProd, sourcemaps.init({loadMaps: true})))
       .pipe(gulpif(config.isProd, uglify({
         compress: { drop_console: true }
       })))
@@ -209,6 +209,16 @@ gulp.task('dev:docs', function() {
 });
 
 gulp.task('build', function() {
+  config.isProd = true;
+  browserifyDefaults = config.browserify.dragular;
+
+  sequence(['browserify', 'styles']);
+});
+
+gulp.task('build:docs', function() {
+  config.isProd = true;
+  browserifyDefaults = config.browserify.docs;
+
   config.isProd = true;
   sequence(['browserify', 'styles']);
 });
