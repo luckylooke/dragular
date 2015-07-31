@@ -18,6 +18,7 @@ var sourcemaps = require('gulp-sourcemaps');
 var concat = require('gulp-concat');
 var ngAnnotate = require('browserify-ngannotate');
 var templateCache = require('gulp-angular-templatecache');
+var ghPages = require('gulp-gh-pages');
 
 var config = {
   dragular: {
@@ -207,4 +208,9 @@ gulp.task('dev:docs', function() {
 gulp.task('build', function() {
   config.isProd = true;
   sequence(['browserify', 'styles']);
+});
+
+gulp.task('deploy:docs', function() {
+  return gulp.src('./docs/**/*')
+    .pipe(ghPages());
 });
