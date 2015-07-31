@@ -66,7 +66,7 @@ function buildScript() {
     debug: true,
     cache: {},
     packageCache: {},
-    fullPaths: true
+    fullPaths: false
   }, watchify.args);
 
   var transforms = [
