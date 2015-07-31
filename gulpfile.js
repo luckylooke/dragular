@@ -205,7 +205,7 @@ gulp.task('dev:docs', function() {
   config.isProd = false;
   browserifyDefaults = config.browserify.docs;
 
-  sequence(['browserify', 'styles:docs', 'templates:docs'], 'watch:docs');
+  sequence(['templates:docs'], ['browserify', 'styles:docs'], 'watch:docs');
 });
 
 gulp.task('build', function() {
