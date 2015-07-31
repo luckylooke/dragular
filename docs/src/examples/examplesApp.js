@@ -67,6 +67,15 @@ module.exports = angular.module('examplesApp', ['dragularModule', 'templates']).
     $rootScope.globals = {
         showModelExamples: true
     };
+
+    $scope.highlightCode = function () {
+        if(document.getElementsByTagName('code').length){
+            var codeBlocks = document.getElementsByTagName('code');
+            for (var i = codeBlocks.length - 1; i >= 0; i--) {
+                hljs.highlightBlock(codeBlocks[i]);
+            };
+        }
+    }
 }]);
 
 bulk(__dirname, ['./**/!(*App).js']);

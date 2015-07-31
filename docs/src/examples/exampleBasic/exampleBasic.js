@@ -32,7 +32,6 @@ examplesAppModule
     }, {
       content: 'Item 8'
     }];
-    console.log($scope.globals);
     var containers = $element.children().children();
     dragularService([containers[0],containers[1]],{
       containersModel: [$scope.items1, $scope.items2]
