@@ -22,26 +22,38 @@ var ngAnnotate = require('browserify-ngannotate');
 var templateCache = require('gulp-angular-templatecache');
 
 var config = {
-  paths: {
-    js: './src',
-    styles: './src',
-    dest: './dist',
-    docs: {
-      src: './docs/src/',
-      app: './docs/src/examples',
-      dest: './docs/dist',
-    }
+  dragular: {
+    scripts: './src/*.js',
+    styles: './src/*.css',
+    dest: './dist'
+  },
+  docs: {
+    src: './docs/src/examples',
+    scripts: './docs/src/examples/**/*.js',
+    styles: './docs/src/**/*.css',
+    templates: './docs/src/examples/**/*.html',
+    dest: './docs/dist'
   },
   browserSync: {
     port: '3000',
     server: './docs'
   },
   browserify: {
-    entryPoint: './src/dragularModule.js',
-    outputFile: 'dragular.js',
+    dragular: {
+      entryPoint: './src/dragularModule.js',
+      bundleName: 'dragular.js',
+      dest: './dist',
+    },
+    docs: {
+      entryPoint: './docs/src/examples/examplesApp.js',
+      bundleName: 'examples.js',
+      dest: './docs/dist'
+    }
   },
   isProd: false
 };
+
+var browserifyDefaults = config.browserify.dragular;
 
 function handleErrors(err) {
   gutil.log(err.toString());
@@ -51,7 +63,7 @@ function handleErrors(err) {
 function buildScript() {
 
   var bundler = browserify({
-    entries: config.browserify.entryPoint,
+    entries: browserifyDefaults.entryPoint,
     debug: true,
     cache: {},
     packageCache: {},
@@ -79,9 +91,9 @@ function buildScript() {
     var stream = bundler.bundle();
 
     return stream.on('error', handleErrors)
-      .pipe(source(config.browserify.outputFile))
+      .pipe(source(browserifyDefaults.bundleName))
       .pipe(buffer())
-      .pipe(sourcemaps.init())
+      .pipe(gulpif(config.isProd, sourcemaps.init()))
       .pipe(gulpif(config.isProd, uglify({
         compress: { drop_console: true }
       })))
@@ -91,8 +103,8 @@ function buildScript() {
       .pipe(size({
         title: 'Scripts: '
       }))
-      .pipe(sourcemaps.write('./'))
-      .pipe(gulp.dest(config.paths.dest))
+      .pipe(gulpif(config.isProd, sourcemaps.write('./')))
+      .pipe(gulp.dest(browserifyDefaults.dest))
       .pipe(browserSync.stream());
   }
 
@@ -100,12 +112,12 @@ function buildScript() {
 }
 
 gulp.task('browserify', function() {
-  return buildScript('main.js');
+  return buildScript();
 });
 
 gulp.task('styles', function() {
 
-  return gulp.src(config.paths.styles + '/*.css')
+  return gulp.src(config.dragular.styles)
     .pipe(autoprefixer({
       browsers: [ 'last 15 versions', '> 1%', 'ie 8', 'ie 7' ],
       cascade: false
@@ -115,27 +127,35 @@ gulp.task('styles', function() {
     .pipe(size({
       title: 'Styles: '
     }))
-    .pipe(gulp.dest(config.paths.dest))
+    .pipe(gulp.dest(config.dragular.dest))
     .pipe(gulpif(browserSync.active, browserSync.stream()));
 });
 
 gulp.task('styles:docs', function() {
+
   return gulp.src([
-    config.paths.docs.src + '/**/*.css',
-    config.paths.styles + '/**/*.css'
+    config.docs.styles,
+    config.dragular.styles
   ])
   .pipe(autoprefixer({
     browsers: [ 'last 15 versions', '> 1%', 'ie 8', 'ie 7' ],
     cascade: false
   }))
   .pipe(concat('examples.css'))
-  .pipe(gulp.dest(config.paths.docs.dest))
+  .pipe(gulp.dest(config.docs.dest))
   .pipe(gulpif(browserSync.active, browserSync.stream()));
 });
 
 gulp.task('lint', function() {
 
-  return gulp.src([config.paths.js + '/**/*.js', './gulpfile.js'])
+  return gulp.src([config.dragular.scripts])
+    .pipe(jshint())
+    .pipe(jshint.reporter('jshint-stylish'));
+});
+
+gulp.task('lint:docs', function() {
+
+  return gulp.src(config.docs.scripts)
     .pipe(jshint())
     .pipe(jshint.reporter('jshint-stylish'));
 });
@@ -154,43 +174,34 @@ gulp.task('serve', function () {
 });
 
 gulp.task('templates:docs', function() {
-  return gulp.src(config.paths.docs.app + '/**/*.html')
+
+  return gulp.src(config.docs.templates)
    .pipe(templateCache({
      moduleSystem: 'Browserify',
      standalone: true,
    }))
-   .pipe(gulp.dest(config.paths.docs.app));
+   .pipe(gulp.dest(config.docs.src));
 });
 
 gulp.task('watch', ['serve'], function() {
-  gulp.watch(config.paths.styles + '*.css',  ['styles']);
+  gulp.watch(config.dragular.styles,  ['styles']);
 });
 
 gulp.task('watch:docs', ['serve'], function() {
-  gulp.watch(config.paths.docs.src + '/**/*.css',  ['styles:docs']);
-  gulp.watch(config.paths.docs.app + '/**/*.html',  ['templates:docs']);
+  gulp.watch(config.docs.styles,  ['styles:docs']);
+  gulp.watch(config.docs.templates,  ['templates:docs']);
 });
 
 gulp.task('dev', function() {
   config.isProd = false;
-  config.browserify = {
-    entryPoint: './src/dragularModule.js',
-    outputFile: 'dragular.js',
-  };
-
-  config.paths.dest = './dist';
+  browserifyDefaults = config.browserify.dragular;
 
   sequence(['browserify', 'styles'], 'watch');
 });
 
 gulp.task('dev:docs', function() {
   config.isProd = false;
-  config.browserify = {
-    entryPoint: './docs/src/examples/examplesApp.js',
-    outputFile: 'examples.js',
-  };
-
-  config.paths.dest = './docs/dist';
+  browserifyDefaults = config.browserify.docs;
 
   sequence(['browserify', 'styles:docs', 'templates:docs'], 'watch:docs');
 });
