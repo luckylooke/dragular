@@ -34,9 +34,8 @@ Have you ever wanted a drag and drop library that just works? That actually unde
 
 # Todo
 
-- example of nested draggables
+- debug syncing with model
 - support selectors in service (#2)
-- better workflow (gulp?)
 - publish more (blog?)
 
 # Features
