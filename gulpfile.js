@@ -10,27 +10,49 @@ var size = require('gulp-size');
 var source = require('vinyl-source-stream');
 var sequence = require('run-sequence');
 var rename = require('gulp-rename');
-var stylus = require('gulp-stylus');
 var minifyCss = require('gulp-minify-css');
 var autoprefixer = require('gulp-autoprefixer');
-var nib = require('nib');
 var browserSync = require('browser-sync');
 var jshint = require('gulp-jshint');
 var sourcemaps = require('gulp-sourcemaps');
 var concat = require('gulp-concat');
+var ngAnnotate = require('browserify-ngannotate');
+var templateCache = require('gulp-angular-templatecache');
+var ghPages = require('gulp-gh-pages');
 
 var config = {
-  paths: {
-    js: 'src',
-    styles: 'src',
-    dest: 'dist'
+  dragular: {
+    scripts: './src/*.js',
+    styles: './src/*.css',
+    dest: './dist'
+  },
+  docs: {
+    src: './docs/src/examples',
+    scripts: './docs/src/examples/**/*.js',
+    styles: './docs/src/**/*.css',
+    templates: './docs/src/examples/**/*.html',
+    dest: './docs/dist'
   },
   browserSync: {
     port: '3000',
-    server: '.'
+    server: './docs'
+  },
+  browserify: {
+    dragular: {
+      entryPoint: './src/dragularModule.js',
+      bundleName: 'dragular.js',
+      dest: './dist',
+    },
+    docs: {
+      entryPoint: './docs/src/examples/examplesApp.js',
+      bundleName: 'examples.js',
+      dest: './docs/dist'
+    }
   },
   isProd: false
 };
+
+var browserifyDefaults = config.browserify.dragular;
 
 function handleErrors(err) {
   gutil.log(err.toString());
@@ -40,12 +62,18 @@ function handleErrors(err) {
 function buildScript() {
 
   var bundler = browserify({
-    entries: config.paths.js + '/dragular.js',
+    entries: browserifyDefaults.entryPoint,
     debug: true,
     cache: {},
     packageCache: {},
     fullPaths: true
   }, watchify.args);
+
+  var transforms = [
+    'brfs',
+    'bulkify',
+    ngAnnotate
+  ];
 
   if (!config.isProd) {
     bundler = watchify(bundler);
@@ -54,13 +82,17 @@ function buildScript() {
     });
   }
 
+  transforms.forEach(function(transform) {
+    bundler.transform(transform);
+  });
+
   function rebundle() {
     var stream = bundler.bundle();
 
     return stream.on('error', handleErrors)
-      .pipe(source('dragular.js'))
+      .pipe(source(browserifyDefaults.bundleName))
       .pipe(buffer())
-      .pipe(sourcemaps.init())
+      .pipe(gulpif(config.isProd, sourcemaps.init({loadMaps: true})))
       .pipe(gulpif(config.isProd, uglify({
         compress: { drop_console: true }
       })))
@@ -70,8 +102,8 @@ function buildScript() {
       .pipe(size({
         title: 'Scripts: '
       }))
-      .pipe(sourcemaps.write('./'))
-      .pipe(gulp.dest(config.paths.dest))
+      .pipe(gulpif(config.isProd, sourcemaps.write('./')))
+      .pipe(gulp.dest(browserifyDefaults.dest))
       .pipe(browserSync.stream());
   }
 
@@ -79,17 +111,17 @@ function buildScript() {
 }
 
 gulp.task('browserify', function() {
-  return buildScript('main.js');
+  return buildScript();
 });
 
 gulp.task('styles', function() {
 
-  return gulp.src(config.paths.styles + '/dragular.styl')
-    .pipe()
+  return gulp.src(config.dragular.styles)
     .pipe(autoprefixer({
       browsers: [ 'last 15 versions', '> 1%', 'ie 8', 'ie 7' ],
       cascade: false
     }))
+    .pipe(concat('dragular.css'))
     .pipe(gulpif(config.isProd, minifyCss()))
     .pipe(gulpif(config.isProd, rename({
       suffix: '.min'
@@ -97,13 +129,35 @@ gulp.task('styles', function() {
     .pipe(size({
       title: 'Styles: '
     }))
-    .pipe(gulp.dest(config.paths.dest))
+    .pipe(gulp.dest(config.dragular.dest))
     .pipe(gulpif(browserSync.active, browserSync.stream()));
+});
+
+gulp.task('styles:docs', function() {
+
+  return gulp.src([
+    config.docs.styles,
+    config.dragular.styles
+  ])
+  .pipe(autoprefixer({
+    browsers: [ 'last 15 versions', '> 1%', 'ie 8', 'ie 7' ],
+    cascade: false
+  }))
+  .pipe(concat('examples.css'))
+  .pipe(gulp.dest(config.docs.dest))
+  .pipe(gulpif(browserSync.active, browserSync.stream()));
 });
 
 gulp.task('lint', function() {
 
-  return gulp.src([config.paths.js + '/**/*.js', './gulpfile.js'])
+  return gulp.src([config.dragular.scripts])
+    .pipe(jshint())
+    .pipe(jshint.reporter('jshint-stylish'));
+});
+
+gulp.task('lint:docs', function() {
+
+  return gulp.src(config.docs.scripts)
     .pipe(jshint())
     .pipe(jshint.reporter('jshint-stylish'));
 });
@@ -121,16 +175,55 @@ gulp.task('serve', function () {
   });
 });
 
+gulp.task('templates:docs', function() {
+
+  return gulp.src(config.docs.templates)
+   .pipe(templateCache({
+     moduleSystem: 'Browserify',
+     standalone: true,
+   }))
+   .pipe(gulp.dest(config.docs.src));
+});
+
 gulp.task('watch', ['serve'], function() {
-  gulp.watch(config.paths.styles + '*.styl',  ['styles']);
+  gulp.watch(config.dragular.styles,  ['styles']);
+});
+
+gulp.task('watch:docs', ['serve'], function() {
+  gulp.watch(config.docs.styles,  ['styles:docs']);
+  gulp.watch(config.docs.templates,  ['templates:docs']);
 });
 
 gulp.task('dev', function() {
   config.isProd = false;
+  browserifyDefaults = config.browserify.dragular;
+
   sequence(['browserify', 'styles'], 'watch');
+});
+
+gulp.task('dev:docs', function() {
+  config.isProd = false;
+  browserifyDefaults = config.browserify.docs;
+
+  sequence(['browserify', 'styles:docs', 'templates:docs'], 'watch:docs');
 });
 
 gulp.task('build', function() {
   config.isProd = true;
+  browserifyDefaults = config.browserify.dragular;
+
   sequence(['browserify', 'styles']);
+});
+
+gulp.task('build:docs', function() {
+  config.isProd = true;
+  browserifyDefaults = config.browserify.docs;
+
+  config.isProd = true;
+  sequence(['browserify', 'styles']);
+});
+
+gulp.task('deploy:docs', function() {
+  return gulp.src('./docs/**/*')
+    .pipe(ghPages());
 });

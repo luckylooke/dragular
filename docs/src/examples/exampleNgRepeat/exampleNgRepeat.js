@@ -1,7 +1,14 @@
 /* global angular */
 'use strict';
-angular.module('examplesApp')
-   .controller('Example14', ['$scope', '$element', 'dragularService', function TodoCtrl($scope, $element, dragularService) {
+
+var examplesAppModule = require('../examplesApp');
+
+/**
+* @ngInject
+*/
+
+examplesAppModule
+  .controller('Example14', ['$scope', '$element', 'dragularService', function TodoCtrl($scope, $element, dragularService) {
     dragularService($element.children());
     $scope.items = [{
       content: 'Try to add or remove some elements (click on +- buttons), you will see that it is not problem for dragular.'
@@ -22,4 +29,4 @@ angular.module('examplesApp')
       var index = $scope.items.indexOf(this.item);
       $scope.items.splice(index, 1);
     };
-  }])
+  }]);

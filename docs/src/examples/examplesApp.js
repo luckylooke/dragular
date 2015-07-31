@@ -1,63 +1,74 @@
 /* global angular */
 'use strict';
 
+var angular = require('angular');
+var bulk = require('bulk-require');
+
+require('../../../src/dragularModule');
+require('./templates');
+
 /**
  *  Module Example App
  *
  *  DEMO app for dragular https://github.com/luckylooke/dragular
  */
-angular.module('examplesApp', ['dragularModule']).controller('ExAppCtrl', ['$rootScope', function($rootScope) {
-    $scope.examplesList = [{
-        template: 'exampleBasic',
-        title: 'Basic'
-    }, {
-        template: 'exampleDirective',
-        title: 'Directive'
-    }, {
-        template: 'exampleEvents',
-        title: 'Events'
-    }, {
-        template: 'exampleRemoveOnSpill',
-        title: 'Remove on spill'
-    }, {
-        template: 'exampleRevertOnSpill',
-        title: 'Revert on spill'
-    }, {
-        template: 'exampleCopy',
-        title: 'Copy'
-    }, {
-        template: 'exampleHandle',
-        title: 'Handle'
-    }, {
-        template: 'exampleCustomClasses',
-        title: 'Custom classes'
-    }, {
-        template: 'exampleNameSpaces',
-        title: 'NameSpaces'
-    }, {
-        template: 'exampleDragOverClasses',
-        title: 'DragOver classes'
-    }, {
-        template: 'exampleBoundingBox',
-        title: 'BoundingBox'
-    }, {
-        template: 'exampleBoundingBoxLockX',
-        title: 'BoundingBox + LockX'
-    }, {
-        template: 'exampleBoundingBoxLockY',
-        title: 'BoundingBox + LockY'
-    }, {
-        template: 'exampleNgRepeat',
-        title: 'ngRepeat'
-    }, {
-        template: 'exampleNestedNgRepeat',
-        title: 'Nested ngRepead'
-    }, {
-        template: 'exampleScrollingDrag',
-        title: 'Scrolling drag'
-    }];
-    $rootScope.models = false;
-    $scope.toggleModels = function toggleModels() {
-        $rootScope.models = !$rootScope.models;
-    }
+
+module.exports = angular.module('examplesApp', ['dragularModule', 'templates']).controller('ExAppCtrl', ['$scope', '$rootScope', function($scope, $rootScope) {
+  $scope.examplesList = [{
+    template: 'exampleBasic/exampleBasic.html',
+    title: 'Basic'
+  }, {
+    template: 'exampleDirective/exampleDirective.html',
+    title: 'Directive'
+  }, {
+    template: 'exampleEvents/exampleEvents.html',
+    title: 'Events'
+  }, {
+    template: 'exampleRemoveOnSpill/exampleRemoveOnSpill.html',
+    title: 'Remove on spill'
+  }, {
+    template: 'exampleRevertOnSpill/exampleRevertOnSpill.html',
+    title: 'Revert on spill'
+  }, {
+    template: 'exampleCopy/exampleCopy.html',
+    title: 'Copy'
+  }, {
+    template: 'exampleHandle/exampleHandle.html',
+    title: 'Handle'
+  }, {
+    template: 'exampleCustomClasses/exampleCustomClasses.html',
+    title: 'Custom classes'
+  }, {
+    template: 'exampleNameSpaces/exampleNameSpaces.html',
+    title: 'NameSpaces'
+  }, {
+    template: 'exampleDragOverClasses/exampleDragOverClasses.html',
+    title: 'DragOver classes'
+  }, {
+    template: 'exampleBoundingBox/exampleBoundingBox.html',
+    title: 'BoundingBox'
+  }, {
+    template: 'exampleBoundingBoxLockX/exampleBoundingBoxLockX.html',
+    title: 'BoundingBox + LockX'
+  }, {
+    template: 'exampleBoundingBoxLockY/exampleBoundingBoxLockY.html',
+    title: 'BoundingBox + LockY'
+  }, {
+    template: 'exampleNgRepeat/exampleNgRepeat.html',
+    title: 'ngRepeat'
+  }, {
+    template: 'exampleNestedNgRepeat/exampleNestedNgRepeat.html',
+    title: 'Nested ngRepead'
+  }, {
+    template: 'exampleScrollingDrag/exampleScrollingDrag.html',
+    title: 'Scrolling drag'
+  }];
+
+  $rootScope.models = false;
+
+  $scope.toggleModels = function toggleModels() {
+    $rootScope.models = !$rootScope.models;
+  };
 }]);
+
+bulk(__dirname, ['./**/!(*App).js']);

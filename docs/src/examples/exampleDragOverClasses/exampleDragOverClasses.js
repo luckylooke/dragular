@@ -1,6 +1,13 @@
 /* global angular */
 'use strict';
-angular.module('examplesApp')
+
+var examplesAppModule = require('../examplesApp');
+
+/**
+* @ngInject
+*/
+
+examplesAppModule
  .controller('Example10', ['$element', 'dragularService', function TodoCtrl($element, dragularService) {
     dragularService([$element.children()[0], $element.children()[2]], {
       nameSpace: 'apples',
@@ -10,4 +17,4 @@ angular.module('examplesApp')
       nameSpace: 'oranges',
       dragOverClasses: true
     });
-  }])
+  }]);

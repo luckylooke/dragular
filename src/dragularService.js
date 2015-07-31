@@ -6,7 +6,13 @@
  * Angular version of dragula https://github.com/bevacqua/dragula
  */
 
-angular.module('dragularModule', []).factory('dragularService', function dragula() {
+var dragularModule = require('./dragularModule');
+
+/**
+* @ngInject
+*/
+
+dragularModule.factory('dragularService', function dragula() {
 
   var containersNameSpaced = {}, // name-spaced containers
     containersNameSpacedModel = {}, // name-spaced containers models
@@ -449,7 +455,7 @@ angular.module('dragularModule', []).factory('dragularService', function dragula
       }
       var item = _copy || _item,
         parent = item.parentElement;
-        
+
       if(!o.containersModel){
         if(parent){
           parent.removeChild(item);
@@ -701,7 +707,7 @@ angular.module('dragularModule', []).factory('dragularService', function dragula
       _targetScope.$apply();
     }
 
-    function scrollContainer(e){   
+    function scrollContainer(e){
       if(_targetContainer){_targetContainer.scrollTop += e.deltaY};
     }
 
@@ -851,7 +857,7 @@ angular.module('dragularModule', []).factory('dragularService', function dragula
     }
   }
 
-  //Cannot use angular.isElement because we need to check plain dom element, no jQlite wrapped  
+  //Cannot use angular.isElement because we need to check plain dom element, no jQlite wrapped
   function isElement(o) {
     return (
       typeof HTMLElement === 'object' ? o instanceof HTMLElement : //DOM2
