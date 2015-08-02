@@ -12,7 +12,7 @@ var dragularModule = require('./dragularModule');
 * @ngInject
 */
 
-dragularModule.factory('dragularService', function dragula() {
+dragularModule.factory('dragularService', ['$timeout', function dragula($timeout) {
 
   var containersNameSpaced = {}, // name-spaced containers
     containersNameSpacedModel = {}, // name-spaced containers models
@@ -304,7 +304,7 @@ dragularModule.factory('dragularService', function dragula() {
 
       // delayed rendering
       if (typeof o.delay === 'number') {
-        _renderTimer = setTimeout(function() {
+        _renderTimer = $timeout(function() {
           renderMirrorAndDrag(e);
         }, o.delay);
       } else {
@@ -524,7 +524,7 @@ dragularModule.factory('dragularService', function dragula() {
 
       // cancel timer
       if (_renderTimer) {
-        clearTimeout(_renderTimer);
+        $timeout.cancel(_renderTimer);
       }
 
       _source = _item = _copy = _initialSibling = _currentSibling = _sourceModel = null;
@@ -918,4 +918,4 @@ dragularModule.factory('dragularService', function dragula() {
     return Array.prototype.indexOf.call(angular.element(parent).children(), child);
   }
 
-});
+}]);
