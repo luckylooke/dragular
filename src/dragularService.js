@@ -369,7 +369,7 @@ dragularModule.factory('dragularService', ['$timeout', function dragula($timeout
         if(o.copy){
           _copyModel = angular.copy(_itemModel);
         }
-        console.log('starting drag',_itemModel);
+        console.log('starting drag',_itemModel, _copyModel);
       }
 
       if (o.copy) {
@@ -703,9 +703,12 @@ dragularModule.factory('dragularService', ['$timeout', function dragula($timeout
         if(_lastTargetModel === _targetModel){
           _targetModel.splice(referenceIndex, 0, _lastTargetModel.splice(_currentIndex, 1)[0]);
         }else{
-          _lastTargetModel.splice(_currentIndex, 1);
+          if(o.copy && _lastTargetModel !== _sourceModel){
+            _lastTargetModel.splice(_currentIndex, 1);
+            _lastTargetScope.$apply();
+          }
           _targetModel.splice(referenceIndex, 0, _copyModel || _itemModel);
-          _lastTargetScope.$apply();
+          console.log('_copyModel', _copyModel);
         }
         _targetScope.$apply();
       }
