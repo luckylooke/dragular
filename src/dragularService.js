@@ -699,14 +699,16 @@ dragularModule.factory('dragularService', ['$timeout', function dragula($timeout
 
     function moveInContainersModel (referenceIndex) {
       console.log(_lastTargetModel[_currentIndex]);
-      if(_lastTargetModel === _targetModel){
-        _targetModel.splice(referenceIndex, 0, _lastTargetModel.splice(_currentIndex, 1)[0]);
-      }else{
-        _lastTargetModel.splice(_currentIndex, 1);
-        _targetModel.splice(referenceIndex, 0, _copyModel || _itemModel);
-        _lastTargetScope.$apply();
+      if(_lastTargetModel[_currentIndex]){
+        if(_lastTargetModel === _targetModel){
+          _targetModel.splice(referenceIndex, 0, _lastTargetModel.splice(_currentIndex, 1)[0]);
+        }else{
+          _lastTargetModel.splice(_currentIndex, 1);
+          _targetModel.splice(referenceIndex, 0, _copyModel || _itemModel);
+          _lastTargetScope.$apply();
+        }
+        _targetScope.$apply();
       }
-      _targetScope.$apply();
     }
 
     function scrollContainer(e){
