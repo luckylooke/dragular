@@ -12,7 +12,7 @@ var dragularModule = require('./dragularModule');
  * @ngInject
  */
 
-dragularModule.factory('dragularService', ['$timeout', function dragula($timeout) {
+dragularModule.factory('dragularService', ['$rootScope', '$timeout', function dragula($rootScope, $timeout) {
 
   var containersNameSpaced = {}, // name-spaced containers
     containersNameSpacedModel = {}, // name-spaced containers models
@@ -34,8 +34,6 @@ dragularModule.factory('dragularService', ['$timeout', function dragula($timeout
       _itemModel, // item-model being dragged
       _targetModel, // target container model
       _lastTargetModel, // last target container model
-      _targetScope, // target model scope (used for $apply-ing changes in model)
-      _lastTargetScope, // target model scope (used for $apply-ing changes in model)
       _offsetX, // reference x
       _offsetY, // reference y
       _offsetXr, // reference x right for boundingBox feature
@@ -206,9 +204,6 @@ dragularModule.factory('dragularService', ['$timeout', function dragula($timeout
         if (o.containersModel) {
           _lastTargetModel = _targetModel;
           _targetModel = _containersModel[api.containers.indexOf(el)];
-          // track scopes too
-          _lastTargetScope = _targetScope;
-          _targetScope = angular.element(el).scope();
         }
         return true;
       }
@@ -222,32 +217,9 @@ dragularModule.factory('dragularService', ['$timeout', function dragula($timeout
           if (o.containersModel) {
             _lastTargetModel = _targetModel;
             _targetModel = _containersModel[nameSpace][api.containers[nameSpace].indexOf(el)];
-            // track scopes too
-            _lastTargetScope = _targetScope;
-            _targetScope = angular.element(el).scope();
           }
           return true;
         }
-      }
-      if (o.isContainer(el)) {
-        if (o.containersModel && o.isContainerModel) {
-          var found = false;
-
-          function tryScope(scope) {
-            if (scope && scope[o.isContainerModel]) {
-              found = true;
-              _lastTargetModel = _targetModel;
-              _targetModel = scope[o.isContainerModel];
-              _lastTargetScope = _targetScope;
-              _targetScope = angular.element(el).scope();
-            }
-          }
-          tryScope(angular.element(target).isolateScope());
-          if (!found) { // dont search in scope if already found in isolateScope
-            tryScope(angular.element(target).scope());
-          }
-        }
-        return true;
       }
       return false;
     }
@@ -425,10 +397,13 @@ dragularModule.factory('dragularService', ['$timeout', function dragula($timeout
 
       if (dropTarget && (o.copy === false || dropTarget !== _source)) {
         // found valid target and (is not copy case or target is not initial container)
+        console.log('release-drop');
         drop(item, dropTarget);
       } else if (o.removeOnSpill) {
+        console.log('release-remove');
         remove();
       } else {
+        console.log('release-cancel');
         cancel();
       }
 
@@ -483,10 +458,10 @@ dragularModule.factory('dragularService', ['$timeout', function dragula($timeout
         parent = item.parentElement;
 
       if (parent === _source && o.copy) {
+        console.log('!!!!!!!!!!!!!!!!! I think this is never possible because copy cannot be placed into source');
         if (!o.containersModel) {
           parent.removeChild(_copy);
         } else {
-          console.log('_copyModel');
           _targetModel.splice(_targetModel.indexOf(_copyModel), 1, _copyModel);
         }
       }
@@ -499,9 +474,6 @@ dragularModule.factory('dragularService', ['$timeout', function dragula($timeout
         } else {
           _lastTargetModel = _targetModel;
           _targetModel = _sourceModel;
-          // track scopes too
-          _lastTargetScope = _targetScope;
-          _targetScope = angular.element(el).scope();
           // move back to initial placement
           moveInContainersModel(_initialIndex);
         }
@@ -635,6 +607,14 @@ dragularModule.factory('dragularService', ['$timeout', function dragula($timeout
 
       // do not copy in same container
       if (dropTarget === _source && o.copy) {
+        console.log('dropTarget === _source && o.copy', _lastTargetModel, _copyModel, _lastTargetModel.indexOf(_copyModel));
+        if (item.parentElement) {
+          item.parentElement.removeChild(item);
+        }
+        if (_lastTargetModel.indexOf(_copyModel) !== -1) {
+          _lastTargetModel.splice(_lastTargetModel.indexOf(_copyModel), 1);
+        }
+        $rootScope.$applyAsync();
         return;
       }
 
@@ -644,9 +624,6 @@ dragularModule.factory('dragularService', ['$timeout', function dragula($timeout
       // prepare models operations
       if (o.containersModel) {
         var referenceIndex;
-
-        _lastTargetScope = _targetScope || angular.element(_source).scope();
-        _targetScope = angular.element(dropTarget).scope();
       }
 
       if (immediate !== null) {
@@ -662,6 +639,7 @@ dragularModule.factory('dragularService', ['$timeout', function dragula($timeout
         }
       } else if (o.revertOnSpill === true && !o.copy) {
         // the case that mirror is not over valid target and reverting is on and copy is off
+        console.log('revertOnSpill');
         reference = _initialSibling;
         dropTarget = _source;
 
@@ -670,19 +648,17 @@ dragularModule.factory('dragularService', ['$timeout', function dragula($timeout
           referenceIndex = _initialIndex;
           _lastTargetModel = _targetModel;
           _targetModel = _sourceModel;
-          _lastTargetScope = _targetScope;
-          _targetScope = angular.element(dropTarget).scope();
         }
       } else {
         // the case that mirror is not over valid target and removing is on or copy is on
         if ((o.copy || o.removeOnSpill === true) && item.parentElement !== null) {
-          console.log(o.copy ? 'remove item copy from last position' : 'remove item from last position')
-            // remove item or copy of item
+          console.log(o.copy ? 'remove item copy from last position' : 'remove item from last position');
+          // remove item or copy of item
           if (!o.containersModel) {
             item.parentElement.removeChild(item);
           } else {
             _targetModel.splice(referenceIndex, 1);
-            _targetScope.$apply();
+            $rootScope.$applyAsync();
           }
         }
         return;
@@ -718,15 +694,16 @@ dragularModule.factory('dragularService', ['$timeout', function dragula($timeout
         if (referenceIndex === null) {
           referenceIndex = _targetModel.length - 1;
         }
-        if (!o.copy || _lastTargetModel !== _sourceModel) {
+        if (!o.copy || _lastTargetModel !== _sourceModel) { // dont remove original from source while copying
           _lastTargetModel.splice(_currentIndex, 1);
-          _lastTargetScope.$apply();
         }
-        _targetModel.splice(referenceIndex, 0, _copyModel || _itemModel);
-        _currentIndex = referenceIndex;
+        if (!o.copy || _targetModel.indexOf(_copyModel) === -1) { // dont place copy twice in one drag
+          _targetModel.splice(referenceIndex, 0, _copyModel || _itemModel);
+          _currentIndex = referenceIndex;
+        }
         console.log('_copyModel', _copyModel);
       }
-      _targetScope.$apply();
+      $rootScope.$applyAsync();
       // }
     }
 
