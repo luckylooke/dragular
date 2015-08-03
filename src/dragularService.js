@@ -528,17 +528,17 @@ dragularModule.factory('dragularService', ['$rootScope', '$timeout', function dr
           if (accepts && o.containersModel) {
             _lastTargetModel = _targetModel;
             if (!o.nameSpace) {
-              _targetModel = _containersModel[api.containers.indexOf(target.parentElement)];
+              _targetModel = _containersModel[api.containers.indexOf(target)];
             } else {
               for (var nameSpace in api.containers) {
-                if (api.containers.hasOwnProperty(nameSpace) && api.containers[nameSpace].indexOf(target.parentElement) !== -1) {
+                if (api.containers.hasOwnProperty(nameSpace) && api.containers[nameSpace].indexOf(target) !== -1) {
                   _lastTargetModel = _targetModel;
-                  _targetModel = _containersModel[nameSpace][api.containers[nameSpace].indexOf(target.parentElement)];
+                  _targetModel = _containersModel[nameSpace][api.containers[nameSpace].indexOf(target)];
                   break;
                 }
               }
             }
-              console.log('_targetModel', _targetModel);
+              console.log('_targetModel', _targetModel, target, _containersModel, api.containers);
           }
         }
 
