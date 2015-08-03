@@ -200,24 +200,13 @@ dragularModule.factory('dragularService', ['$rootScope', '$timeout', function dr
     }
 
     function isContainer(el) {
-      if (api.containers.indexOf(el) !== -1 || o.isContainer(el)) {
-        if (o.containersModel) {
-          _lastTargetModel = _targetModel;
-          _targetModel = _containersModel[api.containers.indexOf(el)];
-        }
-        return true;
-      }
-      return false;
+      return api.containers.indexOf(el) !== -1 || o.isContainer(el);
     }
 
     function isContainerNameSpaced(el) {
       var nameSpace;
       for (nameSpace in api.containers) {
         if (api.containers.hasOwnProperty(nameSpace) && api.containers[nameSpace].indexOf(el) !== -1) {
-          if (o.containersModel) {
-            _lastTargetModel = _targetModel;
-            _targetModel = _containersModel[nameSpace][api.containers[nameSpace].indexOf(el)];
-          }
           return true;
         }
       }
@@ -339,11 +328,12 @@ dragularModule.factory('dragularService', ['$rootScope', '$timeout', function dr
 
         _initialIndex = _currentIndex = itemIndex;
         _sourceModel = o.containersModel[containerIndex];
+        _targetModel = _sourceModel;
         _itemModel = _sourceModel[itemIndex];
         if (o.copy) {
           _copyModel = angular.copy(_itemModel);
         }
-        console.log('starting drag', _itemModel, _copyModel);
+        console.log('starting drag', _itemModel, _copyModel, _sourceModel);
       }
 
       if (o.copy) {
@@ -534,6 +524,22 @@ dragularModule.factory('dragularService', ['$rootScope', '$timeout', function dr
             reference = getReference(target, immediate, clientX, clientY),
             initial = isInitialPlacement(target, reference);
           accepts = initial ? true : o.accepts(_item, target, _source, reference, _itemModel, _sourceModel);
+
+          if (accepts && o.containersModel) {
+            _lastTargetModel = _targetModel;
+            if (!o.nameSpace) {
+              _targetModel = _containersModel[api.containers.indexOf(target.parentElement)];
+            } else {
+              for (var nameSpace in api.containers) {
+                if (api.containers.hasOwnProperty(nameSpace) && api.containers[nameSpace].indexOf(target.parentElement) !== -1) {
+                  _lastTargetModel = _targetModel;
+                  _targetModel = _containersModel[nameSpace][api.containers[nameSpace].indexOf(target.parentElement)];
+                  break;
+                }
+              }
+            }
+              console.log('_targetModel', _targetModel);
+          }
         }
 
         // add class if element is enabled for it and it has not already the class
@@ -648,6 +654,7 @@ dragularModule.factory('dragularService', ['$rootScope', '$timeout', function dr
           referenceIndex = _initialIndex;
           _lastTargetModel = _targetModel;
           _targetModel = _sourceModel;
+              console.log('_targetModel', _targetModel);
         }
       } else {
         // the case that mirror is not over valid target and removing is on or copy is on
@@ -681,7 +688,7 @@ dragularModule.factory('dragularService', ['$rootScope', '$timeout', function dr
     }
 
     function moveInContainersModel(referenceIndex) {
-      console.log(_lastTargetModel[_currentIndex]);
+      // console.log(_lastTargetModel[_currentIndex]);
       // if (_lastTargetModel[_currentIndex]) {
       if (_lastTargetModel === _targetModel) {
         if (referenceIndex === null) {

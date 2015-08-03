@@ -64,7 +64,8 @@ module.exports = angular.module('examplesApp', ['dragularModule', 'templates']).
         title: 'Scrolling drag'
     }];
 
-    $scope.exampleTemplate = 'exampleCopy/exampleCopy.html';
+    // default template loaded first time
+    $scope.exampleTemplate = 'exampleDirective/exampleDirective.html';
 
     $rootScope.globals = {
         showModelExamples: true

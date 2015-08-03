@@ -35,6 +35,8 @@ Have you ever wanted a drag and drop library that just works? That actually unde
 # Todo
 
 - if one model provided, make array from it
+- o.isContainer in _isContainer (fn o.isContainerGetModel(containerElm))
+- allow mixing with and without model containers
 - examples ui-router
 - example delay
 - example dragOverClasses show html code instead of js
