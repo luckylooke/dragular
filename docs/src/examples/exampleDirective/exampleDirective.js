@@ -13,7 +13,7 @@ examplesAppModule
       classes: {
         mirror: 'custom-green-mirror'
       },
-      nameSpace: 'common' // just connecting left and right container
+      nameSpace: 'same' // just connecting left and right container
     };
   }]);
 
