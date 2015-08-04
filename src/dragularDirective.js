@@ -29,7 +29,6 @@ dragularModule.directive('dragular', ['$parse', 'dragularService', function($par
       if(options && options.containersModel && typeof options.containersModel === 'string'){
         var parsedExpFn = $parse(options.containersModel);
         options.containersModel = parsedExpFn($scope);
-        console.log(options.containersModel); // test
       }
 
       dragularService(iElm[0], options);

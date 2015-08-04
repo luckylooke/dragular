@@ -104,7 +104,7 @@ dragularModule.factory('dragularService', ['$rootScope', '$timeout', function dr
       initialContainers = makeArray(initialContainers);
     }
     if (o.containersModel) {
-      o.containersModel = makeArray(o.containersModel);
+      o.containersModel = Array.isArray(o.containersModel[0]) ? o.containersModel : [o.containersModel];
     }
 
     // feed namespaced containers groups and optionaly shadow it by models

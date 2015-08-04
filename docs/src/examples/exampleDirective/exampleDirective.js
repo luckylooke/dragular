@@ -38,7 +38,7 @@ examplesAppModule
       content: 'Item 8'
     }];
     $scope.dragularOptions = {
-      containersModel: [$scope.items1],
+      containersModel: $scope.items1,
       classes: {
         mirror: 'custom-green-mirror'
       },
