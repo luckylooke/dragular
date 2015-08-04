@@ -20,9 +20,6 @@
                     <option ng-repeat="example in examplesList" value="{{example.template}}">{{example.title}}</option>
                 </select>
             </label>
-            <label style="display:inline;">View examples with synced model
-                <input style="display:inline; width:auto;" type="checkbox" id="toggleModel" ng-model="globals.showModelExamples" />
-            </label>
         </div>
         <div ng-include="exampleTemplate" onload="highlightCode()"></div>
     </div>
