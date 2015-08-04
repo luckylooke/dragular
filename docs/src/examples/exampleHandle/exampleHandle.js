@@ -8,7 +8,7 @@ var examplesAppModule = require('../examplesApp');
 */
 
 examplesAppModule
-  .controller('Example6', ['$element', 'dragularService', function TodoCtrl($element, dragularService) {
+  .controller('Handle', ['$element', 'dragularService', function TodoCtrl($element, dragularService) {
     dragularService($element.children(), {
       moves: function(el, container, handle) {
         return handle.className === 'handle';

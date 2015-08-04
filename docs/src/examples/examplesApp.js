@@ -65,7 +65,7 @@ module.exports = angular.module('examplesApp', ['dragularModule', 'templates']).
     }];
 
     // default template loaded first time
-    $scope.exampleTemplate = 'exampleDirective/exampleDirective.html';
+    $scope.exampleTemplate = 'exampleBasic/exampleBasic.html';
 
     $rootScope.globals = {
         showModelExamples: true

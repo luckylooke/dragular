@@ -8,7 +8,7 @@ var examplesAppModule = require('../examplesApp');
 */
 
 examplesAppModule
-  .controller('Example7', ['$element', 'dragularService', function TodoCtrl($element, dragularService) {
+  .controller('CustomClasses', ['$element', 'dragularService', function TodoCtrl($element, dragularService) {
     dragularService($element.children(), {
       classes: {
         mirror: 'custom-green-mirror'

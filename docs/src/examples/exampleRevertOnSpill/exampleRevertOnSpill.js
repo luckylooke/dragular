@@ -8,7 +8,7 @@ var examplesAppModule = require('../examplesApp');
 */
 
 examplesAppModule
-  .controller('Example4', ['$element', 'dragularService', function TodoCtrl($element, dragularService) {
+  .controller('RevertOnSpill', ['$element', 'dragularService', function TodoCtrl($element, dragularService) {
     dragularService($element.children(), {
       revertOnSpill: true
     });
