@@ -37,6 +37,7 @@ var config = {
     port: '3000',
     server: './docs'
   },
+  // Predefined browserify configs to keep tasks DRY
   browserify: {
     dragular: {
       entryPoint: './src/dragularModule.js',
@@ -49,9 +50,15 @@ var config = {
       dest: './docs/dist'
     }
   },
+  // A flag attribute to switch modes.
   isProd: false
 };
 
+/*
+* browserifyDefaults stores current browserify settings (like entry point or
+* output directory). This metadata is used to configure the scripts compilation
+* process.
+*/
 var browserifyDefaults = config.browserify.dragular;
 
 function handleErrors(err) {
@@ -59,6 +66,9 @@ function handleErrors(err) {
   this.emit('end');
 }
 
+/*
+* See http://blog.avisi.nl/2014/04/25/how-to-keep-a-fast-build-with-browserify-and-reactjs/
+*/
 function buildScript() {
 
   var bundler = browserify({
@@ -75,6 +85,7 @@ function buildScript() {
     ngAnnotate
   ];
 
+  // Watch files for changes and only rebuilds what it needs to
   if (!config.isProd) {
     bundler = watchify(bundler);
     bundler.on('update', function() {
@@ -82,6 +93,7 @@ function buildScript() {
     });
   }
 
+  // Apply browserify transformations
   transforms.forEach(function(transform) {
     bundler.transform(transform);
   });
@@ -175,6 +187,10 @@ gulp.task('serve', function () {
   });
 });
 
+/*
+* Concatenate and register templates in the $templateCache. The resulting file
+* (templates.js) is placed inside the directory specified in config.docs.src.
+*/
 gulp.task('templates:docs', function() {
 
   return gulp.src(config.docs.templates)
@@ -185,6 +201,9 @@ gulp.task('templates:docs', function() {
    .pipe(gulp.dest(config.docs.src));
 });
 
+/*
+* Watch files for changes
+*/
 gulp.task('watch', ['serve'], function() {
   gulp.watch(config.dragular.styles,  ['styles']);
 });
@@ -194,6 +213,10 @@ gulp.task('watch:docs', ['serve'], function() {
   gulp.watch(config.docs.templates,  ['templates:docs']);
 });
 
+/*
+* Launch browserSync server, watch & automatically refresh connected browsers
+* on changes, generate non-minified but concatenated output.
+*/
 gulp.task('dev', function() {
   config.isProd = false;
   browserifyDefaults = config.browserify.dragular;
@@ -208,6 +231,9 @@ gulp.task('dev:docs', function() {
   sequence(['templates:docs'], ['browserify', 'styles:docs'], 'watch:docs');
 });
 
+/*
+* Generate production ready minified and concantenated output.
+*/
 gulp.task('build', function() {
   config.isProd = true;
   browserifyDefaults = config.browserify.dragular;
@@ -223,6 +249,9 @@ gulp.task('build:docs', function() {
   sequence(['browserify', 'styles']);
 });
 
+/*
+* Publish code to GitHub pages.
+*/
 gulp.task('deploy:docs', function() {
   return gulp.src('./docs/**/*')
     .pipe(ghPages());
