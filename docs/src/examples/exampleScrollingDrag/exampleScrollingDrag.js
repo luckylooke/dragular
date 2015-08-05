@@ -8,6 +8,6 @@ var examplesAppModule = require('../examplesApp');
 */
 
 examplesAppModule
-  .controller('Example16', ['$element', 'dragularService', function TodoCtrl($element, dragularService) {
+  .controller('ScrollingDrag', ['$element', 'dragularService', function TodoCtrl($element, dragularService) {
     dragularService($element.children());
   }]);

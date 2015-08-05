@@ -11,20 +11,27 @@
 * @ngInject
 */
 
-dragularModule.directive('dragular', ['dragularService', function(dragularService) {
+dragularModule.directive('dragular', ['$parse', 'dragularService', function($parse, dragularService) {
   return {
     restrict: 'A',
     link: function($scope, iElm, iAttrs) {
-      dragularService(iElm[0], $scope[iAttrs.dragular || 'undefined'] || tryJson(iAttrs.dragular));
+
+      var options = $scope[iAttrs.dragular] || tryJson(iAttrs.dragular);
 
       function tryJson(json) {
-        try {
+        try { // I dont like try catch solutions but I havent find sattisfying way of chcecking json validity.
           return JSON.parse(json);
         } catch (e) {
-          console.log(e, 'Dragular: not valid JSON for options!', iElm);
           return undefined;
         }
       }
+
+      if(options && options.containersModel && typeof options.containersModel === 'string'){
+        var parsedExpFn = $parse(options.containersModel);
+        options.containersModel = parsedExpFn($scope);
+      }
+
+      dragularService(iElm[0], options);
     }
   };
 }])

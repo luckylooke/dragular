@@ -8,7 +8,7 @@ var examplesAppModule = require('../examplesApp');
 */
 
 examplesAppModule
-  .controller('Example14', ['$scope', '$element', 'dragularService', function TodoCtrl($scope, $element, dragularService) {
+  .controller('NgRepeat', ['$scope', '$element', 'dragularService', function TodoCtrl($scope, $element, dragularService) {
     dragularService($element.children());
     $scope.items = [{
       content: 'Try to add or remove some elements (click on +- buttons), you will see that it is not problem for dragular.'

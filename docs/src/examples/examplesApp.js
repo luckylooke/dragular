@@ -17,9 +17,15 @@ module.exports = angular.module('examplesApp', ['dragularModule', 'templates']).
     $scope.examplesList = [{
         template: 'exampleBasic/exampleBasic.html',
         title: 'Basic'
+    },{
+        template: 'exampleBasicWithModel/exampleBasicWithModel.html',
+        title: 'Basic - with model'
     }, {
         template: 'exampleDirective/exampleDirective.html',
         title: 'Directive'
+    }, {
+        template: 'exampleDirectiveWithModel/exampleDirectiveWithModel.html',
+        title: 'Directive - with model'
     }, {
         template: 'exampleEvents/exampleEvents.html',
         title: 'Events'
@@ -32,6 +38,9 @@ module.exports = angular.module('examplesApp', ['dragularModule', 'templates']).
     }, {
         template: 'exampleCopy/exampleCopy.html',
         title: 'Copy'
+    }, {
+        template: 'exampleCopyWithModel/exampleCopyWithModel.html',
+        title: 'Copy - with model'
     }, {
         template: 'exampleHandle/exampleHandle.html',
         title: 'Handle'
@@ -64,11 +73,8 @@ module.exports = angular.module('examplesApp', ['dragularModule', 'templates']).
         title: 'Scrolling drag'
     }];
 
-    $scope.exampleTemplate = 'exampleCopy/exampleCopy.html';
-
-    $rootScope.globals = {
-        showModelExamples: true
-    };
+    // default template loaded first time
+    $scope.exampleTemplate = 'exampleBasic/exampleBasic.html';
 
     $scope.highlightCode = function () {
         if(document.getElementsByTagName('code').length){

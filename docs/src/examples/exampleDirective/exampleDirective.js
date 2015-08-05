@@ -4,15 +4,15 @@
 var examplesAppModule = require('../examplesApp');
 
 /**
-* @ngInject
-*/
+ * @ngInject
+ */
 
 examplesAppModule
-  .controller('Example8', ['$scope', 'dragularService', function TodoCtrl($scope) {
+  .controller('Directive', ['$scope', 'dragularService', function TodoCtrl($scope) {
     $scope.dragularOptions = {
       classes: {
         mirror: 'custom-green-mirror'
       },
-      nameSpace: 'common' // just connecting left and right container
+      nameSpace: 'same' // just connecting left and right container
     };
   }]);

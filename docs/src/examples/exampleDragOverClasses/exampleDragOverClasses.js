@@ -8,7 +8,7 @@ var examplesAppModule = require('../examplesApp');
 */
 
 examplesAppModule
- .controller('Example10', ['$element', 'dragularService', function TodoCtrl($element, dragularService) {
+ .controller('DragOverClasses', ['$element', 'dragularService', function TodoCtrl($element, dragularService) {
     dragularService([$element.children()[0], $element.children()[2]], {
       nameSpace: 'apples',
       dragOverClasses: true
