@@ -34,13 +34,11 @@ Have you ever wanted a drag and drop library that just works? That actually unde
 
 # Todo
 
+- gh-pages as mixed api and examples
+- example for delay
 - o.isContainer in _isContainer (fn o.isContainerGetModel(containerElm))
 - solve mixing with and without model containers
-- gh-pages as mixed api and examples
-- example delay
 - remove npm workflow
-- replace timeout timer with $timeout
-- debouncing functionality to prevent flickering
 - support selectors in service (#2)
 
 # Features
