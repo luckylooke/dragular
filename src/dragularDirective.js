@@ -11,7 +11,7 @@
 * @ngInject
 */
 
-dragularModule.directive('dragular', ['$parse', 'dragularService', function($parse, dragularService) {
+dragularModule.directive('dragular', ['dragularService', function(dragularService) {
   return {
     restrict: 'A',
     link: function($scope, iElm, iAttrs) {
@@ -27,8 +27,7 @@ dragularModule.directive('dragular', ['$parse', 'dragularService', function($par
       }
 
       if(options && options.containersModel && typeof options.containersModel === 'string'){
-        var parsedExpFn = $parse(options.containersModel);
-        options.containersModel = parsedExpFn($scope);
+        options.containersModel = $scope.$eval(options.containersModel);
       }
 
       dragularService(iElm[0], options);
