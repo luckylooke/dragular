@@ -66,8 +66,14 @@ module.exports = angular.module('examplesApp', ['dragularModule', 'templates']).
         template: 'exampleNgRepeat/exampleNgRepeat.html',
         title: 'ngRepeat'
     }, {
+        template: 'exampleNgRepeatWithModel/exampleNgRepeatWithModel.html',
+        title: 'ngRepeat - with model'
+    }, {
         template: 'exampleNestedNgRepeat/exampleNestedNgRepeat.html',
         title: 'Nested ngRepead'
+    }, {
+        template: 'exampleNestedNgRepeatWithModel/exampleNestedNgRepeatWithModel.html',
+        title: 'Nested ngRepead - with model'
     }, {
         template: 'exampleScrollingDrag/exampleScrollingDrag.html',
         title: 'Scrolling drag'
