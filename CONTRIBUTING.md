@@ -29,14 +29,33 @@ To take advantage of our npm build script and jshint config it will be easiest f
 
 You can download node.js from [nodejs.org][3].
 
-After that you can clone the repository and run `npm i` inside the cloned folder. This will install dependencies necessary for building the project. Once that is ready,
-make your changes and submit a Pull Request:
+After that you can clone the repository and run `npm i` inside the cloned folder. This will install dependencies necessary for building the project. For development workflow automation dragular uses `gulp >= 3.9.0`. Before starting development, make sure that `gulp` is installed on your machine globally: `npm i -g gulp`.
+
+###Developing
+
+There are several gulp tasks that are used for generating different builds:
+
+- `gulp dev` - Serves files with BrowserSync server, watches & automatically refreshes connected browsers on changes, generates non-minified but concatenated styles & scripts from the dragular source.
+- `gulp dev:docs` - Does exactly the same as `gulp dev`, except it works with the documentation source.
+- `gulp build` - Concatenates and minifies dragular source files.
+- `gulp build:docs` - Concatenates and minifies documentation source files.
+
+###Linting
+
+- `gulp lint` & `gulp lint:docs` - Lint JavaScript files.
+
+###Making a pull request
+
+Once that is ready, make your changes and submit a Pull Request:
 
 - **Send Pull Requests to the `dev` branch.** All Pull Requests must be sent to the `dev` branch, `master` is the latest release and PRs to that branch will be closed.
 
 - **Ensure changes are jshint validated.** Our JSHint configuration file is provided in the repository and you should check against it before submitting.
 
 - **Only commit relevant changes.** Don't include changes that are not directly relevant to the fix you are making. The more focused a PR is, the faster it will get attention and be merged. Extra files changing only whitespace or trash files will likely get your PR closed.
+
+
+Dependencies for building from source and running tests:
 
 
 ##Coding style preferences are not contributions
