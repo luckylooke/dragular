@@ -26,8 +26,8 @@
     </div>
   </div>
   <pre>
-        <code>
-  // HTML
+    <code>
+&lt;!-- HTML --&gt;
 &lt;div ng-controller=&quot;NestedNgRepeatWithModel&quot;&gt;
   &lt;div class='container'&gt;
     &lt;div ng-repeat=&quot;item in items&quot; class='row'&gt;
@@ -38,10 +38,10 @@
     &lt;/div&gt;
   &lt;/div&gt;
 &lt;/div&gt;
-        </code>
-      </pre>
+    </code>
+  </pre>
   <pre>
-        <code>
+    <code>
   // CSS
 
   .row {
@@ -59,10 +59,10 @@
     padding: 10px;
     background-color: rgba(0, 0, 0, 0.2);
   }
-        </code>
-      </pre>
+    </code>
+  </pre>
   <pre>
-        <code>
+    <code>
   // JS
 controller('NestedNgRepeatWithModel', ['$timeout', '$scope', '$element', 'dragularService', function TodoCtrl($timeout, $scope, $element, dragularService) {
     $timeout(function() { // timeount due to nested ngRepeat to be ready
@@ -128,6 +128,6 @@ controller('NestedNgRepeatWithModel', ['$timeout', '$scope', '$element', 'dragul
       }]
     }];
   }])
-        </code>
-      </pre>
+    </code>
+  </pre>
 </div>
