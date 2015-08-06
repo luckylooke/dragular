@@ -28,6 +28,7 @@ var config = {
   },
   docs: {
     src: './docs/src/examples',
+    index: './docs/index.html',
     scripts: './docs/src/examples/**/*.js',
     styles: './docs/src/**/*.css',
     templates: './docs/src/examples/**/*.html',
@@ -194,11 +195,11 @@ gulp.task('serve', function () {
 gulp.task('templates:docs', function() {
 
   return gulp.src(config.docs.templates)
-   .pipe(templateCache({
-     moduleSystem: 'Browserify',
-     standalone: true,
-   }))
-   .pipe(gulp.dest(config.docs.src));
+    .pipe(templateCache({
+      moduleSystem: 'Browserify',
+      standalone: true,
+    }))
+    .pipe(gulp.dest(config.docs.src));
 });
 
 /*
@@ -211,6 +212,7 @@ gulp.task('watch', ['serve'], function() {
 gulp.task('watch:docs', ['serve'], function() {
   gulp.watch(config.docs.styles,  ['styles:docs']);
   gulp.watch(config.docs.templates,  ['templates:docs']);
+  gulp.watch(config.docs.index, browserSync.reload);
 });
 
 /*
