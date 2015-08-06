@@ -1,4 +1,4 @@
-body {
+/*body {
   background-color: #2A8C94;
   margin: 0 auto;
   max-width: 760px;
@@ -113,7 +113,7 @@ button:hover {
 }
 /* dragula-specific example page styles */
 
-.wrapper {
+/*.wrapper {
   display: table;
 }
 
@@ -153,7 +153,7 @@ button:hover {
  * you're better off giving the draggable elements a unique class and styling that directly!
  */
 
-.container div,
+/*.container div,
 .gu-mirror {
   margin: 10px;
   padding: 10px;
@@ -247,4 +247,68 @@ div.limitBox {
 
 .tableRow{
   display: table-row;
+}*/
+
+
+
+/* OFF CANVAS TEMPLATE CSS */
+
+/*
+ * Style tweaks
+ * --------------------------------------------------
+ */
+html,
+body {
+  overflow-x: hidden; /* Prevent scroll on narrow devices */
+}
+body {
+  padding-top: 70px;
+}
+footer {
+  padding: 30px 0;
+}
+
+/*
+ * Off Canvas
+ * --------------------------------------------------
+ */
+@media screen and (max-width: 767px) {
+  .row-offcanvas {
+    position: relative;
+    -webkit-transition: all .25s ease-out;
+         -o-transition: all .25s ease-out;
+            transition: all .25s ease-out;
+  }
+
+  .row-offcanvas-right {
+    right: 0;
+  }
+
+  .row-offcanvas-left {
+    left: 0;
+  }
+
+  .row-offcanvas-right
+  .sidebar-offcanvas {
+    right: -50%; /* 6 columns */
+  }
+
+  .row-offcanvas-left
+  .sidebar-offcanvas {
+    left: -50%; /* 6 columns */
+  }
+
+  .row-offcanvas-right.active {
+    right: 50%; /* 6 columns */
+  }
+
+  .row-offcanvas-left.active {
+    left: 50%; /* 6 columns */
+  }
+
+  .sidebar-offcanvas {
+    position: absolute !important;
+    top: 0;
+    width: 50%; /* 6 columns */
+  }
 }
