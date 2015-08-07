@@ -3,19 +3,19 @@
   <label for='hy'>Same as custom classes example, but showing use of directive.</label>
   <div class='wrapper' ng-controller="DirectiveModel">
     <div class='tableRow'>
-      <div class='container' dragular="dragularOptions">
+      <div class='containerVertical' dragular="dragularOptions">
         <div ng-repeat="item in items1">{{item.content}}</div>
       </div>
-      <div class='container' dragular='{"containersModel":"items2","classes":{"mirror":"custom-green-mirror"},"nameSpace":"common"}'>
+      <div class='containerVertical' dragular='{"containersModel":"items2","classes":{"mirror":"custom-green-mirror"},"nameSpace":"common"}'>
         <div ng-repeat="item in items2">{{item.content}}</div>
       </div>
     </div>
     <div class="tableRow">
-      <div class="container">
+      <div class='containerVertical'>
         <div>Items1:
           <br/>{{items1 | json}}</div>
       </div>
-      <div class="container">
+      <div class='containerVertical'>
         <div>Items2:
           <br/>{{items2 | json}}</div>
       </div>
@@ -56,10 +56,10 @@
         <code>
 &lt;!-- HTML --&gt;
  &lt;div class='wrapper' ng-controller=&quot;DirectiveModel&quot;&gt;
-  &lt;div class='container' dragular=&quot;dragularOptions&quot;&gt;
+  &lt;div class='containerVertical' dragular=&quot;dragularOptions&quot;&gt;
     &lt;div ng-repeat=&quot;item in items1&quot;&gt;{{item.content}}&lt;/div&gt;
   &lt;/div&gt;
-  &lt;div class='container' dragular='{&quot;containersModel&quot;:&quot;items2&quot;,&quot;classes&quot;:{&quot;mirror&quot;:&quot;custom-green-mirror&quot;},&quot;nameSpace&quot;:&quot;common&quot;}'&gt;
+  &lt;div class='containerVertical' dragular='{&quot;containersModel&quot;:&quot;items2&quot;,&quot;classes&quot;:{&quot;mirror&quot;:&quot;custom-green-mirror&quot;},&quot;nameSpace&quot;:&quot;common&quot;}'&gt;
     &lt;div ng-repeat=&quot;item in items2&quot;&gt;{{item.content}}&lt;/div&gt;
   &lt;/div&gt;
 &lt;/div&gt;

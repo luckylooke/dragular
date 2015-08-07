@@ -16,18 +16,22 @@ examplesAppModule
         url: '/home',
         templateUrl: 'partials/partial-home.html'
       })
-      .state('api', {
-        url: '/api',
-        templateUrl: 'partials/partial-api.html'
+      .state('docs', {
+        url: '/docs',
+        templateUrl: 'partials/partial-docs.html',
+        controller: function ($state) {
+          // go to install notes by default
+          $state.go('docs.detail', {link: 'docsInstall'});
+        }
       })
-      .state('api.detail', {
+      .state('docs.detail', {
         url: '/:link',
         templateUrl: function($stateParams) {
           return $stateParams.link + '/' + $stateParams.link + '.html';
         }
       })
-      .state('contact', {
-        url: '/contact',
-        templateUrl: 'partials/partial-contact.html'
+      .state('contribute', {
+        url: '/contribute',
+        templateUrl: 'partials/partial-contribute.html'
       });
   });

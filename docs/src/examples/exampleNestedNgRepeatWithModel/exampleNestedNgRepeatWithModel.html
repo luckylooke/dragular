@@ -7,17 +7,17 @@
   </label>
   <div ng-controller="NestedNgRepeatWithModel">
     <div class='tableRow'>
-      <div class='container'>
-        <div ng-repeat="item in items" class='row'>
+      <div class='containerVertical'>
+        <div ng-repeat="item in items" class='exampleRow'>
           <div class="row-handle">Row {{::$index}}</div>
-          <div class="row cell containerNested">
-            <div ng-repeat="item in item.items" class="cell">{{item.content}}</div>
+          <div class="exampleRow exampleCell containerNested">
+            <div ng-repeat="item in item.items" class="exampleCell">{{item.content}}</div>
           </div>
         </div>
       </div>
     </div>
     <div class="tableRow">
-      <div class="container">
+      <div class='containerVertical'>
         <pre>
             <div>Items:
               <br/>{{items | json}}</div>
@@ -29,11 +29,11 @@
     <code>
 &lt;!-- HTML --&gt;
 &lt;div ng-controller=&quot;NestedNgRepeatWithModel&quot;&gt;
-  &lt;div class='container'&gt;
-    &lt;div ng-repeat=&quot;item in items&quot; class='row'&gt;
+  &lt;div class='containerVertical'&gt;
+    &lt;div ng-repeat=&quot;item in items&quot; class='exampleRow'&gt;
       &lt;div class=&quot;row-handle&quot;&gt;Row {{::$index}}&lt;/div&gt;
-      &lt;div class=&quot;row cell containerNested&quot;&gt;
-        &lt;div ng-repeat=&quot;item in item.items&quot; class=&quot;cell&quot;&gt;{{item.content}}&lt;/div&gt;
+      &lt;div class=&quot;exampleRow exampleCell containerNested&quot;&gt;
+        &lt;div ng-repeat=&quot;item in item.items&quot; class=&quot;exampleCell&quot;&gt;{{item.content}}&lt;/div&gt;
       &lt;/div&gt;
     &lt;/div&gt;
   &lt;/div&gt;
@@ -44,20 +44,24 @@
     <code>
   // CSS
 
-  .row {
+  .exampleRow {
     display: flex;
     flex-direction: row;
   }
 
-  .cell {
+  .exampleCell {
     flex-grow: 1;
   }
 
-  .row,
-  .cell {
+  .exampleRow,
+  .exampleCell {
     margin: 10px;
     padding: 10px;
     background-color: rgba(0, 0, 0, 0.2);
+    cursor: move;
+    cursor: grab;
+    cursor: -moz-grab;
+    cursor: -webkit-grab;
   }
     </code>
   </pre>

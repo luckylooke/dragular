@@ -6,9 +6,9 @@
         <hr/>
     </label>
     <div ng-controller="NestedNgRepeat">
-        <div ng-repeat="item in items" class='row'>
+        <div ng-repeat="item in items" class='exampleRow'>
             <div class="row-handle">Row {{$index}}</div>
-            <div ng-repeat="item in item.items" class="cell">{{item.content}}</div>
+            <div ng-repeat="item in item.items" class="exampleCell">{{item.content}}</div>
         </div>
     </div>
     <pre>
@@ -16,9 +16,9 @@
   // HTML
 
   &lt;div ng-controller=&quot;Example15&quot;&gt;
-    &lt;div ng-repeat=&quot;item in items&quot; class='row'&gt;
+    &lt;div ng-repeat=&quot;item in items&quot; class='exampleRow'&gt;
       &lt;div class=&quot;row-handle&quot;&gt;Row {{$index}}&lt;/div&gt;
-      &lt;div ng-repeat=&quot;item in item.items&quot; class=&quot;cell&quot;&gt;{{item.content}}&lt;/div&gt;
+      &lt;div ng-repeat=&quot;item in item.items&quot; class=&quot;exampleCell&quot;&gt;{{item.content}}&lt;/div&gt;
     &lt;/div&gt;
   &lt;/div&gt;
         </code>
@@ -27,20 +27,24 @@
         <code>
   // CSS
 
-  .row {
+  .exampleRow {
     display: flex;
     flex-direction: row;
   }
 
-  .cell {
+  .exampleCell {
     flex-grow: 1;
   }
 
-  .row,
-  .cell {
+  .exampleRow,
+  .exampleCell {
     margin: 10px;
     padding: 10px;
     background-color: rgba(0, 0, 0, 0.2);
+    cursor: move;
+    cursor: grab;
+    cursor: -moz-grab;
+    cursor: -webkit-grab;
   }
         </code>
       </pre>

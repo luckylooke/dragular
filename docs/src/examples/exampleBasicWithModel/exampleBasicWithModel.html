@@ -3,21 +3,21 @@
   <label for='hy'>Move stuff between these two containers. Note how the stuff gets inserted near the mouse pointer? Great stuff.</label>
   <div class='wrapper' ng-controller="BasicModel">
     <div class='tableRow'>
-      <div class='container'>
+      <div class='containerVertical'>
         <div ng-repeat="item in items1">{{item.content}}</div>
       </div>
-      <div class='container'>
+      <div class='containerVertical'>
         <div ng-repeat="item in items2">{{item.content}}</div>
       </div>
     </div>
     <div class="tableRow">
-      <div class="container">
-        <div>Items1:
-          <br/>{{items1 | json}}</div>
+      <div class='containerVertical'>
+        <pre>Items1:
+          <br/>{{items1 | json}}</pre>
       </div>
-      <div class="container">
-        <div>Items2:
-          <br/>{{items2 | json}}</div>
+      <div class='containerVertical'>
+        <pre>Items2:
+          <br/>{{items2 | json}}</pre>
       </div>
     </div>
   </div>
@@ -53,10 +53,10 @@
 &lt;!-- HTML --&gt;
 &lt;div class='wrapper' ng-controller=&quot;Basic&quot;
     &lt;div class='tableRow'&gt;
-        &lt;div class='container'&gt;
+        &lt;div class='containerVertical'&gt;
             &lt;div ng-repeat=&quot;item in items1&quot;&gt;{{item.content}}&lt;/div&gt;
         &lt;/div&gt;
-        &lt;div class='container'&gt;
+        &lt;div class='containerVertical'&gt;
             &lt;div ng-repeat=&quot;item in items2&quot;&gt;{{item.content}}&lt;/div&gt;
         &lt;/div&gt;
     &lt;/div&gt;
