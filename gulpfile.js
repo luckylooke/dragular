@@ -170,7 +170,7 @@ gulp.task('lint', function() {
 
 gulp.task('lint:docs', function() {
 
-  return gulp.src(config.docs.scripts)
+  return gulp.src([config.docs.scripts, '!./docs/src/examples/templates.js'])
     .pipe(jshint())
     .pipe(jshint.reporter('jshint-stylish'));
 });
