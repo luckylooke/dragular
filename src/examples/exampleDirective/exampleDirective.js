@@ -1,4 +1,3 @@
-/* global angular */
 'use strict';
 
 var examplesAppModule = require('../examplesApp');
@@ -8,7 +7,7 @@ var examplesAppModule = require('../examplesApp');
  */
 
 examplesAppModule
-  .controller('Directive', ['$scope', 'dragularService', function TodoCtrl($scope) {
+  .controller('Directive', ['$scope', function DirectiveCtrl($scope) {
     $scope.dragularOptions = {
       classes: {
         mirror: 'custom-green-mirror'

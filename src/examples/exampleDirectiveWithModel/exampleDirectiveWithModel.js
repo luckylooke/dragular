@@ -1,4 +1,3 @@
-/* global angular */
 'use strict';
 
 var examplesAppModule = require('../examplesApp');
@@ -8,7 +7,7 @@ var examplesAppModule = require('../examplesApp');
  */
 
 examplesAppModule
-  .controller('DirectiveModel', ['$scope', '$element', 'dragularService', function TodoCtrl($scope, $element, dragularService) {
+  .controller('DirectiveModel', ['$scope', function TodoCtrl($scope) {
     $scope.items1 = [{
       content: 'Move me, and make copy on drop.'
     }, {

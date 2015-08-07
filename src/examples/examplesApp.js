@@ -1,4 +1,4 @@
-/* global angular */
+/* global angular, hljs */
 'use strict';
 
 // var angular = require('angular');
@@ -13,7 +13,7 @@ require('./templates');
  *  DEMO app for dragular https://github.com/luckylooke/dragular
  */
 
-module.exports = angular.module('examplesApp', ['dragularModule', 'templates', 'ui.router']).controller('ExAppCtrl', ['$scope', '$rootScope', function($scope, $rootScope) {
+module.exports = angular.module('examplesApp', ['dragularModule', 'templates', 'ui.router']).controller('ExAppCtrl', ['$scope', function($scope) {
     $scope.examplesList = [{
         template: 'exampleBasic/exampleBasic.html',
         link: 'exampleBasic',
@@ -108,14 +108,14 @@ module.exports = angular.module('examplesApp', ['dragularModule', 'templates', '
             var codeBlocks = document.getElementsByTagName('code');
             for (var i = codeBlocks.length - 1; i >= 0; i--) {
                 hljs.highlightBlock(codeBlocks[i]);
-            };
+            }
         }
-    }
+    };
 
     var rowOffcanvas = angular.element(document.getElementById('rowOffcanvas'));
     $scope.toggleSidebar = function toggleSidebar () {
         rowOffcanvas.toggleClass('active');
-    }
+    };
 
 }]);
 

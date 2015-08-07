@@ -1,4 +1,3 @@
-/* global angular */
 'use strict';
 
 var examplesAppModule = require('../examplesApp');
@@ -14,4 +13,4 @@ examplesAppModule
       boundingBox: boundingBox,
       lockY: true
     });
-  }])
+  }]);
