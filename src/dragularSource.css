@@ -2,6 +2,7 @@
   position: fixed !important;
   margin: 0 !important;
   width: z-index 9999 !important;
+  opacity: 0.8;
 }
 
 .gu-hide {
@@ -9,16 +10,9 @@
 }
 
 .gu-unselectable {
-  -webkit-user-select: none !important;
-  -moz-user-select: none !important;
-  -ms-user-select: none !important;
   user-select: none !important;
 }
 
 .gu-transit {
   opacity: 0.2;
-}
-
-.gu-mirror {
-  opacity: 0.8;
 }
