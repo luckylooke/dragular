@@ -1,3 +1,7 @@
+# 2.0.1 Lightning
+
+- fixed forgoten lint errors
+
 # 2.0.0 Aloha
 
 - ngRepeat can be synced with provided model
