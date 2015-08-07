@@ -3,19 +3,19 @@
   <label for='hy'>Copying stuff is great too.</label>
   <div class='wrapper' ng-controller="CopyModel">
     <div class='tableRow'>
-      <div class='container'>
+      <div class='containerVertical'>
         <div ng-repeat="item in items1">{{item.content}}</div>
       </div>
-      <div class='container'>
+      <div class='containerVertical'>
         <div ng-repeat="item in items2">{{item.content}}</div>
       </div>
     </div>
     <div class="tableRow">
-      <div class="container">
+      <div class='containerVertical'>
         <div>Items1:
           <br/>{{items1 | json}}</div>
       </div>
-      <div class="container">
+      <div class='containerVertical'>
         <div>Items2:
           <br/>{{items2 | json}}</div>
       </div>
@@ -54,10 +54,10 @@
 &lt;!-- HTML --&gt;
 &lt;div class='wrapper' ng-controller=&quot;CopyModel&quot; ng-show=&quot;globals.showModelExamples&quot;&gt;
     &lt;div class='tableRow'&gt;
-      &lt;div class='container'&gt;
+      &lt;div class='containerVertical'&gt;
         &lt;div ng-repeat=&quot;item in items1&quot;&gt;{{item.content}}&lt;/div&gt;
       &lt;/div&gt;
-      &lt;div class='container'&gt;
+      &lt;div class='containerVertical'&gt;
         &lt;div ng-repeat=&quot;item in items2&quot;&gt;{{item.content}}&lt;/div&gt;
       &lt;/div&gt;
     &lt;/div&gt;

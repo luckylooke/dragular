@@ -3,7 +3,7 @@
   <label for='hy'>Example of using ng-repeat with dragular and adding/removing items dynamicaly.</label>
   <div class='wrapper' ng-controller="NgRepeatWithModel">
     <div class='tableRow'>
-      <div class='container'>
+      <div class='containerVertical'>
         <div ng-repeat="item in items">
           {{item.content}}
           <button class='cursorDefault' ng-click="addItem()">+</button>
@@ -12,7 +12,7 @@
       </div>
     </div>
     <div class="tableRow">
-      <div class="container">
+      <div class='containerVertical'>
         <div>Items:
           <br/>{{items | json}}</div>
       </div>
@@ -22,7 +22,7 @@
     <code>
   // HTML:
    &lt;div class='wrapper' ng-controller=&quot;NgRepeatWithModel&quot;&gt;
-      &lt;div class='container'&gt;
+      &lt;div class='containerVertical'&gt;
         &lt;div ng-repeat=&quot;item in items&quot;&gt;
           {{item.content}}
           &lt;button class='cursorDefault' ng-click=&quot;addItem()&quot;&gt;+&lt;/button&gt;
