@@ -1,4 +1,3 @@
-/* global angular */
 'use strict';
 
 var examplesAppModule = require('../examplesApp');
@@ -24,7 +23,7 @@ examplesAppModule
       // collect nested contianers
       for (var i = 0; i < parentContainers.length; i++) {
         nestedContainers.push(parentContainers.eq(i).children()[1]);
-      };
+      }
 
       dragularService(nestedContainers, {
         moves: function(el, container, handle) {
@@ -35,7 +34,7 @@ examplesAppModule
             containersModel = [];
           for (var i = 0; i < parent.length; i++) {
             containersModel.push(parent[i].items);
-          };
+          }
           return containersModel;
         })()
       });

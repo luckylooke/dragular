@@ -1,4 +1,3 @@
-/* global angular */
 'use strict';
 
 /**
@@ -33,4 +32,4 @@ dragularModule.directive('dragular', ['dragularService', function(dragularServic
       dragularService(iElm[0], options);
     }
   };
-}])
+}]);

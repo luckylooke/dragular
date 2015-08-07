@@ -113,23 +113,23 @@ dragularModule.factory('dragularService', ['$rootScope', '$timeout', function dr
       o.containersModel = Array.isArray(o.containersModel[0]) ? o.containersModel : [o.containersModel];
     }
 
+    function proceedNameSpaces(_containers, containersNameSpaced, nameSpace, initialContainers) {
+      if (!containersNameSpaced[nameSpace]) {
+        containersNameSpaced[nameSpace] = [];
+      }
+      Array.prototype.push.apply(containersNameSpaced[nameSpace], initialContainers);
+      _containers[nameSpace] = containersNameSpaced[nameSpace];
+    }
+
     // feed namespaced containers groups and optionaly shadow it by models
     if (o.nameSpace) {
       if (!Array.isArray(o.nameSpace)) {
         o.nameSpace = [o.nameSpace];
       }
-
-      function proceedNameSpaces(_containers, containersNameSpaced, nameSpace, initialContainers) {
-        if (!containersNameSpaced[nameSpace]) {
-          containersNameSpaced[nameSpace] = [];
-        }
-        Array.prototype.push.apply(containersNameSpaced[nameSpace], initialContainers);
-        _containers[nameSpace] = containersNameSpaced[nameSpace];
-      }
       o.nameSpace.forEach(function eachNameSpace(nameSpace) {
         proceedNameSpaces(_containers, containersNameSpaced, nameSpace, initialContainers);
         if (o.containersModel) {
-          proceedNameSpaces(_containersModel, containersNameSpacedModel, nameSpace, o.containersModel)
+          proceedNameSpaces(_containersModel, containersNameSpacedModel, nameSpace, o.containersModel);
         }
       });
       _isContainer = isContainerNameSpaced;
@@ -418,14 +418,15 @@ dragularModule.factory('dragularService', ['$rootScope', '$timeout', function dr
         return;
       }
       var item = _copy || _item,
-        parent = item.parentElement;
+        parent = item.parentElement,
+        itemModel;
 
       if (!o.containersModel) {
         if (parent) {
           parent.removeChild(item);
         }
       } else {
-        var itemModel = _copyModel || _itemModel;
+        itemModel = _copyModel || _itemModel;
         _targetModel.splice(_targetModel.indexOf(itemModel), 1);
       }
 
@@ -630,12 +631,8 @@ dragularModule.factory('dragularService', ['$rootScope', '$timeout', function dr
       }
 
       var reference,
-        immediate = getImmediateChild(dropTarget, elementBehindCursor);
-
-      // prepare models operations
-      if (o.containersModel) {
-        var referenceIndex;
-      }
+        immediate = getImmediateChild(dropTarget, elementBehindCursor),
+        referenceIndex;
 
       if (immediate !== null) {
         reference = getReference(dropTarget, immediate, _clientX, _clientY);
@@ -733,7 +730,7 @@ dragularModule.factory('dragularService', ['$rootScope', '$timeout', function dr
         _targetContainer.scrollTop += e.deltaY;
         e.stopPropagation();
         e.preventDefault();
-      };
+      }
     }
 
     function renderMirrorImage() {
@@ -859,7 +856,7 @@ dragularModule.factory('dragularService', ['$rootScope', '$timeout', function dr
       },
       $el = angular.element(el);
 
-    $el[op](touch[type], fn)
+    $el[op](touch[type], fn);
     $el[op](type, fn);
   }
 

@@ -396,6 +396,7 @@ footer {
   position: fixed !important;
   margin: 0 !important;
   width: z-index 9999 !important;
+  opacity: 0.8;
 }
 
 .gu-hide {
@@ -411,8 +412,4 @@ footer {
 
 .gu-transit {
   opacity: 0.2;
-}
-
-.gu-mirror {
-  opacity: 0.8;
 }
