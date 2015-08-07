@@ -1,4 +1,4 @@
-# 2.0.0
+# 2.0.0 Aloha
 
 - ngRepeat can be synced with provided model
 - gulp workflow (thanks to @alferov)
