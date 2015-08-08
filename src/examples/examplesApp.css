@@ -150,13 +150,6 @@ div.limitBox {
   cursor: -webkit-grab;
 }
 
-.heightLimit {
-  width: 100%;
-  display: block;
-  max-height: 300px;
-  overflow-y: auto;
-}
-
 .tableRow {
   display: table-row;
 }
