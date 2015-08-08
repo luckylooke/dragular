@@ -106,6 +106,8 @@ function buildScript() {
       .pipe(source(browserifyDefaults.bundleName))
       .pipe(buffer())
       .pipe(gulpif(config.isProd, sourcemaps.init({loadMaps: true})))
+      .pipe(jshint())
+      .pipe(jshint.reporter('jshint-stylish'))
       .pipe(gulpif(config.isProd, uglify({
         compress: { drop_console: true }
       })))
