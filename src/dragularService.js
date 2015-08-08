@@ -57,6 +57,9 @@ dragularModule.factory('dragularService', ['$rootScope', '$timeout', function dr
       _renderTimer, // timer for setTimeout renderMirrorImage
       _isContainer, // internal isContainer
       _targetContainer, // droppable container under drag item
+      _dragEnterEvent, // drag enter event fired on element behind cursor
+      _dragLeaveEvent, // drag leave event fired on element behind cursor
+      _lastElementBehindCursor, // last element behind cursor
       defaultClasses = {
         mirror: 'gu-mirror',
         hide: 'gu-hide',
@@ -144,6 +147,18 @@ dragularModule.factory('dragularService', ['$rootScope', '$timeout', function dr
 
     //register events
     events();
+
+    if (document.createEvent) {
+      _dragEnterEvent = document.createEvent('HTMLEvents');
+      _dragEnterEvent.initEvent('dragularenter', true, true);
+      _dragLeaveEvent = document.createEvent('HTMLEvents');
+      _dragLeaveEvent.initEvent('dragularleave', true, true);
+    } else {
+      _dragEnterEvent = document.createEventObject();
+      _dragEnterEvent.eventType = 'dragularenter';
+      _dragLeaveEvent = document.createEventObject();
+      _dragLeaveEvent.eventType = 'dragularleave';
+    }
 
     var drake = {
       addContainer: manipulateContainers('add'),
@@ -402,6 +417,10 @@ dragularModule.factory('dragularService', ['$rootScope', '$timeout', function dr
         rmClass(_lastOverElem, _lastOverClass);
         _lastOverElem = null;
       }
+
+      if (o.scope) {
+        o.scope.$emit('release', item, _source);
+      }
     }
 
     function drop(item, target) {
@@ -507,6 +526,7 @@ dragularModule.factory('dragularService', ['$rootScope', '$timeout', function dr
     // find valid drop container
     function findDropTarget(elementBehindCursor, clientX, clientY) {
       var target = elementBehindCursor;
+
       while (target && !accepted()) {
         target = target.parentElement;
       }
@@ -608,6 +628,14 @@ dragularModule.factory('dragularService', ['$rootScope', '$timeout', function dr
         elementBehindCursor = getElementBehindPoint(_mirror, _clientX, _clientY),
         dropTarget = findDropTarget(elementBehindCursor, _clientX, _clientY),
         changed = dropTarget !== null && dropTarget !== _lastDropTarget;
+
+        if (elementBehindCursor !== _lastElementBehindCursor) {
+          fireEvent(elementBehindCursor, _dragEnterEvent);
+          if (_lastElementBehindCursor) {
+            fireEvent(_lastElementBehindCursor, _dragLeaveEvent);
+          }
+          _lastElementBehindCursor = elementBehindCursor;
+        }
 
       if (changed || dropTarget === null) {
         if (o.scope) {
@@ -855,12 +883,13 @@ dragularModule.factory('dragularService', ['$rootScope', '$timeout', function dr
     var touch = {
         mouseup: 'touchend',
         mousedown: 'touchstart',
-        mousemove: 'touchmove',
-        wheel: 'wheel'
+        mousemove: 'touchmove'
       },
       $el = angular.element(el);
 
-    $el[op](touch[type], fn);
+    if (type !== 'wheel') {
+      $el[op](touch[type], fn);
+    }
     $el[op](type, fn);
   }
 
@@ -954,6 +983,14 @@ dragularModule.factory('dragularService', ['$rootScope', '$timeout', function dr
 
   function domIndexOf(child, parent) {
     return Array.prototype.indexOf.call(angular.element(parent).children(), child);
+  }
+
+  function fireEvent(target, e) {
+    if (target.dispatchEvent) {
+      target.dispatchEvent(e);
+    } else {
+      target.fireEvent("on" + e.eventType, e);
+    }
   }
 
 }]);
