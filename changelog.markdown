@@ -1,3 +1,9 @@
+# 2.1.0 Elder Scrolls
+
+- fixed scrolling while drag #14
+- added new events fired on elements behind cursor while dragging (dragularenter, dragularleave), could be used to add/remove classes
+- added new scope event 'release' when mouse button is released whatever ending it has (drop, cancel, revert..)
+
 # 2.0.1 Lightning
 
 - fixed forgoten lint errors
