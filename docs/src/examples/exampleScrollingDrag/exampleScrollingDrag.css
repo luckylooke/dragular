@@ -1,0 +1,6 @@
+.scrollingDrag {
+  width: 45%;
+  display: inline-block;
+  max-height: 300px;
+  overflow-y: auto;
+}

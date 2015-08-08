@@ -286,13 +286,6 @@ div.limitBox {
   cursor: -webkit-grab;
 }
 
-.heightLimit {
-  width: 100%;
-  display: block;
-  max-height: 300px;
-  overflow-y: auto;
-}
-
 .tableRow {
   display: table-row;
 }
@@ -392,6 +385,12 @@ footer {
   background-color: red;
 }
 
+.scrollingDrag {
+  width: 45%;
+  display: inline-block;
+  max-height: 300px;
+  overflow-y: auto;
+}
 .gu-mirror {
   position: fixed !important;
   margin: 0 !important;

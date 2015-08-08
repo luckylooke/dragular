@@ -727,9 +727,13 @@ dragularModule.factory('dragularService', ['$rootScope', '$timeout', function dr
 
     function scrollContainer(e) {
       if (_targetContainer) {
+        var before = _targetContainer.scrollTop;
         _targetContainer.scrollTop += e.deltaY;
-        e.stopPropagation();
-        e.preventDefault();
+        // block scroll of the document when container can be scrolled
+        if (before !== _targetContainer.scrollTop) {
+          e.stopPropagation();
+          e.preventDefault();
+        }
       }
     }
 
