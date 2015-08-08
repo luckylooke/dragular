@@ -32,14 +32,14 @@ examplesAppModule
       if (!speed) {
         speed = 20;
       }
-      angular.element(bar).on('dragularenter', function(e) {
+      angular.element(bar).on('dragularenter', function() {
         container.scrollTop += inc;
         timer = $interval(function moveScroll() {
           console.log('tick', bar, container, inc);
           container.scrollTop += inc;
         }, speed);
       });
-      angular.element(bar).on('dragularleave', function(e) {
+      angular.element(bar).on('dragularleave', function() {
         $interval.cancel(timer);
       });
     }
@@ -47,6 +47,6 @@ examplesAppModule
     // in case you release drag over bar
     $scope.$on('release', function stopScroll () {
     	$interval.cancel(timer);
-    })
+    });
 
   }]);

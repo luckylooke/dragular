@@ -989,7 +989,7 @@ dragularModule.factory('dragularService', ['$rootScope', '$timeout', function dr
     if (target.dispatchEvent) {
       target.dispatchEvent(e);
     } else {
-      target.fireEvent("on" + e.eventType, e);
+      target.fireEvent('on' + e.eventType, e);
     }
   }
 
