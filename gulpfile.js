@@ -193,7 +193,7 @@ gulp.task('serve', function () {
 * Concatenate and register templates in the $templateCache. The resulting file
 * (templates.js) is placed inside the directory specified in config.docs.src.
 */
-gulp.task('templates:docs', ['markdown'], function() {
+gulp.task('templates:docs', function() {
 
   return gulp.src(config.docs.templates)
     .pipe(templateCache({
@@ -214,6 +214,7 @@ gulp.task('watch:docs', ['serve'], function() {
   gulp.watch(config.docs.styles,  ['styles:docs']);
   gulp.watch(config.docs.templates,  ['templates:docs']);
   gulp.watch(config.docs.index, browserSync.reload);
+  gulp.watch(['./CONTRIBUTING.md', './readme.markdown'], ['markdown']);
 });
 
 /*
@@ -231,7 +232,7 @@ gulp.task('dev:docs', function() {
   config.isProd = false;
   browserifyDefaults = config.browserify.docs;
 
-  sequence('templates:docs', ['browserify', 'styles:docs'], 'watch:docs');
+  sequence('markdown', 'templates:docs', ['browserify', 'styles:docs'], 'watch:docs');
 });
 
 /*
@@ -248,8 +249,7 @@ gulp.task('build:docs', function() {
   config.isProd = true;
   browserifyDefaults = config.browserify.docs;
 
-  config.isProd = true;
-  sequence(['browserify', 'styles']);
+  sequence('markdown', 'templates:docs', ['browserify', 'styles']);
 });
 
 /*
@@ -264,6 +264,7 @@ gulp.task('deploy:docs', function() {
 * Compiles markdown to html.
 */
 gulp.task('markdown', function () {
+
   return gulp.src(['./CONTRIBUTING.md', './readme.markdown'])
     .pipe(markdown())
     .pipe(gulpif('**/CONTRIBUTING.html', rename({basename: 'partial-contribute'})))
