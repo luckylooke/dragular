@@ -19,6 +19,7 @@ var concat = require('gulp-concat');
 var ngAnnotate = require('browserify-ngannotate');
 var templateCache = require('gulp-angular-templatecache');
 var ghPages = require('gulp-gh-pages');
+var markdown = require('gulp-markdown');
 
 var config = {
   dragular: {
@@ -192,7 +193,7 @@ gulp.task('serve', function () {
 * Concatenate and register templates in the $templateCache. The resulting file
 * (templates.js) is placed inside the directory specified in config.docs.src.
 */
-gulp.task('templates:docs', function() {
+gulp.task('templates:docs', ['markdown'], function() {
 
   return gulp.src(config.docs.templates)
     .pipe(templateCache({
@@ -230,7 +231,7 @@ gulp.task('dev:docs', function() {
   config.isProd = false;
   browserifyDefaults = config.browserify.docs;
 
-  sequence(['templates:docs'], ['browserify', 'styles:docs'], 'watch:docs');
+  sequence('templates:docs', ['browserify', 'styles:docs'], 'watch:docs');
 });
 
 /*
@@ -257,4 +258,15 @@ gulp.task('build:docs', function() {
 gulp.task('deploy:docs', function() {
   return gulp.src('./docs/**/*')
     .pipe(ghPages());
+});
+
+/*
+* Compiles markdown to html.
+*/
+gulp.task('markdown', function () {
+  return gulp.src(['./CONTRIBUTING.md', './readme.markdown'])
+    .pipe(markdown())
+    .pipe(gulpif('**/CONTRIBUTING.html', rename({basename: 'partial-contribute'})))
+    .pipe(gulpif('**/readme.html', rename({ basename: 'partial-readme'})))
+    .pipe(gulp.dest(config.docs.src + '/partials'));
 });
