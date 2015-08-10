@@ -41,11 +41,13 @@ var config = {
   // Predefined browserify configs to keep tasks DRY
   browserify: {
     dragular: {
+      type: 'dragular',
       entryPoint: './src/dragularModule.js',
       bundleName: 'dragular.js',
       dest: './dist',
     },
     docs: {
+      type: 'docs',
       entryPoint: './docs/src/examples/examplesApp.js',
       bundleName: 'examples.js',
       dest: './docs/dist'
@@ -90,7 +92,7 @@ function buildScript() {
   if (!config.isProd) {
     bundler = watchify(bundler);
     bundler.on('update', function() {
-      rebundle();
+      lintAndRebundle();
     });
   }
 
@@ -120,7 +122,15 @@ function buildScript() {
       .pipe(browserSync.stream());
   }
 
-  return rebundle();
+  function lintAndRebundle() {
+    if (browserifyDefaults.type === 'dragular') {
+      return sequence('lint', rebundle);
+    }
+
+    return sequence('lint:docs', rebundle);
+  }
+
+  return lintAndRebundle();
 }
 
 gulp.task('browserify', function() {
@@ -247,7 +257,6 @@ gulp.task('build:docs', function() {
   config.isProd = true;
   browserifyDefaults = config.browserify.docs;
 
-  config.isProd = true;
   sequence(['browserify', 'styles']);
 });
 
