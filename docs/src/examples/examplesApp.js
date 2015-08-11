@@ -15,6 +15,10 @@ require('./templates');
 
 module.exports = angular.module('examplesApp', ['dragularModule', 'templates', 'ui.router']).controller('ExAppCtrl', ['$scope', function($scope) {
     $scope.examplesList = [{
+        template: 'docsInstall/docsInstall.html',
+        link: 'docsInstall',
+        title: 'Installation'
+    },{
         template: 'exampleBasic/exampleBasic.html',
         link: 'exampleBasic',
         title: 'Basic'
@@ -101,7 +105,7 @@ module.exports = angular.module('examplesApp', ['dragularModule', 'templates', '
     }];
 
     // default template loaded first time
-    $scope.exampleTemplate = 'exampleBasic/exampleBasic.html';
+    $scope.exampleTemplate = 'docsInstall/docsInstall.html';
 
     $scope.highlightCode = function () {
         if(document.getElementsByTagName('code').length){
