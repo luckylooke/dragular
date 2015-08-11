@@ -20,7 +20,7 @@ examplesAppModule
         templateUrl: 'partials/partial-docs.html',
         controller: function ($state) {
           // go to install notes by default
-          $state.go('docs.detail', {link: 'exampleScrollingDrag'});
+          $state.go('docs.detail', {link: 'docsInstall'});
         }
       })
       .state('docs.detail', {
