@@ -104,9 +104,6 @@ module.exports = angular.module('examplesApp', ['dragularModule', 'templates', '
         title: 'Scrolling drag'
     }];
 
-    // default template loaded first time
-    $scope.exampleTemplate = 'docsInstall/docsInstall.html';
-
     $scope.highlightCode = function () {
         if(document.getElementsByTagName('code').length){
             var codeBlocks = document.getElementsByTagName('code');
