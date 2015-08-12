@@ -77,7 +77,7 @@ function buildScript() {
 
   var bundler = browserify({
     entries: browserifyDefaults.entryPoint,
-    debug: true,
+    debug: false,
     cache: {},
     packageCache: {},
     fullPaths: false
