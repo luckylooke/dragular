@@ -164,6 +164,7 @@ dragularModule.factory('dragularService', ['$rootScope', '$timeout', function dr
       addContainer: manipulateContainers('add'),
       removeContainer: manipulateContainers('remove'),
       containers: _containers,
+      containersModel: _containersModel,
       start: start,
       end: end,
       cancel: cancel,
