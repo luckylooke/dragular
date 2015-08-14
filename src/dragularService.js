@@ -199,12 +199,17 @@ dragularModule.factory('dragularService', ['$rootScope', '$timeout', function dr
         var changes = Array.isArray(all) ? all : makeArray(all);
         changes.forEach(function forEachContainer(container) {
           if (o.nameSpace) {
-            angular.forEach(o.nameSpace, function addRemoveNamespaced(containers, nameSpace) {
+            angular.forEach(o.nameSpace, function addRemoveNamespaced(nameSpace) {
+              var index;
               if (op === 'add') {
                 _containers[nameSpace].push(container);
                 console.warn && console.warn('drake.addContainer is deprecated. please access drake.containers directly, instead');
               } else {
-                _containers[nameSpace].splice(_containers.indexOf(container), 1);
+                index = _containers[nameSpace].indexOf(container);
+                _containers[nameSpace].splice(index, 1);
+                if(o.containersModel){
+                   _containersModel[nameSpace].splice(index, 1);
+                }
                 console.warn && console.warn('drake.removeContainer is deprecated. please access drake.containers directly, instead');
               }
             });
@@ -246,7 +251,7 @@ dragularModule.factory('dragularService', ['$rootScope', '$timeout', function dr
 
     function destroy() {
       events(true);
-      drake.removeContainer(_containers);
+      drake.removeContainer(initialContainers);
       release({});
     }
 
