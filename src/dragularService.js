@@ -630,13 +630,13 @@ dragularModule.factory('dragularService', ['$rootScope', '$timeout', function dr
         dropTarget = findDropTarget(elementBehindCursor, _clientX, _clientY),
         changed = dropTarget !== null && dropTarget !== _lastDropTarget;
 
-        if (elementBehindCursor !== _lastElementBehindCursor) {
-          fireEvent(elementBehindCursor, _dragEnterEvent);
-          if (_lastElementBehindCursor) {
-            fireEvent(_lastElementBehindCursor, _dragLeaveEvent);
-          }
-          _lastElementBehindCursor = elementBehindCursor;
+      if (elementBehindCursor !== _lastElementBehindCursor) {
+        fireEvent(elementBehindCursor, _dragEnterEvent);
+        if (_lastElementBehindCursor) {
+          fireEvent(_lastElementBehindCursor, _dragLeaveEvent);
         }
+        _lastElementBehindCursor = elementBehindCursor;
+      }
 
       if (changed || dropTarget === null) {
         if (o.scope) {
@@ -653,8 +653,9 @@ dragularModule.factory('dragularService', ['$rootScope', '$timeout', function dr
         if (!o.containersModel && item.parentElement) {
           item.parentElement.removeChild(item);
         } else if (o.containersModel && _lastTargetModel.indexOf(_copyModel) !== -1) {
-          _lastTargetModel.splice(_lastTargetModel.indexOf(_copyModel), 1);
-          $rootScope.$applyAsync();
+          $rootScope.$applyAsync(function removeCopyFromLastContainer() {
+            _lastTargetModel.splice(_lastTargetModel.indexOf(_copyModel), 1);
+          });
         }
         return;
       }
@@ -690,8 +691,9 @@ dragularModule.factory('dragularService', ['$rootScope', '$timeout', function dr
           if (!o.containersModel) {
             item.parentElement.removeChild(item);
           } else {
-            _targetModel.splice(referenceIndex, 1);
-            $rootScope.$applyAsync();
+            $rootScope.$applyAsync(function removeOnSpillOrRemoveCopy() {
+              _targetModel.splice(referenceIndex, 1);
+            });
           }
         }
         return;
@@ -732,26 +734,27 @@ dragularModule.factory('dragularService', ['$rootScope', '$timeout', function dr
     }
 
     function moveInContainersModel(referenceIndex) {
-      if (_lastTargetModel === _targetModel) {
-        if (referenceIndex === null) {
-          referenceIndex = _targetModel.length;
+      $rootScope.$applyAsync(function applyMoveBetweenContainers() {
+        if (_lastTargetModel === _targetModel) {
+          if (referenceIndex === null) {
+            referenceIndex = _targetModel.length;
+          }
+          var index = referenceIndex > _currentIndex ? referenceIndex - 1 : referenceIndex;
+          _targetModel.splice(index, 0, _lastTargetModel.splice(_currentIndex, 1)[0]);
+          _currentIndex = index;
+        } else {
+          if (referenceIndex === null) {
+            referenceIndex = _targetModel.length - 1;
+          }
+          if (!o.copy || _lastTargetModel !== _sourceModel) { // dont remove original from source while copying
+            _lastTargetModel.splice(_currentIndex, 1);
+          }
+          if (!o.copy || _targetModel.indexOf(_copyModel) === -1) { // dont place copy twice in one drag
+            _targetModel.splice(referenceIndex, 0, _copyModel || _itemModel);
+            _currentIndex = referenceIndex;
+          }
         }
-        var index = referenceIndex > _currentIndex ? referenceIndex - 1 : referenceIndex;
-        _targetModel.splice(index, 0, _lastTargetModel.splice(_currentIndex, 1)[0]);
-        _currentIndex = index;
-      } else {
-        if (referenceIndex === null) {
-          referenceIndex = _targetModel.length - 1;
-        }
-        if (!o.copy || _lastTargetModel !== _sourceModel) { // dont remove original from source while copying
-          _lastTargetModel.splice(_currentIndex, 1);
-        }
-        if (!o.copy || _targetModel.indexOf(_copyModel) === -1) { // dont place copy twice in one drag
-          _targetModel.splice(referenceIndex, 0, _copyModel || _itemModel);
-          _currentIndex = referenceIndex;
-        }
-      }
-      $rootScope.$applyAsync();
+      });
     }
 
     function scrollContainer(e) {
