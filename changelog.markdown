@@ -1,3 +1,7 @@
+# 2.1.1 patch
+
+- fixing dragke.destroy()
+
 # 2.1.0 Elder Scrolls
 
 - fixed scrolling while drag #14
