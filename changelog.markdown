@@ -5,11 +5,13 @@
 - fixing mixed enviroment with containers with model and without ut
 
 ----------------------------------------------------------------------------------------------------------------
+# 2.1.2 Damn
 
+- fixing release (unminidied files had still 2.1.0 version)
 
 # 2.1.1 patch
 
-- fixing dragke.destroy()
+- fixing drake.destroy()
 
 # 2.1.0 Elder Scrolls
 
