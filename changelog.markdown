@@ -2,9 +2,14 @@
 
 - remove dragoverclasses (replacing example with one using dragularenter/leave events)
 - remove delay (merging mousedown and move condition to start drag from dragula)
+- options.isCopy function (allows conditional copy option)
 - fixing mixed enviroment with containers with model and without ut
 
 ----------------------------------------------------------------------------------------------------------------
+# 2.1.3 hotfix
+
+- fixing makeArray internal function which causes reversed arrays and so unexpected behaviour
+
 # 2.1.2 Damn
 
 - fixing release (unminidied files had still 2.1.0 version)
