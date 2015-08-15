@@ -1,3 +1,12 @@
+# Planned in 3.0.0
+
+- remove dragoverclasses (replacing example with one using dragularenter/leave events)
+- remove delay (merging mousedown and move condition to start drag from dragula)
+- fixing mixed enviroment with containers with model and without ut
+
+----------------------------------------------------------------------------------------------------------------
+
+
 # 2.1.1 patch
 
 - fixing dragke.destroy()
