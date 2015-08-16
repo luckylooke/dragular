@@ -182,10 +182,10 @@ dragularModule.factory('dragularService', ['$rootScope', '$timeout', function dr
       }
       if (all.length) { // is array-like
         var iAll = all.length,
-          newArray = [];
-        while (iAll) {
-          iAll--;
-          newArray.push(all[iAll]);
+          newArray = [],
+          i;
+        for (i = 0; i < iAll; i++) {
+          newArray.push(all[i]);
         }
         return newArray;
       } else { // is one element
@@ -207,8 +207,8 @@ dragularModule.factory('dragularService', ['$rootScope', '$timeout', function dr
               } else {
                 index = _containers[nameSpace].indexOf(container);
                 _containers[nameSpace].splice(index, 1);
-                if(o.containersModel){
-                   _containersModel[nameSpace].splice(index, 1);
+                if (o.containersModel) {
+                  _containersModel[nameSpace].splice(index, 1);
                 }
                 console.warn && console.warn('drake.removeContainer is deprecated. please access drake.containers directly, instead');
               }

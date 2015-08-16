@@ -1,15 +1,14 @@
-# Planned in 3.0.0
+# 2.1.3 hotfix
 
-- remove dragoverclasses (replacing example with one using dragularenter/leave events)
-- remove delay (merging mousedown and move condition to start drag from dragula)
-- fixing mixed enviroment with containers with model and without ut
+- fixing makeArray internal function which causes reversed arrays and so unexpected behaviour
 
-----------------------------------------------------------------------------------------------------------------
+# 2.1.2 Damn
 
+- fixing release (unminidied files had still 2.1.0 version)
 
 # 2.1.1 patch
 
-- fixing dragke.destroy()
+- fixing drake.destroy()
 
 # 2.1.0 Elder Scrolls
 
