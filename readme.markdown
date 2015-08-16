@@ -28,6 +28,7 @@ Have you ever wanted a drag and drop library that just works? That actually unde
 
 # Todo towards 3.0.0
 
+- updating models on drop
 - improving docs
 - example of clickable/dragable elements
 - example of interactions with dragging item

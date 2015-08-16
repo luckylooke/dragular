@@ -16,7 +16,7 @@ dragularModule.factory('dragularService', ['$rootScope', '$timeout', function dr
 
   var containersNameSpaced = {}, // name-spaced containers
     containersNameSpacedModel = {}, // name-spaced containers models
-    _cache = {}, // classes lookup cache
+    _classesCache = {}, // classes lookup cache
     _mirror; // mirror image
 
   return function(initialContainers, options) {
@@ -452,7 +452,9 @@ dragularModule.factory('dragularService', ['$rootScope', '$timeout', function dr
         }
       } else {
         itemModel = _copyModel || _itemModel;
-        _targetModel.splice(_targetModel.indexOf(itemModel), 1);
+        $rootScope.$applyAsync(function removeModel () {
+          _targetModel.splice(_targetModel.indexOf(itemModel), 1);
+        });
       }
 
       if (o.scope) {
@@ -659,6 +661,7 @@ dragularModule.factory('dragularService', ['$rootScope', '$timeout', function dr
           item.parentElement.removeChild(item);
         } else if (o.containersModel && _lastTargetModel.indexOf(_copyModel) !== -1) {
           $rootScope.$applyAsync(function removeCopyFromLastContainer() {
+            console.log(_lastTargetModel.indexOf(_copyModel), _currentIndex);
             _lastTargetModel.splice(_lastTargetModel.indexOf(_copyModel), 1);
           });
         }
@@ -695,7 +698,8 @@ dragularModule.factory('dragularService', ['$rootScope', '$timeout', function dr
           // remove item or copy of item
           if (!o.containersModel) {
             item.parentElement.removeChild(item);
-          } else {
+          } else if(_targetModel !== _sourceModel && _targetModel.indexOf(_copyModel || _itemModel)){
+            console.log('removeOnSpill', o.copy,  _targetModel !== _sourceModel,  _targetModel, _sourceModel);
             $rootScope.$applyAsync(function removeOnSpillOrRemoveCopy() {
               _targetModel.splice(referenceIndex, 1);
             });
@@ -931,11 +935,11 @@ dragularModule.factory('dragularService', ['$rootScope', '$timeout', function dr
   }
 
   function lookupClass(className) {
-    var cached = _cache[className];
+    var cached = _classesCache[className];
     if (cached) {
       cached.lastIndex = 0;
     } else {
-      _cache[className] = cached = new RegExp('(?:^|\\s)' + className + '(?:\\s|$)', 'g');
+      _classesCache[className] = cached = new RegExp('(?:^|\\s)' + className + '(?:\\s|$)', 'g');
     }
     return cached;
   }
