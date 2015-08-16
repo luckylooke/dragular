@@ -108,6 +108,7 @@ function buildScript() {
     return stream.on('error', handleErrors)
       .pipe(source(browserifyDefaults.bundleName))
       .pipe(buffer())
+      .pipe(gulpif(config.isProd, gulp.dest(browserifyDefaults.dest)))
       .pipe(gulpif(config.isProd, sourcemaps.init({loadMaps: true})))
       .pipe(gulpif(config.isProd, uglify({
         compress: { drop_console: true }
@@ -120,7 +121,7 @@ function buildScript() {
       }))
       .pipe(gulpif(config.isProd, sourcemaps.write('./')))
       .pipe(gulp.dest(browserifyDefaults.dest))
-      .pipe(browserSync.stream());
+      .pipe(gulpif(browserSync.active, browserSync.stream()));
   }
 
   function lintAndRebundle() {
@@ -146,6 +147,7 @@ gulp.task('styles', function() {
       cascade: false
     }))
     .pipe(concat('dragular.css'))
+    .pipe(gulpif(config.isProd, gulp.dest(config.dragular.dest)))
     .pipe(gulpif(config.isProd, minifyCss()))
     .pipe(gulpif(config.isProd, rename({
       suffix: '.min'
