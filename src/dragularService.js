@@ -879,9 +879,6 @@ dragularModule.factory('dragularService', ['$rootScope', '$timeout', function dr
     }
 
     function getElementBehindPoint(point, x, y) {
-      if (!x && !y) {
-        return null;
-      }
       var p = point || {},
         state = p.className,
         el;
