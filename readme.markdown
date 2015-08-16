@@ -14,39 +14,42 @@ Have you ever wanted a drag and drop library that just works? That actually unde
 
 # Differences of dragular (against dragula)
 
-- replaced crossvent with angulars event binding
-- replaced contra.emitter with $scope.$emit if scope provided in options (options.scope)
-- encapsulated the code into angular factory (dragularService)
-- created directive dragular where options can be passed providing scope property name
-- both service and directive provided as angular module (dragularModule)
+- replaced dragula crossvent with angulars event binding
+- replaced dragula contra.emitter with $scope.$emit if scope provided in options (options.scope)
+- provided as service or directive dragular where options can be passed via atribute dragular
 - automatic direction if not provided in options, instead of default vertical
-- accepting arraylike objects as containers array
+- accepting arraylike objects as containers array (jQuery, jQlite collections etc..)
 - accepting custom classes via option.classes
-- namespaced containers groups available via option.nameSpace
+- namespaced containers groups available via option.nameSpace (containers in same nameSpace cooperate)
 - boundingBox (dragging element can me moved only in specific area)
 - lockX/Y (dragging element can me moved only in specific direction)
-- more examples
-- accept JSON options in dragular directive (#2)
-- add/remove with ng-repeat
-- add syntax highlighter to example codes
+- DOM can be synced with scope model
+- added syntax highlighter to example codes
 
-# Todo
+# Todo towards 3.0.0
 
-- gh-pages as mixed api and examples
-- example for delay
-- o.isContainer in _isContainer (fn o.isContainerGetModel(containerElm))
-- solve mixing with and without model containers
+- improving docs
+- example of clickable/dragable elements
+- example of interactions with dragging item
+- oportunity to provide model if options.isContainer is used (fn o.isContainerGetModel(containerElm...))
 - remove npm workflow
+- use destination container settings (will help in mixed enviroment see bellow)
+- remove dragoverclasses (replacing example with one using dragularenter/leave events)
+- remove delay (merging mousedown and move condition to start drag from dragula)
+- options.isCopy function (allows conditional copy option)
+- fixing mixed enviroment with containers with model and without ut
+- solve ngRepeat filtered
 - support selectors in service (#2)
 
 # Features
 
 - provided as service and also as directive
-- Super easy to set up
+- Easy to set up
 - No bloated dependencies
-- **Figures out sort order** on its own
 - A shadow where the item would be dropped offers **visual feedback**
 - Touch events!
+- DOM can be synced with model
+- area or axes of movement can be restricted
 
 # Install
 
