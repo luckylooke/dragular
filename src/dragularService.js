@@ -168,10 +168,6 @@ dragularModule.factory('dragularService', ['$rootScope', '$timeout', function dr
       dragging: false
     };
 
-    if (o.removeOnSpill === true) {
-      drake.on('over', spillOver).on('out', spillOut);
-    }
-
     return drake;
 
     // make array from array-like objects or from single element
@@ -281,7 +277,7 @@ dragularModule.factory('dragularService', ['$rootScope', '$timeout', function dr
     }
 
     function startBecauseMouseMoved(e) {
-      eventualMovements(true);
+      eventualMovements(true); // remove mousemove listener
       movements();
       end();
       start(_grabbed);
@@ -404,7 +400,11 @@ dragularModule.factory('dragularService', ['$rootScope', '$timeout', function dr
     }
 
     function end() {
-      drop(_item, _item.parentElement);
+      if (!drake.dragging) {
+        return;
+      }
+      var item = _copy || _item;
+      drop(item, item.parentElement);
     }
 
     function ungrab() {
@@ -537,6 +537,10 @@ dragularModule.factory('dragularService', ['$rootScope', '$timeout', function dr
       }
 
       drake.dragging = false;
+
+      if (o.removeOnSpill === true) {
+        spillOut(item);
+      }
 
       if (o.scope) {
         o.scope.$emit('out', item, _lastDropTarget, _source);
@@ -716,7 +720,7 @@ dragularModule.factory('dragularService', ['$rootScope', '$timeout', function dr
         }
       } else {
         // the case that mirror is not over valid target and removing is on or copy is on
-        if ((o.copy || o.removeOnSpill === true) && item.parentElement !== null) {
+        if (o.copy && item.parentElement !== null) {
           // remove item or copy of item
           if (!o.containersModel) {
             item.parentElement.removeChild(item);
@@ -748,7 +752,12 @@ dragularModule.factory('dragularService', ['$rootScope', '$timeout', function dr
       }
 
       function moved(type) {
-        o.scope.$emit(type, item, _lastDropTarget, _source);
+        if (o.scope) {
+          o.scope.$emit(type, item, _lastDropTarget, _source);
+        }
+        if (o.removeOnSpill === true) {
+          type === 'over' ? spillOver(item) : spillOut(item);
+        }
       }
 
       function over() {
@@ -929,7 +938,7 @@ dragularModule.factory('dragularService', ['$rootScope', '$timeout', function dr
       },
       $el = angular.element(el);
 
-    if (type !== 'wheel') {
+    if (touch[type]) {
       $el[op](touch[type], fn);
     }
     $el[op](type, fn);
@@ -1028,6 +1037,9 @@ dragularModule.factory('dragularService', ['$rootScope', '$timeout', function dr
   }
 
   function fireEvent(target, e) {
+    if (!target) {
+      return;
+    }
     if (target.dispatchEvent) {
       target.dispatchEvent(e);
     } else {
