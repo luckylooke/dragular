@@ -35,7 +35,6 @@ examplesAppModule
       angular.element(bar).on('dragularenter', function() {
         container.scrollTop += inc;
         timer = $interval(function moveScroll() {
-          console.log('tick', bar, container, inc);
           container.scrollTop += inc;
         }, speed);
       });
