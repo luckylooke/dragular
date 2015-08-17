@@ -218,22 +218,9 @@ dragularModule.factory('dragularService', ['$rootScope', '$timeout', function dr
 
     return drake;
 
-    // make array from array-like objects or from single element
-    function makeArray(all) {
-      if (Array.isArray(all)) {
-        return all;
-      }
-      if (all.length) { // is array-like
-        var iAll = all.length,
-          newArray = [],
-          i;
-        for (i = 0; i < iAll; i++) {
-          newArray.push(all[i]);
-        }
-        return newArray;
-      } else { // is one element
-        return [all];
-      }
+    // make array from array-like objects or from single element (based on bevacqua/atoa)
+    function makeArray(all, startIndex) {
+      return Array.prototype.slice.call(all, startIndex);
     }
 
     // add or remove containers - deprecated
