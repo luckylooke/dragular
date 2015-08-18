@@ -464,16 +464,15 @@ dragularModule.factory('dragularService', ['$rootScope', function dragula($rootS
       }
       var item = _copy || _item,
         parent = item.parentElement,
-        itemModel;
+        itemModel = _sourceModel && _sourceModel[_initialIndex];
 
-      if (!o.containersModel) {
-        if (parent) {
-          parent.removeChild(item);
-        }
-      } else {
+      if (parent) {
+        parent.removeChild(item);
+      }
+
+      if (o.containersModel){
         $rootScope.$applyAsync(function removeModel() {
-          console.log(_targetModel.indexOf(_copyModel || _itemModel), _currentIndex);
-          _targetModel.splice(_targetModel.indexOf(_copyModel || _itemModel), 1);
+          _sourceModel.splice(_initialIndex, 1);
           cleanup();
         });
       }
@@ -481,7 +480,7 @@ dragularModule.factory('dragularService', ['$rootScope', function dragula($rootS
       if (o.scope) {
         o.scope.$emit(o.copy ? 'cancel' : 'remove', item, parent, itemModel, _sourceModel, _targetModel);
       }
-      if (!o.containresModel) {
+      if (!o.containersModel) {
         cleanup();
       }
     }
