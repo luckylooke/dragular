@@ -43,6 +43,10 @@ module.exports = angular.module('examplesApp', ['dragularModule', 'templates', '
         link: 'exampleRemoveOnSpill',
         title: 'Remove on spill'
     }, {
+        template: 'exampleRemoveOnSpillWithModel/exampleRemoveOnSpillWithModel.html',
+        link: 'exampleRemoveOnSpillWithModel',
+        title: 'Remove on spill - with model'
+    }, {
         template: 'exampleRevertOnSpill/exampleRevertOnSpill.html',
         link: 'exampleRevertOnSpill',
         title: 'Revert on spill'

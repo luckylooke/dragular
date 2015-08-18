@@ -7,11 +7,6 @@ var examplesAppModule = require('../examplesApp');
 */
 
 examplesAppModule
-  .controller('Basic', ['$element', 'dragularService', function TodoCtrl($element, dragularService) {
-    dragularService($element.children());
-  }]);
-
-examplesAppModule
   .controller('BasicModel', ['$scope', '$element', 'dragularService', function TodoCtrl($scope, $element, dragularService) {
     $scope.items1 = [{
       content: 'Move me, but you can only drop me in one of these containers.'
