@@ -28,7 +28,10 @@ Have you ever wanted a drag and drop library that just works? That actually unde
 
 # Todo towards 3.0.0
 
-- updating models on drop
+- share containers between instances, so no need to nameSpace if containers are initialised separately
+- refactor code to be more human frendly
+- refactor service to return only small api object and share _containers between instances
+- reveal more internal variables in drake and provide drake on events as argument
 - improving docs
 - example of clickable/dragable elements
 - example of interactions with dragging item
