@@ -1313,16 +1313,18 @@ dragularModule.factory('dragularService', ['$rootScope', '$timeout', function dr
           parent.removeChild(item);
         }
       } else {
-        itemModel = _copyModel || _itemModel;
         $rootScope.$applyAsync(function removeModel() {
-          _targetModel.splice(_targetModel.indexOf(itemModel), 1);
+          _targetModel.splice(_targetModel.indexOf(_copyModel || _itemModel), 1);
+          cleanup();
         });
       }
 
       if (o.scope) {
         o.scope.$emit(o.copy ? 'cancel' : 'remove', item, parent, itemModel, _sourceModel, _targetModel);
       }
-      cleanup();
+      if (!o.containersModel) {
+        cleanup();
+      }
     }
 
     function cancel(revert) {
@@ -1380,7 +1382,7 @@ dragularModule.factory('dragularService', ['$rootScope', '$timeout', function dr
       drake.dragging = false;
 
       if (o.removeOnSpill === true) {
-        spillOut(item);
+        spillOut();
       }
 
       if (o.scope) {
@@ -1513,13 +1515,9 @@ dragularModule.factory('dragularService', ['$rootScope', '$timeout', function dr
       }
 
       if (changed || dropTarget === null) {
-        if (o.scope) {
-          out();
-          _lastDropTarget = dropTarget;
-          over();
-        } else {
-          _lastDropTarget = dropTarget;
-        }
+        out();
+        _lastDropTarget = dropTarget;
+        over();
       }
 
       // do not copy in same container
@@ -1566,11 +1564,14 @@ dragularModule.factory('dragularService', ['$rootScope', '$timeout', function dr
           if (!o.containersModel) {
             item.parentElement.removeChild(item);
           } else if (_targetModel !== _sourceModel && _targetModel.indexOf(_copyModel || _itemModel)) {
-            console.log('removeOnSpill', o.copy, _targetModel !== _sourceModel, _targetModel, _sourceModel);
-            $rootScope.$applyAsync(function removeOnSpillOrRemoveCopy() {
+            $rootScope.$applyAsync(function removeCopy() {
               _targetModel.splice(referenceIndex, 1);
             });
           }
+        }else if(o.removeOnSpill){
+          _lastTargetModel = _targetModel;
+          _targetModel = _sourceModel;
+          moveInContainersModel(_initialIndex);
         }
         return;
       }
@@ -1594,10 +1595,10 @@ dragularModule.factory('dragularService', ['$rootScope', '$timeout', function dr
 
       function moved(type) {
         if (o.scope) {
-          o.scope.$emit(type, item, _lastDropTarget, _source);
+          o.scope.$emit(type, _item, _lastDropTarget, _source);
         }
         if (o.removeOnSpill === true) {
-          type === 'over' ? spillOver(item) : spillOut(item);
+          type === 'over' ? spillOver() : spillOut();
         }
       }
 
@@ -1614,13 +1615,25 @@ dragularModule.factory('dragularService', ['$rootScope', '$timeout', function dr
       }
     }
 
-    function spillOver(el) {
-      rmClass(el, o.classes.hide);
+    function spillOver() {
+      var item = _copy || _item;
+      rmClass(item, o.classes.hide);
+      if (o.containersModel && _targetModel.indexOf(item) !== -1) {
+        $rootScope.applyAsync(function spill() {
+          _targetModel.splice(_targetModel.indexOf(item), 1);
+        });
+      }
     }
 
-    function spillOut(el) {
+    function spillOut() {
+      var item = _copy || _item;
       if (drake.dragging) {
-        addClass(el, o.classes.hide);
+        addClass(item, o.classes.hide);
+        if (o.containersModel && _targetModel.indexOf(item) !== -1) {
+          $rootScope.applyAsync(function spill() {
+            _targetModel.splice(_targetModel.indexOf(item), 1);
+          });
+        }
       }
     }
 
