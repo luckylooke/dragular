@@ -780,8 +780,8 @@ examplesAppModule
 },{"./examplesApp":22}],24:[function(require,module,exports){
 'use strict'; module.exports = angular.module("templates", []).run(["$templateCache", function($templateCache) {$templateCache.put("docsInstall/docsInstall.html","<h2>Install</h2>\n<p>download dragular.js and dragular.css from dist folder</p>\n<p>OR clone git</p>\n<pre><code>\ngit clone http://github.com/luckylooke/dragular.git\n</code></pre>\n<p>OR use npm</p>\n<pre><code>\n[sudo] npm install dragular\n</code></pre>\n<p>OR use bower</p>\n<pre><code>\nbower install dragular\n</code></pre>\n<p>AND include files into your project</p>\n<pre><code>\n&lt;link href=\'styles/dragular.css\' rel=\'stylesheet\' type=\'text/css\' /&gt;\n&lt;script src=\'scripts/dragular.js\'&gt;&lt;/script&gt;\n</code></pre>\n<p>AND put dragularModule into dependency array</p>\n<pre><code>\nvar app = angular.module(\'myApp\', [\'dragularModule\', \'otherDependencies\']);\n</code></pre>\n<p>DONE :)</p>\n");
 $templateCache.put("exampleBasic/exampleBasic.html","<div class=\'parent\'>\n  <h2>Basic</h2>\n  <label for=\'hy\'>Move stuff between these two containers. Note how the stuff gets inserted near the mouse pointer? Great stuff.</label>\n  <div class=\'wrapper\' ng-controller=\"Basic\">\n    <div class=\'containerVertical\'>\n      <div>Move me, but you can only drop me in one of these containers.</div>\n      <div>If you try to drop me somewhere other than these containers, I\'ll just come back.</div>\n      <div>Item 3.</div>\n      <div>Item 6.</div>\n    </div>\n    <div class=\'containerVertical\'>\n      <div>You can drop me in the left container, otherwise I\'ll stay here.</div>\n      <div>Item 4.</div>\n      <div>Item 5.</div>\n    </div>\n  </div>\n  <pre>\n        <code>\n// JS\n  controller(\'Basic\', [\'$element\', \'dragularService\', function TodoCtrl($element, dragularService) {\n    dragularService($element.children());\n  }])\n        </code>\n        <code>\n&lt;!-- HTML --&gt;\n  &lt;div class=\'wrapper\' ng-controller=&quot;Basic&quot;&gt;\n    &lt;div class=\'containerVertical\'&gt;\n        &lt;div&gt;Move me, but you can only drop me in one of these containers.&lt;/div&gt;\n        &lt;div&gt;If you try to drop me somewhere other than these containers, I\'ll just come back.&lt;/div&gt;\n        &lt;div&gt;Item 3.&lt;/div&gt;\n        &lt;div&gt;Item 6.&lt;/div&gt;\n    &lt;/div&gt;\n    &lt;div class=\'containerVertical\'&gt;\n        &lt;div&gt;You can drop me in the left container, otherwise I\'ll stay here.&lt;/div&gt;\n        &lt;div&gt;Item 4.&lt;/div&gt;\n        &lt;div&gt;Item 5.&lt;/div&gt;\n    &lt;/div&gt;\n&lt;/div&gt;\n        </code>\n      </pre>\n</div>\n");
-$templateCache.put("exampleBoundingBox/exampleBoundingBox.html","        <div class=\'parent\'>\n            <h2>BoundingBox</h2>\n            <label for=\'hy\'>You can provide element in options.boundingBox to limit crossing element borders.</label>\n            <div class=\'wrapper\' ng-controller=\"BoundingBox\">\n                <div class=\'containerVertical\'>\n                    <div>This items cannot cross its example element, just try it your selves.</div>\n                    <div>Item 2.</div>\n                    <div>Item 3.</div>\n                    <div>Item 6.</div>\n                </div>\n                <div class=\'containerVertical\'>\n                    <div>This items cannot cross its example element, just try it your selves.</div>\n                    <div>Item 4.</div>\n                    <div>Item 5.</div>\n                </div>\n            </div>\n            <pre>\n        <code>\n  dragularService([$element.children(), {\n    boundingBox: $element\n  });\n        </code>\n      </pre>\n        </div>");
 $templateCache.put("exampleBasicWithModel/exampleBasicWithModel.html","<div class=\'parent\'>\n  <h2>Basic - with model</h2>\n  <label for=\'hy\'>Move stuff between these two containers. Note how the stuff gets inserted near the mouse pointer? Great stuff.</label>\n  <div class=\'wrapper\' ng-controller=\"BasicModel\">\n    <div class=\'tableRow\'>\n      <div class=\'containerVertical\'>\n        <div ng-repeat=\"item in items1\">{{item.content}}</div>\n      </div>\n      <div class=\'containerVertical\'>\n        <div ng-repeat=\"item in items2\">{{item.content}}</div>\n      </div>\n    </div>\n    <div class=\"tableRow\">\n      <div class=\'containerVertical\'>\n        <pre>Items1:\n          <br/>{{items1 | json}}</pre>\n      </div>\n      <div class=\'containerVertical\'>\n        <pre>Items2:\n          <br/>{{items2 | json}}</pre>\n      </div>\n    </div>\n  </div>\n  <pre>\n        <code>\n// JS\n  controller(\'BasicModel\', [\'$scope\', \'$element\', \'dragularService\', function TodoCtrl($scope, $element, dragularService) {\n    $scope.items1 = [{\n      content: \'Move me, but you can only drop me in one of these containers.\'\n    }, {\n      content: \'If you try to drop me somewhere other than these containers, I\\\'ll just come back.\'\n    }, {\n      content: \'Item 3\'\n    }, {\n      content: \'Item 4\'\n    }];\n    $scope.items2 = [{\n      content: \'Item 5\'\n    }, {\n      content: \'Item 6\'\n    }, {\n      content: \'Item 7\'\n    }, {\n      content: \'Item 8\'\n    }];\n    var containers = $element.children().children();\n    dragularService([containers[0],containers[1]],{\n      containersModel: [$scope.items1, $scope.items2]\n    });\n  }])\n        </code>\n        <code>\n&lt;!-- HTML --&gt;\n&lt;div class=\'wrapper\' ng-controller=&quot;Basic&quot;&gt;\n    &lt;div class=\'tableRow\'&gt;\n        &lt;div class=\'containerVertical\'&gt;\n            &lt;div ng-repeat=&quot;item in items1&quot;&gt;{{item.content}}&lt;/div&gt;\n        &lt;/div&gt;\n        &lt;div class=\'containerVertical\'&gt;\n            &lt;div ng-repeat=&quot;item in items2&quot;&gt;{{item.content}}&lt;/div&gt;\n        &lt;/div&gt;\n    &lt;/div&gt;\n    &lt;div class=&quot;tableRow&quot;&gt;\n        &lt;div class=&quot;container&quot;&gt;\n            &lt;div&gt;Items1:\n                &lt;br/&gt;{{items1 | json}}&lt;/div&gt;\n        &lt;/div&gt;\n        &lt;div class=&quot;container&quot;&gt;\n            &lt;div&gt;Items2:\n                &lt;br/&gt;{{items2 | json}}&lt;/div&gt;\n        &lt;/div&gt;\n    &lt;/div&gt;\n&lt;/div&gt;\n        </code>\n      </pre>\n</div>\n");
+$templateCache.put("exampleBoundingBox/exampleBoundingBox.html","        <div class=\'parent\'>\n            <h2>BoundingBox</h2>\n            <label for=\'hy\'>You can provide element in options.boundingBox to limit crossing element borders.</label>\n            <div class=\'wrapper\' ng-controller=\"BoundingBox\">\n                <div class=\'containerVertical\'>\n                    <div>This items cannot cross its example element, just try it your selves.</div>\n                    <div>Item 2.</div>\n                    <div>Item 3.</div>\n                    <div>Item 6.</div>\n                </div>\n                <div class=\'containerVertical\'>\n                    <div>This items cannot cross its example element, just try it your selves.</div>\n                    <div>Item 4.</div>\n                    <div>Item 5.</div>\n                </div>\n            </div>\n            <pre>\n        <code>\n  dragularService([$element.children(), {\n    boundingBox: $element\n  });\n        </code>\n      </pre>\n        </div>");
 $templateCache.put("exampleBoundingBoxLockX/exampleBoundingBoxLockX.html","<div class=\'parent\'>\n            <h2>BoundingBox and lockX</h2>\n            <label for=\'hy\'>Movement can be locked to X or Y axis and also you can provide element in options.boundingBox to limit crossing element borders.</label>\n            <div class=\'wrapper\' ng-controller=\"BoundingBoxLockX\">\n                <div class=\'containerHorizontal\'>\n                    <div class=\'boundingBox\'>\n                        <div class=\"width25\">Items are locked in X axis movement and cannot cross its closest parent div.boundingBox, just try it your selves.</div>\n                        <div class=\"width25\">item 2</div>\n                        <div class=\"width25\">item 3</div>\n                        <div class=\"width25\">item 4</div>\n                    </div>\n                </div>\n            </div>\n            <pre>\n        <code>\n  dragularService([$element.children()[0].children(), {\n    boundingBox: $element.children()[0],\n    lockX: true\n  });\n        </code>\n      </pre>\n        </div>");
 $templateCache.put("exampleBoundingBoxLockY/exampleBoundingBoxLockY.html","        <div class=\'parent\'>\n            <h2>BoundingBox and LockY</h2>\n            <label for=\'hy\'>Movement can be locked to X or Y axis and also you can provide element in options.boundingBox to limit crossing element borders.</label>\n            <div class=\'wrapper\' ng-controller=\"BoundingBoxLockY\">\n                <div class=\'containerVertical\'>\n                    <div class=\'boundingBox\'>\n                        <div>Items are locked in Y axis movement and cannot cross its closest parent div.boundingBox, just try it your selves.</div>\n                        <div>item 2</div>\n                        <div>item 3</div>\n                        <div>item 4</div>\n                        <div>item 5</div>\n                        <div>item 6</div>\n                    </div>\n                </div>\n            </div>\n            <pre>\n        <code>\n  dragularService([$element.children()[0].children(), {\n    boundingBox: $element.children()[0],\n    lockY: true\n  });\n        </code>\n      </pre>\n        </div>");
 $templateCache.put("exampleCopy/exampleCopy.html","<div class=\'parent\'>\n  <h2>Copy</h2>\n  <label for=\'hy\'>Copying stuff is great too.</label>\n  <div class=\'wrapper\' ng-controller=\"Copy\" ng-hide=\"globals.showModelExamples\">\n    <div id=\'left2\' class=\'containerVertical\'>\n      <div>Move me, and make copy on drop.</div>\n      <div>If you try to drop me somewhere other than these containers, I\'ll just come back.</div>\n    </div>\n    <div id=\'right2\' class=\'containerVertical\'>\n      <div>You can drop me in the left container, otherwise I\'ll stay here.</div>\n    </div>\n  </div>\n  <pre>\n        <code>\n// JS\n  controller(\'Copy\', [\'$element\', \'dragularService\', function TodoCtrl($element, dragularService) {\n    dragularService($element.children(), {\n      copy: true\n    });\n  }])\n        </code>\n        <code>\n&lt;!-- HTML --&gt;\n&lt;div class=\'wrapper\' ng-controller=&quot;Copy&quot; ng-hide=&quot;globals.showModelExamples&quot;&gt;\n    &lt;div id=\'left2\' class=\'containerVertical\'&gt;\n      &lt;div&gt;Move me, and make copy on drop.&lt;/div&gt;\n      &lt;div&gt;If you try to drop me somewhere other than these containers, I\'ll just come back.&lt;/div&gt;\n    &lt;/div&gt;\n    &lt;div id=\'right2\' class=\'containerVertical\'&gt;\n      &lt;div&gt;You can drop me in the left container, otherwise I\'ll stay here.&lt;/div&gt;\n    &lt;/div&gt;\n  &lt;/div&gt;\n        </code>\n      </pre>\n</div>\n");
@@ -866,7 +866,7 @@ var dragularModule = require('./dragularModule');
  * @ngInject
  */
 
-dragularModule.factory('dragularService', ['$rootScope', '$timeout', function dragula($rootScope, $timeout) {
+dragularModule.factory('dragularService', ['$rootScope', function dragula($rootScope) {
 
   var containersNameSpaced = {}, // name-spaced containers
     containersNameSpacedModel = {}, // name-spaced containers models
@@ -908,13 +908,13 @@ dragularModule.factory('dragularService', ['$rootScope', '$timeout', function dr
       _copyModel, // item-model used for copying
       _containers = {}, // containers managed by the drake
       _containersModel = {}, // containers model
-      _renderTimer, // timer for setTimeout renderMirrorImage
       _isContainer, // internal isContainer
       _targetContainer, // droppable container under drag item
       _dragEnterEvent, // drag enter event fired on element behind cursor
       _dragLeaveEvent, // drag leave event fired on element behind cursor
       _lastElementBehindCursor, // last element behind cursor
       _grabbed, // holds mousedown context until first mousemove
+      _referenceIndex, // holds reference for updating model after release
       defaultClasses = {
         mirror: 'gu-mirror',
         hide: 'gu-hide',
@@ -1278,6 +1278,9 @@ dragularModule.factory('dragularService', ['$rootScope', '$timeout', function dr
       if (dropTarget && (o.copy === false || dropTarget !== _source)) {
         // found valid target and (is not copy case or target is not initial container)
         drop(item, dropTarget);
+        if (o.containersModel) {
+          moveInContainersModel(_referenceIndex, true);
+        }
       } else if (o.removeOnSpill) {
         remove();
       } else {
@@ -1304,7 +1307,9 @@ dragularModule.factory('dragularService', ['$rootScope', '$timeout', function dr
       } else if (o.scope) {
         o.scope.$emit('drop', item, target, _source, _copyModel || _itemModel, _sourceModel, _targetModel);
       }
-      cleanup();
+      if (!o.containersModel) {
+        cleanup();
+      }
     }
 
     function remove() {
@@ -1321,6 +1326,7 @@ dragularModule.factory('dragularService', ['$rootScope', '$timeout', function dr
         }
       } else {
         $rootScope.$applyAsync(function removeModel() {
+          console.log(_targetModel.indexOf(_copyModel || _itemModel), _currentIndex);
           _targetModel.splice(_targetModel.indexOf(_copyModel || _itemModel), 1);
           cleanup();
         });
@@ -1329,7 +1335,7 @@ dragularModule.factory('dragularService', ['$rootScope', '$timeout', function dr
       if (o.scope) {
         o.scope.$emit(o.copy ? 'cancel' : 'remove', item, parent, itemModel, _sourceModel, _targetModel);
       }
-      if (!o.containersModel) {
+      if (!o.containresModel) {
         cleanup();
       }
     }
@@ -1344,11 +1350,7 @@ dragularModule.factory('dragularService', ['$rootScope', '$timeout', function dr
 
       if (parent === _source && o.copy) {
         console.log('!!!!!!!!!!!!!!!!! I think this is never possible because copy cannot be placed into source');
-        if (!o.containersModel) {
-          parent.removeChild(_copy);
-        } else {
-          _targetModel.splice(_targetModel.indexOf(_copyModel), 1, _copyModel);
-        }
+        parent.removeChild(_copy);
       }
 
       var initial = isInitialPlacement(parent);
@@ -1359,7 +1361,7 @@ dragularModule.factory('dragularService', ['$rootScope', '$timeout', function dr
           _lastTargetModel = _targetModel;
           _targetModel = _sourceModel;
           // move back to initial placement
-          moveInContainersModel(_initialIndex);
+          moveInContainersModel(_initialIndex, true);
         }
       }
 
@@ -1368,8 +1370,9 @@ dragularModule.factory('dragularService', ['$rootScope', '$timeout', function dr
       } else if (o.scope) {
         o.scope.$emit('drop', item, parent, _source);
       }
-
-      cleanup();
+      if (!o.containersModel || o.copy) {
+        cleanup();
+      }
     }
 
     function cleanup() {
@@ -1379,11 +1382,6 @@ dragularModule.factory('dragularService', ['$rootScope', '$timeout', function dr
 
       if (item) {
         rmClass(item, o.classes.transit);
-      }
-
-      // cancel timer
-      if (_renderTimer) {
-        $timeout.cancel(_renderTimer);
       }
 
       drake.dragging = false;
@@ -1398,7 +1396,7 @@ dragularModule.factory('dragularService', ['$rootScope', '$timeout', function dr
       }
 
       _source = _item = _copy = _initialSibling = _currentSibling = _sourceModel = null;
-      _itemModel = _copyModel = _initialIndex = _currentIndex = _renderTimer = _lastDropTarget = null;
+      _itemModel = _copyModel = _initialIndex = _currentIndex = _lastDropTarget = null;
     }
 
     // is item currently placed in original container and original position?
@@ -1420,23 +1418,25 @@ dragularModule.factory('dragularService', ['$rootScope', '$timeout', function dr
         var accepts = false;
 
         if (_isContainer(target)) { // is droppable?
-          _targetContainer = target;
 
           var immediate = getImmediateChild(target, elementBehindCursor),
             reference = getReference(target, immediate, clientX, clientY),
             initial = isInitialPlacement(target, reference);
           accepts = initial ? true : o.accepts(_item, target, _source, reference, _itemModel, _sourceModel);
 
-          if (accepts && o.containersModel) {
-            _lastTargetModel = _targetModel;
-            if (!o.nameSpace) {
-              _targetModel = _containersModel[drake.containers.indexOf(target)];
-            } else {
-              for (var nameSpace in drake.containers) {
-                if (drake.containers.hasOwnProperty(nameSpace) && drake.containers[nameSpace].indexOf(target) !== -1) {
-                  _lastTargetModel = _targetModel;
-                  _targetModel = _containersModel[nameSpace][drake.containers[nameSpace].indexOf(target)];
-                  break;
+          if (_targetContainer !== target) {
+            _targetContainer = target;
+            if (accepts && o.containersModel) {
+              if (!o.nameSpace) {
+                _lastTargetModel = _targetModel;
+                _targetModel = _containersModel[drake.containers.indexOf(target)];
+              } else {
+                for (var nameSpace in drake.containers) {
+                  if (drake.containers.hasOwnProperty(nameSpace) && drake.containers[nameSpace].indexOf(target) !== -1) {
+                    _lastTargetModel = _targetModel;
+                    _targetModel = _containersModel[nameSpace][drake.containers[nameSpace].indexOf(target)];
+                    break;
+                  }
                 }
               }
             }
@@ -1529,28 +1529,22 @@ dragularModule.factory('dragularService', ['$rootScope', '$timeout', function dr
 
       // do not copy in same container
       if (dropTarget === _source && o.copy) {
-        if (!o.containersModel && item.parentElement) {
+        if (item.parentElement) {
           item.parentElement.removeChild(item);
-        } else if (o.containersModel && _lastTargetModel.indexOf(_copyModel) !== -1) {
-          $rootScope.$applyAsync(function removeCopyFromLastContainer() {
-            console.log(_lastTargetModel.indexOf(_copyModel), _currentIndex);
-            _lastTargetModel.splice(_lastTargetModel.indexOf(_copyModel), 1);
-          });
         }
         return;
       }
 
       var reference,
-        immediate = getImmediateChild(dropTarget, elementBehindCursor),
-        referenceIndex;
+        immediate = getImmediateChild(dropTarget, elementBehindCursor);
 
       if (immediate !== null) {
         reference = getReference(dropTarget, immediate, _clientX, _clientY);
         if (o.containersModel) {
           if (reference) { // reference is null if drag is over last element
-            referenceIndex = domIndexOf(reference, dropTarget);
+            _referenceIndex = domIndexOf(_copy || _item, dropTarget);
           } else {
-            referenceIndex = null;
+            _referenceIndex = null;
           }
         }
       } else if (o.revertOnSpill === true && !o.copy) {
@@ -1560,7 +1554,7 @@ dragularModule.factory('dragularService', ['$rootScope', '$timeout', function dr
 
         // getting model intitial properties into current
         if (o.containersModel) {
-          referenceIndex = _initialIndex;
+          _referenceIndex = _initialIndex;
           _lastTargetModel = _targetModel;
           _targetModel = _sourceModel;
         }
@@ -1568,17 +1562,7 @@ dragularModule.factory('dragularService', ['$rootScope', '$timeout', function dr
         // the case that mirror is not over valid target and removing is on or copy is on
         if (o.copy && item.parentElement !== null) {
           // remove item or copy of item
-          if (!o.containersModel) {
-            item.parentElement.removeChild(item);
-          } else if (_targetModel !== _sourceModel && _targetModel.indexOf(_copyModel || _itemModel)) {
-            $rootScope.$applyAsync(function removeCopy() {
-              _targetModel.splice(referenceIndex, 1);
-            });
-          }
-        }else if(o.removeOnSpill){
-          _lastTargetModel = _targetModel;
-          _targetModel = _sourceModel;
-          moveInContainersModel(_initialIndex);
+          item.parentElement.removeChild(item);
         }
         return;
       }
@@ -1589,11 +1573,7 @@ dragularModule.factory('dragularService', ['$rootScope', '$timeout', function dr
         // moving item/copy to new container from previous one
         _currentSibling = reference;
 
-        if (!o.containersModel) {
-          dropTarget.insertBefore(item, reference); // if reference is null item is inserted at the end
-        } else {
-          moveInContainersModel(referenceIndex);
-        }
+        dropTarget.insertBefore(item, reference); // if reference is null item is inserted at the end
 
         if (o.scope) {
           o.scope.$emit('shadow', item, dropTarget);
@@ -1625,45 +1605,40 @@ dragularModule.factory('dragularService', ['$rootScope', '$timeout', function dr
     function spillOver() {
       var item = _copy || _item;
       rmClass(item, o.classes.hide);
-      if (o.containersModel && _targetModel.indexOf(item) !== -1) {
-        $rootScope.applyAsync(function spill() {
-          _targetModel.splice(_targetModel.indexOf(item), 1);
-        });
-      }
     }
 
     function spillOut() {
       var item = _copy || _item;
       if (drake.dragging) {
         addClass(item, o.classes.hide);
-        if (o.containersModel && _targetModel.indexOf(item) !== -1) {
-          $rootScope.applyAsync(function spill() {
-            _targetModel.splice(_targetModel.indexOf(item), 1);
-          });
-        }
       }
     }
 
-    function moveInContainersModel(referenceIndex) {
+    function moveInContainersModel(referenceIndex, cleanupEnabled) {
       $rootScope.$applyAsync(function applyMoveBetweenContainers() {
+        if (referenceIndex === null) {
+          referenceIndex = _targetModel.length;
+        }
+
         if (_lastTargetModel === _targetModel) {
-          if (referenceIndex === null) {
-            referenceIndex = _targetModel.length;
-          }
-          var index = referenceIndex > _currentIndex ? referenceIndex - 1 : referenceIndex;
-          _targetModel.splice(index, 0, _lastTargetModel.splice(_currentIndex, 1)[0]);
-          _currentIndex = index;
+          _targetModel.splice(referenceIndex, 0, _lastTargetModel.splice(_currentIndex, 1)[0]);
         } else {
-          if (referenceIndex === null) {
-            referenceIndex = _targetModel.length - 1;
-          }
           if (!o.copy || _lastTargetModel !== _sourceModel) { // dont remove original from source while copying
             _lastTargetModel.splice(_currentIndex, 1);
           }
           if (!o.copy || _targetModel.indexOf(_copyModel) === -1) { // dont place copy twice in one drag
             _targetModel.splice(referenceIndex, 0, _copyModel || _itemModel);
-            _currentIndex = referenceIndex;
           }
+        }
+
+        _currentIndex = referenceIndex;
+
+        if (cleanupEnabled) {
+          var item = _copy || _item;
+          if (item.parentElement) {
+            item.parentElement.removeChild(item);
+          }
+          cleanup();
         }
       });
     }
