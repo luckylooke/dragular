@@ -254,7 +254,7 @@ gulp.task('build', function() {
   config.isProd = true;
   browserifyDefaults = config.browserify.dragular;
 
-  sequence(['browserify', 'styles']);
+  sequence(['browserify', 'styles'], 'build:docs');
 });
 
 gulp.task('build:docs', function() {
