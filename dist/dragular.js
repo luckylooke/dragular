@@ -60,7 +60,7 @@ var dragularModule = require('./dragularModule');
  * @ngInject
  */
 
-dragularModule.factory('dragularService', ['$rootScope', '$timeout', function dragula($rootScope, $timeout) {
+dragularModule.factory('dragularService', ['$rootScope', function dragula($rootScope) {
 
   var containersNameSpaced = {}, // name-spaced containers
     containersNameSpacedModel = {}, // name-spaced containers models
@@ -102,13 +102,13 @@ dragularModule.factory('dragularService', ['$rootScope', '$timeout', function dr
       _copyModel, // item-model used for copying
       _containers = {}, // containers managed by the drake
       _containersModel = {}, // containers model
-      _renderTimer, // timer for setTimeout renderMirrorImage
       _isContainer, // internal isContainer
       _targetContainer, // droppable container under drag item
       _dragEnterEvent, // drag enter event fired on element behind cursor
       _dragLeaveEvent, // drag leave event fired on element behind cursor
       _lastElementBehindCursor, // last element behind cursor
       _grabbed, // holds mousedown context until first mousemove
+      _referenceIndex, // holds reference for updating model after release
       defaultClasses = {
         mirror: 'gu-mirror',
         hide: 'gu-hide',
@@ -472,6 +472,9 @@ dragularModule.factory('dragularService', ['$rootScope', '$timeout', function dr
       if (dropTarget && (o.copy === false || dropTarget !== _source)) {
         // found valid target and (is not copy case or target is not initial container)
         drop(item, dropTarget);
+        if (o.containersModel) {
+          moveInContainersModel(_referenceIndex, true);
+        }
       } else if (o.removeOnSpill) {
         remove();
       } else {
@@ -498,7 +501,9 @@ dragularModule.factory('dragularService', ['$rootScope', '$timeout', function dr
       } else if (o.scope) {
         o.scope.$emit('drop', item, target, _source, _copyModel || _itemModel, _sourceModel, _targetModel);
       }
-      cleanup();
+      if (!o.containersModel) {
+        cleanup();
+      }
     }
 
     function remove() {
@@ -515,6 +520,7 @@ dragularModule.factory('dragularService', ['$rootScope', '$timeout', function dr
         }
       } else {
         $rootScope.$applyAsync(function removeModel() {
+          console.log(_targetModel.indexOf(_copyModel || _itemModel), _currentIndex);
           _targetModel.splice(_targetModel.indexOf(_copyModel || _itemModel), 1);
           cleanup();
         });
@@ -523,7 +529,7 @@ dragularModule.factory('dragularService', ['$rootScope', '$timeout', function dr
       if (o.scope) {
         o.scope.$emit(o.copy ? 'cancel' : 'remove', item, parent, itemModel, _sourceModel, _targetModel);
       }
-      if (!o.containersModel) {
+      if (!o.containresModel) {
         cleanup();
       }
     }
@@ -538,11 +544,7 @@ dragularModule.factory('dragularService', ['$rootScope', '$timeout', function dr
 
       if (parent === _source && o.copy) {
         console.log('!!!!!!!!!!!!!!!!! I think this is never possible because copy cannot be placed into source');
-        if (!o.containersModel) {
-          parent.removeChild(_copy);
-        } else {
-          _targetModel.splice(_targetModel.indexOf(_copyModel), 1, _copyModel);
-        }
+        parent.removeChild(_copy);
       }
 
       var initial = isInitialPlacement(parent);
@@ -553,7 +555,7 @@ dragularModule.factory('dragularService', ['$rootScope', '$timeout', function dr
           _lastTargetModel = _targetModel;
           _targetModel = _sourceModel;
           // move back to initial placement
-          moveInContainersModel(_initialIndex);
+          moveInContainersModel(_initialIndex, true);
         }
       }
 
@@ -562,8 +564,9 @@ dragularModule.factory('dragularService', ['$rootScope', '$timeout', function dr
       } else if (o.scope) {
         o.scope.$emit('drop', item, parent, _source);
       }
-
-      cleanup();
+      if (!o.containersModel || o.copy) {
+        cleanup();
+      }
     }
 
     function cleanup() {
@@ -573,11 +576,6 @@ dragularModule.factory('dragularService', ['$rootScope', '$timeout', function dr
 
       if (item) {
         rmClass(item, o.classes.transit);
-      }
-
-      // cancel timer
-      if (_renderTimer) {
-        $timeout.cancel(_renderTimer);
       }
 
       drake.dragging = false;
@@ -592,7 +590,7 @@ dragularModule.factory('dragularService', ['$rootScope', '$timeout', function dr
       }
 
       _source = _item = _copy = _initialSibling = _currentSibling = _sourceModel = null;
-      _itemModel = _copyModel = _initialIndex = _currentIndex = _renderTimer = _lastDropTarget = null;
+      _itemModel = _copyModel = _initialIndex = _currentIndex = _lastDropTarget = null;
     }
 
     // is item currently placed in original container and original position?
@@ -614,23 +612,25 @@ dragularModule.factory('dragularService', ['$rootScope', '$timeout', function dr
         var accepts = false;
 
         if (_isContainer(target)) { // is droppable?
-          _targetContainer = target;
 
           var immediate = getImmediateChild(target, elementBehindCursor),
             reference = getReference(target, immediate, clientX, clientY),
             initial = isInitialPlacement(target, reference);
           accepts = initial ? true : o.accepts(_item, target, _source, reference, _itemModel, _sourceModel);
 
-          if (accepts && o.containersModel) {
-            _lastTargetModel = _targetModel;
-            if (!o.nameSpace) {
-              _targetModel = _containersModel[drake.containers.indexOf(target)];
-            } else {
-              for (var nameSpace in drake.containers) {
-                if (drake.containers.hasOwnProperty(nameSpace) && drake.containers[nameSpace].indexOf(target) !== -1) {
-                  _lastTargetModel = _targetModel;
-                  _targetModel = _containersModel[nameSpace][drake.containers[nameSpace].indexOf(target)];
-                  break;
+          if (_targetContainer !== target) {
+            _targetContainer = target;
+            if (accepts && o.containersModel) {
+              if (!o.nameSpace) {
+                _lastTargetModel = _targetModel;
+                _targetModel = _containersModel[drake.containers.indexOf(target)];
+              } else {
+                for (var nameSpace in drake.containers) {
+                  if (drake.containers.hasOwnProperty(nameSpace) && drake.containers[nameSpace].indexOf(target) !== -1) {
+                    _lastTargetModel = _targetModel;
+                    _targetModel = _containersModel[nameSpace][drake.containers[nameSpace].indexOf(target)];
+                    break;
+                  }
                 }
               }
             }
@@ -723,28 +723,22 @@ dragularModule.factory('dragularService', ['$rootScope', '$timeout', function dr
 
       // do not copy in same container
       if (dropTarget === _source && o.copy) {
-        if (!o.containersModel && item.parentElement) {
+        if (item.parentElement) {
           item.parentElement.removeChild(item);
-        } else if (o.containersModel && _lastTargetModel.indexOf(_copyModel) !== -1) {
-          $rootScope.$applyAsync(function removeCopyFromLastContainer() {
-            console.log(_lastTargetModel.indexOf(_copyModel), _currentIndex);
-            _lastTargetModel.splice(_lastTargetModel.indexOf(_copyModel), 1);
-          });
         }
         return;
       }
 
       var reference,
-        immediate = getImmediateChild(dropTarget, elementBehindCursor),
-        referenceIndex;
+        immediate = getImmediateChild(dropTarget, elementBehindCursor);
 
       if (immediate !== null) {
         reference = getReference(dropTarget, immediate, _clientX, _clientY);
         if (o.containersModel) {
           if (reference) { // reference is null if drag is over last element
-            referenceIndex = domIndexOf(reference, dropTarget);
+            _referenceIndex = domIndexOf(_copy || _item, dropTarget);
           } else {
-            referenceIndex = null;
+            _referenceIndex = null;
           }
         }
       } else if (o.revertOnSpill === true && !o.copy) {
@@ -754,7 +748,7 @@ dragularModule.factory('dragularService', ['$rootScope', '$timeout', function dr
 
         // getting model intitial properties into current
         if (o.containersModel) {
-          referenceIndex = _initialIndex;
+          _referenceIndex = _initialIndex;
           _lastTargetModel = _targetModel;
           _targetModel = _sourceModel;
         }
@@ -762,17 +756,7 @@ dragularModule.factory('dragularService', ['$rootScope', '$timeout', function dr
         // the case that mirror is not over valid target and removing is on or copy is on
         if (o.copy && item.parentElement !== null) {
           // remove item or copy of item
-          if (!o.containersModel) {
-            item.parentElement.removeChild(item);
-          } else if (_targetModel !== _sourceModel && _targetModel.indexOf(_copyModel || _itemModel)) {
-            $rootScope.$applyAsync(function removeCopy() {
-              _targetModel.splice(referenceIndex, 1);
-            });
-          }
-        }else if(o.removeOnSpill){
-          _lastTargetModel = _targetModel;
-          _targetModel = _sourceModel;
-          moveInContainersModel(_initialIndex);
+          item.parentElement.removeChild(item);
         }
         return;
       }
@@ -783,11 +767,7 @@ dragularModule.factory('dragularService', ['$rootScope', '$timeout', function dr
         // moving item/copy to new container from previous one
         _currentSibling = reference;
 
-        if (!o.containersModel) {
-          dropTarget.insertBefore(item, reference); // if reference is null item is inserted at the end
-        } else {
-          moveInContainersModel(referenceIndex);
-        }
+        dropTarget.insertBefore(item, reference); // if reference is null item is inserted at the end
 
         if (o.scope) {
           o.scope.$emit('shadow', item, dropTarget);
@@ -819,45 +799,40 @@ dragularModule.factory('dragularService', ['$rootScope', '$timeout', function dr
     function spillOver() {
       var item = _copy || _item;
       rmClass(item, o.classes.hide);
-      if (o.containersModel && _targetModel.indexOf(item) !== -1) {
-        $rootScope.applyAsync(function spill() {
-          _targetModel.splice(_targetModel.indexOf(item), 1);
-        });
-      }
     }
 
     function spillOut() {
       var item = _copy || _item;
       if (drake.dragging) {
         addClass(item, o.classes.hide);
-        if (o.containersModel && _targetModel.indexOf(item) !== -1) {
-          $rootScope.applyAsync(function spill() {
-            _targetModel.splice(_targetModel.indexOf(item), 1);
-          });
-        }
       }
     }
 
-    function moveInContainersModel(referenceIndex) {
+    function moveInContainersModel(referenceIndex, cleanupEnabled) {
       $rootScope.$applyAsync(function applyMoveBetweenContainers() {
+        if (referenceIndex === null) {
+          referenceIndex = _targetModel.length;
+        }
+
         if (_lastTargetModel === _targetModel) {
-          if (referenceIndex === null) {
-            referenceIndex = _targetModel.length;
-          }
-          var index = referenceIndex > _currentIndex ? referenceIndex - 1 : referenceIndex;
-          _targetModel.splice(index, 0, _lastTargetModel.splice(_currentIndex, 1)[0]);
-          _currentIndex = index;
+          _targetModel.splice(referenceIndex, 0, _lastTargetModel.splice(_currentIndex, 1)[0]);
         } else {
-          if (referenceIndex === null) {
-            referenceIndex = _targetModel.length - 1;
-          }
           if (!o.copy || _lastTargetModel !== _sourceModel) { // dont remove original from source while copying
             _lastTargetModel.splice(_currentIndex, 1);
           }
           if (!o.copy || _targetModel.indexOf(_copyModel) === -1) { // dont place copy twice in one drag
             _targetModel.splice(referenceIndex, 0, _copyModel || _itemModel);
-            _currentIndex = referenceIndex;
           }
+        }
+
+        _currentIndex = referenceIndex;
+
+        if (cleanupEnabled) {
+          var item = _copy || _item;
+          if (item.parentElement) {
+            item.parentElement.removeChild(item);
+          }
+          cleanup();
         }
       });
     }
