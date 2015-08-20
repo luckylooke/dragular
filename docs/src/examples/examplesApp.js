@@ -26,6 +26,10 @@ module.exports = angular.module('examplesApp', ['dragularModule', 'templates', '
         template: 'exampleBasicWithModel/exampleBasicWithModel.html',
         link: 'exampleBasicWithModel',
         title: 'Basic - with model'
+    },{
+        template: 'exampleDifferentOptionsWithModel/exampleDifferentOptionsWithModel.html',
+        link: 'exampleDifferentOptionsWithModel',
+        title: 'Different options - with model'
     }, {
         template: 'exampleDirective/exampleDirective.html',
         link: 'exampleDirective',

@@ -1,3 +1,24 @@
+# upcoming
+
+- example with containers which has different options each
+- **[Braking change!]** Now all non-nameSpaced continers are in same domain
+- **[Braking change!]** Models are not updated until drag ends
+
+### Changes merged from dragula 3.0.3:
+- Fixed a historical bug, where click on anchors would be ignored within dragula containers in mobile
+- Fixed a bug where events wouldn't be gracefully removed if drake were destroyed during a drag event
+- Now emits dragend after out to preserve consistency (because drag is emitted before over)
+- Fixed another old bug where attempting to remove elements using removeOnSpill on mobile would fail
+- Fixed a bug in mobile, caused by 3.0.0, where scrolling would be impossible
+- Fixed a bug where dragging would cause text selection in IE8
+- **[Braking change!]** Removed addContainer method, which was previously deprecated
+- **[Braking change!]** Removed removeContainer method, which was previously deprecated
+- **[Braking change!]** Removed delay option in favor of using mousemove
+- Drag events now start on the first occurrence of a mousemove event
+- If mousemove never fires, then the drag machinery won't start, either
+- Changed default value for invalid, now always returns false by default
+- Added mirrorContainer option to determine where the mirror gets appended to (defaults to document.body)
+
 # 2.1.3 hotfix
 
 - fixing makeArray internal function which causes reversed arrays and so unexpected behaviour
