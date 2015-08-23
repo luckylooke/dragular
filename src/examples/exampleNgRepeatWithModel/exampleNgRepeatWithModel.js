@@ -17,6 +17,7 @@ examplesAppModule
     }, {
       content: 'Item 4'
     }];
+    dragularService.cleanEnviroment();
     dragularService($element.children().eq(0).children(), {containersModel: $scope.items});
     $scope.addItem = function addItem() {
       var index = $scope.items.indexOf(this.item) + 1;

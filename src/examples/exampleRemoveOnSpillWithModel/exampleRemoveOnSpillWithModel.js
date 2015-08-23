@@ -27,6 +27,7 @@ examplesAppModule
       content: 'Item 8'
     }];
     var containers = $element.children().eq(0).children();
+    dragularService.cleanEnviroment();
     dragularService([containers[0], containers[1]], {
       containersModel: [$scope.items1, $scope.items2],
       removeOnSpill: true

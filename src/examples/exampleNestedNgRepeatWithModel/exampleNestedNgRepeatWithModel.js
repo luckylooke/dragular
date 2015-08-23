@@ -7,24 +7,26 @@ var examplesAppModule = require('../examplesApp');
 */
 
 examplesAppModule
-  .controller('NestedNgRepeatWithModel', ['$timeout', '$scope', '$element', 'dragularService', function TodoCtrl($timeout, $scope, $element, dragularService) {
+  .controller('NestedNgRepeatWithModel', ['$timeout', '$scope', '$element', 'dragularService', function NestedNgRepeatWithModelCtrl($timeout, $scope, $element, dragularService) {
     $timeout(function() { // timeount due to nested ngRepeat to be ready
       var container = $element.children().eq(0).children(),
         parentContainers = container.children(),
         nestedContainers = [];
 
+      dragularService.cleanEnviroment();
       dragularService(container, {
         moves: function(el, container, handle) {
           return handle.classList.contains('row-handle');
         },
-        containersModel: $scope.items
+        containersModel: $scope.items,
+        nameSpace: 'rows'
       });
 
       // collect nested contianers
       for (var i = 0; i < parentContainers.length; i++) {
         nestedContainers.push(parentContainers.eq(i).children()[1]);
       }
-
+    
       dragularService(nestedContainers, {
         moves: function(el, container, handle) {
           return !handle.classList.contains('row-handle');
@@ -36,7 +38,8 @@ examplesAppModule
             containersModel.push(parent[i].items);
           }
           return containersModel;
-        })()
+        })(),
+        nameSpace: 'cells'
       });
     }, 0);
     $scope.items = [{

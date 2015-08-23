@@ -9,7 +9,8 @@ var examplesAppModule = require('../examplesApp');
 examplesAppModule
   .controller('BoundingBoxLockX', ['$element', 'dragularService', function TodoCtrl($element, dragularService) {
     var boundingBox = $element.children().children()[0];
-    dragularService(boundingBox, {
+    dragularService.cleanEnviroment();
+	dragularService(boundingBox, {
       boundingBox: boundingBox,
       lockX: true
     });
