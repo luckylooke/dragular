@@ -1,5 +1,5 @@
 <div class='parent'>
-  <h2>Remove on spill</h2>
+  <h2>Remove on spill - with model</h2>
   <label for='hy'>Need to be able to quickly delete stuff when it spills out of the chosen containers?</label>
   <div class='wrapper' ng-controller="RemoveOnSpillWithModel">
     <div class='tableRow'>
@@ -44,6 +44,7 @@
       content: 'Item 8'
     }];
     var containers = $element.children().eq(0).children();
+    dragularService.cleanEnviroment();
     dragularService([containers[0],containers[1]],{
       containersModel: [$scope.items1, $scope.items2],
       removeOnSpill: true

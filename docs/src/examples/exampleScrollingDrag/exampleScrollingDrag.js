@@ -19,6 +19,7 @@ examplesAppModule
       rightTopBar = document.getElementById('rightTopBar'),
       rightBottomBar = document.getElementById('rightBottomBar');
 
+    dragularService.cleanEnviroment();
     dragularService([leftScroll, rightScroll], {
       scope: $scope
     });

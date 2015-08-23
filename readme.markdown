@@ -28,7 +28,7 @@ Have you ever wanted a drag and drop library that just works? That actually unde
 
 # Todo towards 3.0.0
 
-- share containers between instances, so no need to nameSpace if containers are initialised separately
+- empty drop area case
 - refactor code to be more human frendly
 - refactor service to return only small api object and share _containers between instances
 - reveal more internal variables in drake and provide drake on events as argument

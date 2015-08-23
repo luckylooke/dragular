@@ -1,6 +1,6 @@
 <div class='parent'>
   <h2>Different options - with model</h2>
-  <label for='hy'>You may need to setup different options (rules) for each container. For such setup you need to initialize each container separately. <b>Do not initialize same container twice!</b></label>
+  <label for='hy'>You may need to setup different options (rules) for each container. For such setup you need to initialize each container separately. <b>Do not initialize same container twice!</b>. In example bellow you can copy from left to right, but not otherwise. And from right container items can be removed on spill.</label>
   <div class='wrapper' ng-controller="DifferentOptionsModel">
     <div class='tableRow'>
       <div id="containerLeft" class='containerVertical'>
@@ -24,7 +24,7 @@
   <pre>
         <code>
 // JS
-  controller('BasicModel', ['$scope', '$element', 'dragularService', function TodoCtrl($scope, $element, dragularService) {
+  .controller('DifferentOptionsModel', ['$scope', '$element', 'dragularService', function TodoCtrl($scope, $element, dragularService) {
     $scope.items1 = [{
       content: 'Move me, but you can only drop me in one of these containers.'
     }, {
@@ -43,15 +43,35 @@
     }, {
       content: 'Item 8'
     }];
-    var containers = $element.children().children();
-    dragularService([containers[0],containers[1]],{
-      containersModel: [$scope.items1, $scope.items2]
+
+    var containerLeft = document.querySelector('#containerLeft'),
+      containerRight = document.querySelector('#containerRight');
+
+    function accepts(el, target, source) {
+      if (source === containerLeft || source === target) {
+        return true;
+      }
+    }
+
+    dragularService([containerLeft], {
+      containersModel: [$scope.items1],
+      copy: true,
+      //move only from left to right  
+      accepts: accepts
     });
+
+    dragularService([containerRight], {
+      containersModel: [$scope.items2],
+      removeOnSpill: true,
+      //move only from left to right  
+      accepts: accepts
+    });
+
   }])
         </code>
         <code>
 &lt;!-- HTML --&gt;
-&lt;div class='wrapper' ng-controller=&quot;Basic&quot;&gt;
+&lt;div class='wrapper' ng-controller=&quot;DifferentOptionsModel&quot;&gt;
     &lt;div class='tableRow'&gt;
         &lt;div class='containerVertical'&gt;
             &lt;div ng-repeat=&quot;item in items1&quot;&gt;{{item.content}}&lt;/div&gt;

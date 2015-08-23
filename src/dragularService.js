@@ -14,13 +14,13 @@ var dragularModule = require('./dragularModule');
 
 dragularModule.factory('dragularService', ['$rootScope', function dragula($rootScope) {
 
-  var containersNameSpaced = {}, // name-spaced containers
-    containersNameSpacedModel = {}, // name-spaced containers models
+  var serviceFn, // function returned as service
     _classesCache = {}, // classes lookup cache
+    _containersModel = {}, // containers model
     _containers = {}, // containers managed by the drake
     _mirror; // mirror image
 
-  return function(initialContainers, options) {
+  serviceFn = function(initialContainers, options) {
 
     if (arguments.length === 1 && !Array.isArray(initialContainers) && !angular.isElement(initialContainers) && !initialContainers[0]) {
       // then containers are not provided, only options
@@ -49,8 +49,6 @@ dragularModule.factory('dragularService', ['$rootScope', function dragula($rootS
       _currentIndex, // reference model index now
       _lastOverElem, // last element behind the cursor (dragOverClasses feature)
       _lastOverClass, // last overClass used (dragOverClasses feature)
-      _containers = {}, // containers managed by the drake
-      _containersModel = {}, // containers model
       _isContainer, // internal isContainer
       _targetContainer, // droppable container under drag item
       _dragEnterEvent, // drag enter event fired on element behind cursor
@@ -98,25 +96,23 @@ dragularModule.factory('dragularService', ['$rootScope', function dragula($rootS
       o.mirrorContainer = document.body;
     }
 
-    // get initial containers from options, argument or fall back to empty array (containers can be added later)
-    initialContainers = o.containers || (initialContainers ? makeArray(initialContainers) : []);
-    if (o.containers) {
-      // make array from o.containers
-      initialContainers = makeArray(initialContainers);
-    }
+    // get initial containers from options, argument or fall back to empty array (containers can be also added later)
+    initialContainers = o.containers || initialContainers || [];
+    initialContainers = makeArray(initialContainers);
+
     if (o.containersModel) {
+      //                            is 2D array?
       o.containersModel = Array.isArray(o.containersModel[0]) ? o.containersModel : [o.containersModel];
     }
 
-    function proceedContainers(_containers, containersNameSpaced, nameSpace, initialContainers) {
-      if (!containersNameSpaced[nameSpace]) {
-        containersNameSpaced[nameSpace] = [];
+    function proceedContainers(containers, nameSpace, initial) {
+      if (!containers[nameSpace]) {
+        containers[nameSpace] = [];
       }
-      Array.prototype.push.apply(containersNameSpaced[nameSpace], initialContainers);
-      _containers[nameSpace] = containersNameSpaced[nameSpace];
+      Array.prototype.push.apply(containers[nameSpace], initial);
     }
 
-    // feed namespaced containers groups and optionaly shadow it by models
+    // feed containers groups and optionaly shadow it by models
     if (!o.nameSpace) {
       o.nameSpace = ['dragularCommon'];
     }
@@ -124,9 +120,9 @@ dragularModule.factory('dragularService', ['$rootScope', function dragula($rootS
       o.nameSpace = [o.nameSpace];
     }
     o.nameSpace.forEach(function eachNameSpace(nameSpace) {
-      proceedContainers(_containers, containersNameSpaced, nameSpace, initialContainers);
+      proceedContainers(_containers, nameSpace, initialContainers);
       if (o.containersModel) {
-        proceedContainers(_containersModel, containersNameSpacedModel, nameSpace, o.containersModel);
+        proceedContainers(_containersModel, nameSpace, o.containersModel);
       }
     });
     _isContainer = isContainer;
@@ -176,7 +172,7 @@ dragularModule.factory('dragularService', ['$rootScope', function dragula($rootS
       $rootScope.applyAsync(function applyDestroyed() {
         var changes = Array.isArray(all) ? all : makeArray(all);
         changes.forEach(function forEachContainer(container) {
-          angular.forEach(o.nameSpace, function addRemoveNamespaced(nameSpace) {
+          angular.forEach(o.nameSpace, function forEachNs(nameSpace) {
             var index;
             index = _containers[nameSpace].indexOf(container);
             _containers[nameSpace].splice(index, 1);
@@ -189,9 +185,9 @@ dragularModule.factory('dragularService', ['$rootScope', function dragula($rootS
     }
 
     function isContainer(el) {
-      var nameSpace;
-      for (nameSpace in drake.containers) {
-        if (drake.containers.hasOwnProperty(nameSpace) && drake.containers[nameSpace].indexOf(el) !== -1) {
+      var i = o.nameSpace.length;
+      while (i--) {
+        if (drake.containers[o.nameSpace[i]].indexOf(el) !== -1) {
           return true;
         }
       }
@@ -238,8 +234,7 @@ dragularModule.factory('dragularService', ['$rootScope', function dragula($rootS
         return; // we only care about honest-to-god left clicks and touch events
       }
 
-      var item = e.target,
-        context = canStart(item);
+      var context = canStart(e.target);
       if (!context) {
         return;
       }
@@ -259,16 +254,16 @@ dragularModule.factory('dragularService', ['$rootScope', function dragula($rootS
 
       // automaticly detect direction of elements if not set in options
       if (!o.direction) {
-        var parent = _item.parentElement,
+        var parent = _sourceItem.parentElement,
           parentHeight = parent.offsetHeight,
           parentWidth = parent.offsetWidth,
-          childHeight = _item.clientHeight,
-          childWidth = _item.clientWidth;
+          childHeight = _sourceItem.clientHeight,
+          childWidth = _sourceItem.clientWidth;
         o.direction = parentHeight / childHeight < parentWidth / childWidth ? 'horizontal' : 'vertical';
       }
 
       // get initial coordinates, used to render _mirror for first time
-      var offset = getOffset(_item);
+      var offset = getOffset(_sourceItem);
       _offsetX = getCoord('pageX', e) - offset.left;
       _offsetY = getCoord('pageY', e) - offset.top;
       _clientX = getCoord('clientX', e);
@@ -297,13 +292,10 @@ dragularModule.factory('dragularService', ['$rootScope', function dragula($rootS
         return; // already dragging
       }
 
-      if (_isContainer(item)) {
-        return; // don't drag container itself
-      }
-
       var handle = item;
 
-      while (item.parentElement && !_isContainer(item.parentElement)) {
+      while (item.parentElement &&
+        !_isContainer(item.parentElement)) {
         // break loop if user tries to drag item which is considered invalid handle
         if (o.invalid(item, handle)) {
           return;
@@ -315,10 +307,9 @@ dragularModule.factory('dragularService', ['$rootScope', function dragula($rootS
       }
 
       var source = item.parentElement;
-      if (!source) {
-        return;
-      }
-      if (!source || o.invalid(item, handle) || !o.moves(item, source, handle, _sourceModel)) { // is movable
+      if (!source ||
+        o.invalid(item, handle) ||
+        !o.moves(item, source, handle)) {
         return;
       }
 
@@ -339,7 +330,7 @@ dragularModule.factory('dragularService', ['$rootScope', function dragula($rootS
       _sourceItem = _item = context.item;
       _source = context.source;
       _initialSibling = _currentSibling = nextEl(context.item);
-      
+
       if (o.copy) {
         _item = context.item.cloneNode(true);
         if (o.scope) {
@@ -431,20 +422,20 @@ dragularModule.factory('dragularService', ['$rootScope', function dragula($rootS
             var targetModel,
               dropElmModel = o.copy ? angular.copy(_sourceModel[_initialIndex]) : _sourceModel[_initialIndex];
 
-            for (var nameSpace in o.nameSpace) {
-              if (drake.containers.hasOwnProperty(nameSpace) && drake.containers[nameSpace].indexOf(target) !== -1) {
-                targetModel = _containersModel[nameSpace][drake.containers[nameSpace].indexOf(target)];
+            var i = o.nameSpace.length;
+            while (i--) {
+              if (drake.containers[o.nameSpace[i]].indexOf(target) !== -1) {
+                targetModel = _containersModel[o.nameSpace[i]][drake.containers[o.nameSpace[i]].indexOf(target)];
                 break;
               }
             }
 
-            console.log(o.nameSpace, drake, target);
+            target.removeChild(dropElm); // element must be removed for ngRepeat to apply correctly
 
             if (!o.copy) {
               _sourceModel.splice(_initialIndex, 1);
             }
             targetModel.splice(dropIndex, 0, dropElmModel);
-            target.removeChild(dropElm); // element must be removed for ngRepeat to apply correctly
           }
 
           if (item.parentElement) {
@@ -732,8 +723,8 @@ dragularModule.factory('dragularService', ['$rootScope', function dragula($rootS
       if (_mirror) {
         return;
       }
-      var rect = _item.getBoundingClientRect();
-      _mirror = _item.cloneNode(true);
+      var rect = _sourceItem.getBoundingClientRect();
+      _mirror = _sourceItem.cloneNode(true);
       _mirrorWidth = rect.width;
       _mirrorHeight = rect.height;
       _mirror.style.width = getRectWidth(rect) + 'px';
@@ -745,7 +736,7 @@ dragularModule.factory('dragularService', ['$rootScope', function dragula($rootS
       addClass(body, o.classes.unselectable);
       regEvent(_mirror, 'on', 'wheel', scrollContainer);
       if (o.scope) {
-        o.scope.$emit('cloned', _mirror, _item);
+        o.scope.$emit('cloned', _mirror, _sourceItem);
       }
     }
 
@@ -838,6 +829,19 @@ dragularModule.factory('dragularService', ['$rootScope', function dragula($rootS
       return el;
     }
   };
+
+// clean common/shared objects
+  serviceFn.cleanEnviroment = function cleanEnviroment () {
+    _classesCache = {};
+    _containersModel = {};
+    _containers = {};
+    _mirror = undefined;
+  };
+
+  return serviceFn;
+
+
+  // HELPERS FUNCTIONS:
 
   function regEvent(el, op, type, fn) {
     var touch = {

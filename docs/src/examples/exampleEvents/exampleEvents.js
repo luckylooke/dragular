@@ -8,6 +8,7 @@ var examplesAppModule = require('../examplesApp');
 
 examplesAppModule
   .controller('Events', ['$scope', '$element', 'dragularService', '$timeout', function TodoCtrl($scope, $element, dragularService, $timeout) {
+    dragularService.cleanEnviroment();
     dragularService($element.children(), {
       scope: $scope
     });

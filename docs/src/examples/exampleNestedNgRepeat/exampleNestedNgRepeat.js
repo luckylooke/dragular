@@ -7,15 +7,19 @@ var examplesAppModule = require('../examplesApp');
 */
 
 examplesAppModule
-  .controller('NestedNgRepeat', ['$timeout', '$scope', '$element', 'dragularService', function TodoCtrl($timeout, $scope, $element, dragularService) {
+  .controller('NestedNgRepeat', ['$timeout', '$scope', '$element', 'dragularService', function NestedNgRepeatCtrl($timeout, $scope, $element, dragularService) {
     $timeout(function() { // timeount due to ngRepeat to be ready
+      dragularService.cleanEnviroment();
       dragularService($element, {
-        moves: function(el, container, handle) {
+        nameSpace: 'rows',
+        moves: function rowOnly (el, container, handle) {
           return handle.classList.contains('row-handle');
         }
       });
+
       dragularService($element.children(), {
-        moves: function(el, container, handle) {
+        nameSpace: 'cells',
+        moves: function excludeHandle (el, container, handle) {
           return !handle.classList.contains('row-handle');
         }
       });

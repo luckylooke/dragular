@@ -36,6 +36,7 @@ examplesAppModule
       }
     }
 
+    dragularService.cleanEnviroment();
     dragularService([containerLeft], {
       containersModel: [$scope.items1],
       copy: true,
