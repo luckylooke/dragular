@@ -4,6 +4,7 @@
 - example with containers which has different options each
 - **[Braking change!]** Now all non-nameSpaced continers are in same domain
 - **[Braking change!]** Models are not updated until drag ends
+- removed npm workflow
 
 ### Changes merged from dragula 3.0.3:
 - Fixed a historical bug, where click on anchors would be ignored within dragula containers in mobile

@@ -28,15 +28,10 @@ Have you ever wanted a drag and drop library that just works? That actually unde
 
 # Todo towards 3.0.0
 
-- empty drop area case
-- refactor code to be more human frendly
-- refactor service to return only small api object and share _containers between instances
-- reveal more internal variables in drake and provide drake on events as argument
 - improving docs
 - example of clickable/dragable elements
 - example of interactions with dragging item
 - oportunity to provide model if options.isContainer is used (fn o.isContainerGetModel(containerElm...))
-- remove npm workflow
 - use destination container settings (will help in mixed enviroment see bellow)
 - renaming dragular events to be more dragular specific (dragulardrop instead of drop etc..)
 - remove dragoverclasses (replacing example with one using dragularenter/leave events)
