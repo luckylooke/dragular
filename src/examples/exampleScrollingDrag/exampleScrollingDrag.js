@@ -8,26 +8,24 @@ var examplesAppModule = require('../examplesApp');
  */
 
 examplesAppModule
-  .controller('ScrollingDrag', ['$scope', '$interval', '$element', 'dragularService', function TodoCtrl($scope, $interval, $element, dragularService) {
+  .controller('ScrollingDrag', ['$interval', '$element', 'dragularService', function TodoCtrl($interval, $element, dragularService) {
 
 
     var timer,
-      leftScroll = document.getElementById('leftScroll'),
-      rightScroll = document.getElementById('rightScroll'),
+      leftScrollContainer = document.getElementById('leftScroll'),
+      rightScrollContainer = document.getElementById('rightScroll'),
       leftTopBar = document.getElementById('leftTopBar'),
       leftBottomBar = document.getElementById('leftBottomBar'),
       rightTopBar = document.getElementById('rightTopBar'),
       rightBottomBar = document.getElementById('rightBottomBar');
 
     dragularService.cleanEnviroment();
-    dragularService([leftScroll, rightScroll], {
-      scope: $scope
-    });
+    dragularService([leftScrollContainer, rightScrollContainer]);
 
-    registerEvents(leftTopBar, leftScroll, -5);
-    registerEvents(leftBottomBar, leftScroll, 5);
-    registerEvents(rightTopBar, rightScroll, -5);
-    registerEvents(rightBottomBar, rightScroll, 5);
+    registerEvents(leftTopBar, leftScrollContainer, -5);
+    registerEvents(leftBottomBar, leftScrollContainer, 5);
+    registerEvents(rightTopBar, rightScrollContainer, -5);
+    registerEvents(rightBottomBar, rightScrollContainer, 5);
 
     function registerEvents(bar, container, inc, speed) {
       if (!speed) {
@@ -39,14 +37,8 @@ examplesAppModule
           container.scrollTop += inc;
         }, speed);
       });
-      angular.element(bar).on('dragularleave', function() {
+      angular.element(bar).on('dragularleave dragularrelease', function() {
         $interval.cancel(timer);
       });
     }
-
-    // in case you release drag over bar
-    $scope.$on('release', function stopScroll () {
-    	$interval.cancel(timer);
-    });
-
   }]);

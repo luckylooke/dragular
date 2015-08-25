@@ -75,9 +75,9 @@ module.exports = angular.module('examplesApp', ['dragularModule', 'templates', '
         link: 'exampleNameSpaces',
         title: 'NameSpaces'
     }, {
-        template: 'exampleDragOverClasses/exampleDragOverClasses.html',
-        link: 'exampleDragOverClasses',
-        title: 'DragOver classes'
+        template: 'exampleDragOverEvents/exampleDragOverEvents.html',
+        link: 'exampleDragOverEvents',
+        title: 'Drag-over events'
     }, {
         template: 'exampleBoundingBox/exampleBoundingBox.html',
         link: 'exampleBoundingBox',

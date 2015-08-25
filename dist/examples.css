@@ -378,15 +378,15 @@ github.com style (c) Vasily Polovnyov <vast@whiteants.net>
   background-color: rgba(0, 0, 0, 0.2);
 }
 
-.notContainer.gu-over-active.gu-over-decline {
+.notContainer.gu-over {
   background-color: yellow;
 }
 
-.container.gu-over-active.gu-over-accept {
+.containerVertical.gu-over-accept {
   background-color: green;
 }
 
-.container.gu-over-active.gu-over-decline {
+.containerVertical.gu-over-decline {
   background-color: red;
 }
 
