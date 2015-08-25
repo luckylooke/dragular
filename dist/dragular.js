@@ -95,24 +95,22 @@ dragularModule.factory('dragularService', ['$rootScope', function dragula($rootS
       _currentSibling, // reference sibling now
       _initialIndex, // reference model index when grabbed
       _currentIndex, // reference model index now
-      _lastOverElem, // last element behind the cursor (dragOverClasses feature)
-      _lastOverClass, // last overClass used (dragOverClasses feature)
       _isContainer, // internal isContainer
       _targetContainer, // droppable container under drag item
-      _dragEnterEvent, // drag enter event fired on element behind cursor
-      _dragLeaveEvent, // drag leave event fired on element behind cursor
+      _dragOverEvents = {}, // drag over events fired on element behind cursor
       _lastElementBehindCursor, // last element behind cursor
       _grabbed, // holds mousedown context until first mousemove
       defaultClasses = {
         mirror: 'gu-mirror',
         hide: 'gu-hide',
         unselectable: 'gu-unselectable',
-        transit: 'gu-transit',
-        overActive: 'gu-over-active',
-        overAccepts: 'gu-over-accept',
-        overDeclines: 'gu-over-decline'
+        transit: 'gu-transit'
+          // overActive: 'gu-over-active',
+          // overAccepts: 'gu-over-accept',
+          // overDeclines: 'gu-over-decline'
       },
       o = { // options
+        dragOverEventNames: ['dragularenter', 'dragularleave', 'dragularrelease'],
         classes: defaultClasses,
         containers: false,
         moves: always,
@@ -122,7 +120,6 @@ dragularModule.factory('dragularService', ['$rootScope', function dragula($rootS
         invalid: invalidTarget,
         revertOnSpill: false,
         removeOnSpill: false,
-        dragOverClasses: false,
         lockX: false,
         lockY: false,
         boundingBox: false,
@@ -178,17 +175,15 @@ dragularModule.factory('dragularService', ['$rootScope', function dragula($rootS
     //register events
     events();
 
-    if (document.createEvent) {
-      _dragEnterEvent = document.createEvent('HTMLEvents');
-      _dragEnterEvent.initEvent('dragularenter', true, true);
-      _dragLeaveEvent = document.createEvent('HTMLEvents');
-      _dragLeaveEvent.initEvent('dragularleave', true, true);
-    } else {
-      _dragEnterEvent = document.createEventObject();
-      _dragEnterEvent.eventType = 'dragularenter';
-      _dragLeaveEvent = document.createEventObject();
-      _dragLeaveEvent.eventType = 'dragularleave';
-    }
+    angular.forEach(o.dragOverEventNames, function prepareDragOverEvents(dragOverEvent) {
+      if (document.createEvent) {
+        _dragOverEvents[dragOverEvent] = document.createEvent('HTMLEvents');
+        _dragOverEvents[dragOverEvent].initEvent(dragOverEvent, true, true);
+      } else {
+        _dragOverEvents[dragOverEvent] = document.createEventObject();
+        _dragOverEvents[dragOverEvent].eventType = dragOverEvent;
+      }
+    });
 
     var drake = {
       containers: _containers,
@@ -443,10 +438,8 @@ dragularModule.factory('dragularService', ['$rootScope', function dragula($rootS
       // after release there is no container hovered
       _targetContainer = null;
 
-      // remove classes if used
-      if (o.dragOverClasses && _lastOverElem) {
-        rmClass(_lastOverElem, _lastOverClass);
-        _lastOverElem = null;
+      if (_lastElementBehindCursor) {
+        fireEvent(_lastElementBehindCursor, _dragOverEvents['dragularrelease'], _item, _source, _sourceModel, _initialIndex, elementBehindCursor);
       }
 
       if (o.scope) {
@@ -456,9 +449,9 @@ dragularModule.factory('dragularService', ['$rootScope', function dragula($rootS
 
     function drop(item, target) {
       if (o.scope && isInitialPlacement(target)) {
-        o.scope.$emit('cancel', item, _source, _sourceModel);
+        o.scope.$emit('cancel', item, _source, _sourceModel, _initialIndex);
       } else if (o.scope) {
-        o.scope.$emit('drop', item, target, _source, _sourceModel);
+        o.scope.$emit('drop', item, target, _source, _sourceModel, _initialIndex);
       }
       if (o.containersModel && !isInitialPlacement(target)) {
         var dropElm = item,
@@ -500,8 +493,7 @@ dragularModule.factory('dragularService', ['$rootScope', function dragula($rootS
       if (!drake.dragging) {
         return;
       }
-      var parent = _item.parentElement,
-        itemModel = _sourceModel && _sourceModel[_initialIndex];
+      var parent = _item.parentElement;
 
       if (parent) {
         parent.removeChild(_item);
@@ -515,7 +507,7 @@ dragularModule.factory('dragularService', ['$rootScope', function dragula($rootS
       }
 
       if (o.scope) {
-        o.scope.$emit(o.copy ? 'cancel' : 'remove', _item, parent, itemModel, _sourceModel);
+        o.scope.$emit(o.copy ? 'cancel' : 'remove', _item, parent, _sourceModel, _initialIndex);
       }
       if (!o.containersModel) {
         cleanup();
@@ -594,27 +586,13 @@ dragularModule.factory('dragularService', ['$rootScope', function dragula($rootS
           var immediate = getImmediateChild(target, elementBehindCursor),
             reference = getReference(target, immediate, clientX, clientY),
             initial = isInitialPlacement(target, reference);
-          accepts = initial ? true : o.accepts(_item, target, _source, reference, _sourceModel);
 
-          if (_targetContainer !== target) {
+          accepts = initial || o.accepts(_item, target, _source, reference, _sourceModel, _initialIndex);
+
+          if (_targetContainer !== target) { // used for scroll issue
             _targetContainer = target;
           }
         }
-
-        // add class if element is enabled for it and it has not already the class
-        if (o.dragOverClasses &&
-          hasClass(target, o.classes.overActive) &&
-          target !== _lastOverElem) {
-
-          if (_lastOverElem) { // clear from previous
-            rmClass(_lastOverElem, _lastOverClass);
-          }
-
-          _lastOverClass = accepts ? o.classes.overAccepts : o.classes.overDeclines;
-          addClass(target, _lastOverClass);
-          _lastOverElem = target;
-        }
-
         return accepts;
       }
     }
@@ -668,17 +646,17 @@ dragularModule.factory('dragularService', ['$rootScope', function dragula($rootS
 
       var elementBehindCursor = getElementBehindPoint(_mirror, _clientX, _clientY),
         dropTarget = findDropTarget(elementBehindCursor, _clientX, _clientY),
-        changed = dropTarget !== null && dropTarget !== _lastDropTarget;
+        changed = dropTarget !== _lastDropTarget;
 
       if (elementBehindCursor !== _lastElementBehindCursor) {
-        fireEvent(elementBehindCursor, _dragEnterEvent);
+        fireEvent(elementBehindCursor, _dragOverEvents['dragularenter'], _item, _source, _sourceModel, _initialIndex, !!dropTarget);
         if (_lastElementBehindCursor) {
-          fireEvent(_lastElementBehindCursor, _dragLeaveEvent);
+          fireEvent(_lastElementBehindCursor, _dragOverEvents['dragularleave'], _item, _source, _sourceModel, _initialIndex, elementBehindCursor);
         }
         _lastElementBehindCursor = elementBehindCursor;
       }
 
-      if (changed || dropTarget === null) {
+      if (changed) {
         out();
         _lastDropTarget = dropTarget;
         over();
@@ -878,8 +856,8 @@ dragularModule.factory('dragularService', ['$rootScope', function dragula($rootS
     }
   };
 
-// clean common/shared objects
-  serviceFn.cleanEnviroment = function cleanEnviroment () {
+  // clean common/shared objects
+  serviceFn.cleanEnviroment = function cleanEnviroment() {
     _classesCache = {};
     _containersModel = {};
     _containers = {};
@@ -956,10 +934,6 @@ dragularModule.factory('dragularService', ['$rootScope', function dragula($rootS
     el.className = el.className.replace(lookupClass(className), ' ').trim();
   }
 
-  function hasClass(el, className) {
-    return (' ' + el.className + ' ').indexOf(' ' + className + ' ') > -1;
-  }
-
   function getEventHost(e) {
     // on touchend event, we have to use `e.changedTouches`
     // see http://stackoverflow.com/questions/7192563/touchend-event-properties
@@ -997,10 +971,15 @@ dragularModule.factory('dragularService', ['$rootScope', function dragula($rootS
     return Array.prototype.indexOf.call(angular.element(parent).children(), child);
   }
 
-  function fireEvent(target, e) {
+  function fireEvent(target, e, item, source, sourceModel, initialIndex, extra) {
     if (!target) {
       return;
     }
+    serviceFn.item = item;
+    serviceFn.source = source;
+    serviceFn.sourceModel = sourceModel;
+    serviceFn.initialIndex = initialIndex;
+    serviceFn.extra = extra;
     if (target.dispatchEvent) {
       target.dispatchEvent(e);
     } else {

@@ -34,10 +34,8 @@ Have you ever wanted a drag and drop library that just works? That actually unde
 - oportunity to provide model if options.isContainer is used (fn o.isContainerGetModel(containerElm...))
 - use destination container settings (will help in mixed enviroment see bellow)
 - renaming dragular events to be more dragular specific (dragulardrop instead of drop etc..)
-- remove dragoverclasses (replacing example with one using dragularenter/leave events)
-- remove delay (merging mousedown and move condition to start drag from dragula)
 - options.isCopy function (allows conditional copy option)
-- fixing mixed enviroment with containers with model and without ut
+- fixing mixed enviroment with containers with model and without model
 - solve ngRepeat filtered
 - support selectors in service (#2)
 

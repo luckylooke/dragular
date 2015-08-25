@@ -1,5 +1,6 @@
 # upcoming
 
+- **[Braking change!]** removed dragOverClasses (dragOver events can be used instead);
 - share containers between instances, so no need to nameSpace if containers are initialised separately (CAUTION: in case of nested containers you need to use nameSpace for each group/level_of_nesting)
 - example with containers which has different options each
 - **[Braking change!]** Now all non-nameSpaced continers are in same domain
