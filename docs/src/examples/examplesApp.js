@@ -121,8 +121,11 @@ module.exports = angular.module('examplesApp', ['dragularModule', 'templates', '
         }
     };
 
-    var rowOffcanvas = angular.element(document.getElementById('rowOffcanvas'));
+    var rowOffcanvas;
     $scope.toggleSidebar = function toggleSidebar () {
+        if(!rowOffcanvas){
+            rowOffcanvas = angular.element(document.getElementById('rowOffcanvas'));
+        }
         rowOffcanvas.toggleClass('active');
     };
 
