@@ -10,7 +10,7 @@
     </div>
     <div class='containerVertical'>
       <div>You can drop me in the left container, otherwise I'll stay here.</div>
-      <div>Item 4.</div>
+      <div ng-click="clicked = !clicked" ng-class="clicked && 'clickedClass'">Try to click me, dragular distinguish drag from click</div>
       <div>Item 5.</div>
     </div>
   </div>
@@ -20,6 +20,12 @@
   controller('Basic', ['$element', 'dragularService', function TodoCtrl($element, dragularService) {
     dragularService($element.children());
   }])
+        </code>
+        <code>
+// CSS
+.clickedClass {
+  background-color: orange !important;
+}
         </code>
         <code>
 &lt;!-- HTML --&gt;
@@ -32,7 +38,7 @@
     &lt;/div&gt;
     &lt;div class='containerVertical'&gt;
         &lt;div&gt;You can drop me in the left container, otherwise I'll stay here.&lt;/div&gt;
-        &lt;div&gt;Item 4.&lt;/div&gt;
+        &lt;div ng-click="clicked = !clicked" ng-class="clicked && 'clickedClass'"&gt;Try to click me, dragular distinguish drag from click&lt;/div&gt;
         &lt;div&gt;Item 5.&lt;/div&gt;
     &lt;/div&gt;
 &lt;/div&gt;

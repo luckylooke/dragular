@@ -29,8 +29,6 @@ Have you ever wanted a drag and drop library that just works? That actually unde
 # Todo towards 3.0.0
 
 - improving docs
-- example of clickable/dragable elements
-- example of interactions with dragging item
 - oportunity to provide model if options.isContainer is used (fn o.isContainerGetModel(containerElm...))
 - use destination container settings (will help in mixed enviroment see bellow)
 - renaming dragular events to be more dragular specific (dragulardrop instead of drop etc..)
