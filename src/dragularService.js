@@ -207,6 +207,7 @@ dragularModule.factory('dragularService', ['$rootScope', function dragula($rootS
       var op = remove ? 'off' : 'on';
       regEvent(documentElement, op, 'selectstart', preventGrabbed); // IE8
       regEvent(documentElement, op, 'click', preventGrabbed);
+      regEvent(documentElement, op, 'touchmove', preventGrabbed); // fixes touch devices scrolling while drag
     }
 
     function destroy() {
@@ -236,7 +237,9 @@ dragularModule.factory('dragularService', ['$rootScope', function dragula($rootS
 
       _grabbed = context;
       eventualMovements();
-      e.preventDefault(); // fixes https://github.com/bevacqua/dragula/issues/155 and fixes touch devices scrolling while drag
+      if (e.type === 'mousedown') {
+        e.preventDefault(); // fixes https://github.com/bevacqua/dragula/issues/155
+      }
     }
 
     function startBecauseMouseMoved(e) {
