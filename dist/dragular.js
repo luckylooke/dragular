@@ -284,9 +284,7 @@ dragularModule.factory('dragularService', ['$rootScope', function dragula($rootS
 
       _grabbed = context;
       eventualMovements();
-      if (e.type === 'mousedown') {
-        e.preventDefault(); // fixes https://github.com/bevacqua/dragula/issues/155
-      }
+      e.preventDefault(); // fixes https://github.com/bevacqua/dragula/issues/155 and fixes touch devices scrolling while drag
     }
 
     function startBecauseMouseMoved(e) {
