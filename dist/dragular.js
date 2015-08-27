@@ -96,6 +96,7 @@ dragularModule.factory('dragularService', ['$rootScope', function dragula($rootS
       _initialIndex, // reference model index when grabbed
       _currentIndex, // reference model index now
       _isContainer, // internal isContainer
+      _isContainerModel, // if o.isContainer is used, model can be provided as well, here it is kept
       _targetContainer, // droppable container under drag item
       _dragOverEvents = {}, // drag over events fired on element behind cursor
       _lastElementBehindCursor, // last element behind cursor
@@ -123,7 +124,8 @@ dragularModule.factory('dragularService', ['$rootScope', function dragula($rootS
         lockX: false,
         lockY: false,
         boundingBox: false,
-        containersModel: false
+        containersModel: false,
+        isContainerModel: emptyObj
       };
 
     if (!isElement(o.boundingBox)) {
@@ -234,7 +236,13 @@ dragularModule.factory('dragularService', ['$rootScope', function dragula($rootS
           return true;
         }
       }
-      return o.isContainer(el);
+      if (o.isContainer(el)) {
+        _isContainerModel = o.isContainerModel(el);
+        return true;
+      } else {
+        _isContainerModel = null;
+      }
+      return false;
     }
 
     function events(remove) {
@@ -464,12 +472,16 @@ dragularModule.factory('dragularService', ['$rootScope', function dragula($rootS
             var targetModel,
               dropElmModel = o.copy ? angular.copy(_sourceModel[_initialIndex]) : _sourceModel[_initialIndex];
 
-            var i = o.nameSpace.length;
-            while (i--) {
-              if (drake.containers[o.nameSpace[i]].indexOf(target) !== -1) {
-                targetModel = _containersModel[o.nameSpace[i]][drake.containers[o.nameSpace[i]].indexOf(target)];
-                break;
+            if (!_isContainerModel) {
+              var i = o.nameSpace.length;
+              while (i--) {
+                if (drake.containers[o.nameSpace[i]].indexOf(target) !== -1) {
+                  targetModel = _containersModel[o.nameSpace[i]][drake.containers[o.nameSpace[i]].indexOf(target)];
+                  break;
+                }
               }
+            } else {
+              targetModel = _isContainerModel;
             }
 
             target.removeChild(dropElm); // element must be removed for ngRepeat to apply correctly
@@ -561,7 +573,7 @@ dragularModule.factory('dragularService', ['$rootScope', function dragula($rootS
       }
 
       _source = _item = _sourceItem = _initialSibling = _currentSibling = _sourceModel = null;
-      _initialIndex = _currentIndex = _lastDropTarget = null;
+      _initialIndex = _currentIndex = _lastDropTarget = _isContainerModel = null;
     }
 
     // is item currently placed in original container and original position?
@@ -890,6 +902,10 @@ dragularModule.factory('dragularService', ['$rootScope', function dragula($rootS
 
   function always() {
     return true;
+  }
+
+  function emptyObj() {
+    return {};
   }
 
   function nextEl(el) {

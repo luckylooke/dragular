@@ -67,6 +67,10 @@ module.exports = angular.module('examplesApp', ['dragularModule', 'templates', '
         link: 'exampleHandle',
         title: 'Handle'
     }, {
+        template: 'exampleIsContainerWithModel/exampleIsContainerWithModel.html',
+        link: 'exampleIsContainerWithModel',
+        title: 'isContainer - with model'
+    }, {
         template: 'exampleCustomClasses/exampleCustomClasses.html',
         link: 'exampleCustomClasses',
         title: 'Custom classes'
