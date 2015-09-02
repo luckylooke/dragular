@@ -135,6 +135,22 @@ dragularModule.factory('dragularService', ['$rootScope', function dragula($rootS
         }
       });
 
+      isContainer = function isContainer(el) {
+        var i = o.nameSpace.length;
+        while (i--) {
+          if (shared.containers[o.nameSpace[i]].indexOf(el) !== -1) {
+            return true;
+          }
+        }
+        if (o.isContainer(el)) {
+          shared.isContainerModel = o.isContainerModel(el);
+          return true;
+        } else {
+          shared.isContainerModel = null;
+        }
+        return false;
+      };
+
       var drake = {
         containers: shared.containers,
         containersModel: shared.containersModel,
@@ -176,22 +192,6 @@ dragularModule.factory('dragularService', ['$rootScope', function dragula($rootS
             });
           });
         });
-      }
-
-      function isContainer(el) {
-        var i = o.nameSpace.length;
-        while (i--) {
-          if (shared.containers[o.nameSpace[i]].indexOf(el) !== -1) {
-            return true;
-          }
-        }
-        if (o.isContainer(el)) {
-          shared.isContainerModel = o.isContainerModel(el);
-          return true;
-        } else {
-          shared.isContainerModel = null;
-        }
-        return false;
       }
 
       function events(remove) {

@@ -5,23 +5,23 @@
 <div class="table-responsive">
   <table class="table table-hover">
     <tr>
-      <td>dragularService.item</td>
+      <td>dragularService.shared.item</td>
       <td>item beeing dragged (it is copy of item if copy is enabled via options)</td>
     </tr>
     <tr>
-      <td>dragularService.source</td>
+      <td>dragularService.shared.source</td>
       <td>source container item is dragged from</td>
     </tr>
     <tr>
-      <td>dragularService.sourceModel</td>
+      <td>dragularService.shared.sourceModel</td>
       <td>source container model representation if model was porvided</td>
     </tr>
     <tr>
-      <td>dragularService.initialIndex</td>
+      <td>dragularService.shared.initialIndex</td>
       <td>original index of item, can be used to get item model from sourceModel</td>
     </tr>
     <tr>
-      <td>dragularService.extra</td>
+      <td>dragularService.shared.extra</td>
       <td>contains accepting information (boolean) on dragenter, element drag is leaving to on dragleave and element behind the cursor on dragrelease</td>
     </tr>
   </table>
@@ -119,13 +119,13 @@
     function registerEvents(el) {
       el.on('dragularenter', function(e) {
         if (el[0] === e.target) { // filter bubbled
-          el.addClass(dragularService.extra ? 'gu-over-accept' : 'gu-over-decline');
+          el.addClass(dragularService.shared.extra ? 'gu-over-accept' : 'gu-over-decline');
         }
       });
       el.on('dragularleave dragularrelease', function(e) {
         if ((el[0] === e.target && // filter bubbled
-          dragularService.extra && // extra on dragleave contains element the drag is leaving to
-          dragularService.extra.parentElement !== e.target) // is that element child of this container?
+          dragularService.shared.extra && // extra on dragleave contains element the drag is leaving to
+          dragularService.shared.extra.parentElement !== e.target) // is that element child of this container?
           || e.type === 'dragularrelease') {
           el.removeClass('gu-over-accept');
           el.removeClass('gu-over-decline');

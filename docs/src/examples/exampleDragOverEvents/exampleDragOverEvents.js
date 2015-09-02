@@ -21,13 +21,13 @@ examplesAppModule
     function registerEvents(el) {
       el.on('dragularenter', function(e) {
         if (el[0] === e.target) { // filter bubbled
-          el.addClass(dragularService.extra ? 'gu-over-accept' : 'gu-over-decline');
+          el.addClass(dragularService.shared.extra ? 'gu-over-accept' : 'gu-over-decline');
         }
       });
       el.on('dragularleave dragularrelease', function(e) {
         if ((el[0] === e.target && // filter bubbled
-          dragularService.extra && // extra on dragleave contains element the drag is leaving to
-          dragularService.extra.parentElement !== e.target) || // is that element child of this container?
+          dragularService.shared.extra && // extra on dragleave contains element the drag is leaving to
+          dragularService.shared.extra.parentElement !== e.target) || // is that element child of this container?
           e.type === 'dragularrelease') {
           el.removeClass('gu-over-accept');
           el.removeClass('gu-over-decline');

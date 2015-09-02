@@ -312,13 +312,13 @@ examplesAppModule
     function registerEvents(el) {
       el.on('dragularenter', function(e) {
         if (el[0] === e.target) { // filter bubbled
-          el.addClass(dragularService.extra ? 'gu-over-accept' : 'gu-over-decline');
+          el.addClass(dragularService.shared.extra ? 'gu-over-accept' : 'gu-over-decline');
         }
       });
       el.on('dragularleave dragularrelease', function(e) {
         if ((el[0] === e.target && // filter bubbled
-          dragularService.extra && // extra on dragleave contains element the drag is leaving to
-          dragularService.extra.parentElement !== e.target) || // is that element child of this container?
+          dragularService.shared.extra && // extra on dragleave contains element the drag is leaving to
+          dragularService.shared.extra.parentElement !== e.target) || // is that element child of this container?
           e.type === 'dragularrelease') {
           el.removeClass('gu-over-accept');
           el.removeClass('gu-over-decline');
@@ -982,7 +982,7 @@ $templateCache.put("exampleCustomClasses/exampleCustomClasses.html","<div class=
 $templateCache.put("exampleDifferentOptionsWithModel/exampleDifferentOptionsWithModel.html","<div class=\'parent\'>\n  <h2>Different options - with model</h2>\n  <label for=\'hy\'>You may need to setup different options (rules) for each container. For such setup you need to initialize each container separately. <b>Do not initialize same container twice!</b>. In example bellow you can copy from left to right, but not otherwise. And from right container items can be removed on spill.</label>\n  <div class=\'wrapper\' ng-controller=\"DifferentOptionsModel\">\n    <div class=\'tableRow\'>\n      <div id=\"containerLeft\" class=\'containerVertical\'>\n        <div ng-repeat=\"item in items1\">{{item.content}}</div>\n      </div>\n      <div id=\"containerRight\" class=\'containerVertical\'>\n        <div ng-repeat=\"item in items2\">{{item.content}}</div>\n      </div>\n    </div>\n    <div class=\"tableRow\">\n      <div class=\'containerVertical\'>\n        <pre>Items1:\n          <br/>{{items1 | json}}</pre>\n      </div>\n      <div class=\'containerVertical\'>\n        <pre>Items2:\n          <br/>{{items2 | json}}</pre>\n      </div>\n    </div>\n  </div>\n  <pre>\n        <code>\n// JS\n  .controller(\'DifferentOptionsModel\', [\'$scope\', \'$element\', \'dragularService\', function TodoCtrl($scope, $element, dragularService) {\n    $scope.items1 = [{\n      content: \'Move me, but you can only drop me in one of these containers.\'\n    }, {\n      content: \'If you try to drop me somewhere other than these containers, I\\\'ll just come back.\'\n    }, {\n      content: \'Item 3\'\n    }, {\n      content: \'Item 4\'\n    }];\n    $scope.items2 = [{\n      content: \'Item 5\'\n    }, {\n      content: \'Item 6\'\n    }, {\n      content: \'Item 7\'\n    }, {\n      content: \'Item 8\'\n    }];\n\n    var containerLeft = document.querySelector(\'#containerLeft\'),\n      containerRight = document.querySelector(\'#containerRight\');\n\n    function accepts(el, target, source) {\n      if (source === containerLeft || source === target) {\n        return true;\n      }\n    }\n\n    dragularService([containerLeft], {\n      containersModel: [$scope.items1],\n      copy: true,\n      //move only from left to right  \n      accepts: accepts\n    });\n\n    dragularService([containerRight], {\n      containersModel: [$scope.items2],\n      removeOnSpill: true,\n      //move only from left to right  \n      accepts: accepts\n    });\n\n  }])\n        </code>\n        <code>\n&lt;!-- HTML --&gt;\n&lt;div class=\'wrapper\' ng-controller=&quot;DifferentOptionsModel&quot;&gt;\n    &lt;div class=\'tableRow\'&gt;\n        &lt;div class=\'containerVertical\'&gt;\n            &lt;div ng-repeat=&quot;item in items1&quot;&gt;{{item.content}}&lt;/div&gt;\n        &lt;/div&gt;\n        &lt;div class=\'containerVertical\'&gt;\n            &lt;div ng-repeat=&quot;item in items2&quot;&gt;{{item.content}}&lt;/div&gt;\n        &lt;/div&gt;\n    &lt;/div&gt;\n    &lt;div class=&quot;tableRow&quot;&gt;\n        &lt;div class=&quot;container&quot;&gt;\n            &lt;div&gt;Items1:\n                &lt;br/&gt;{{items1 | json}}&lt;/div&gt;\n        &lt;/div&gt;\n        &lt;div class=&quot;container&quot;&gt;\n            &lt;div&gt;Items2:\n                &lt;br/&gt;{{items2 | json}}&lt;/div&gt;\n        &lt;/div&gt;\n    &lt;/div&gt;\n&lt;/div&gt;\n        </code>\n      </pre>\n</div>\n");
 $templateCache.put("exampleDirective/exampleDirective.html","<div class=\'parent\'>\n  <h2>Directive</h2>\n  <label for=\'hy\'>Same as custom classes example, but showing use of directive.</label>\n  <div class=\'wrapper\' ng-controller=\"Directive\">\n    <div class=\'containerVertical\' dragular=\"dragularOptions\">\n      <div>Move me, but you can only drop me in one of these containers.</div>\n      <div>If you try to drop me somewhere other than these containers, I\'ll just come back.</div>\n      <div>Item 3.</div>\n      <div>Item 6.</div>\n    </div>\n    <div class=\'containerVertical\' dragular=\'{\"classes\":{\"mirror\":\"custom-green-mirror\"},\"nameSpace\":\"same\"}\'>\n      <div>You can drop me in the left container, otherwise I\'ll stay here.</div>\n      <div>Item 4.</div>\n      <div>Item 5.</div>\n    </div>\n  </div>\n  <pre>\n        <code>\n// JS\n  controller(\'Directive\', [\'$scope\', \'dragularService\', function TodoCtrl($scope) {\n    $scope.dragularOptions = {\n      classes: {\n        mirror: \'custom-green-mirror\'\n      },\n      nameSpace: \'common\' // just connecting left and right container\n    };\n  }])\n        </code>\n        <code>\n&lt;!-- HTML --&gt;\n&lt;div class=\'wrapper\' ng-controller=&quot;Directive&quot;&gt;\n    &lt;div class=\'containerVertical\' dragular=&quot;dragularOptions&quot;&gt;\n      &lt;div&gt;Move me, but you can only drop me in one of these containers.&lt;/div&gt;\n      &lt;div&gt;If you try to drop me somewhere other than these containers, I\'ll just come back.&lt;/div&gt;\n      &lt;div&gt;Item 3.&lt;/div&gt;\n      &lt;div&gt;Item 6.&lt;/div&gt;\n    &lt;/div&gt;\n    &lt;div class=\'containerVertical\' dragular=\'{&quot;classes&quot;:{&quot;mirror&quot;:&quot;custom-green-mirror&quot;},&quot;nameSpace&quot;:&quot;same&quot;}\'&gt;\n      &lt;div&gt;You can drop me in the left container, otherwise I\'ll stay here.&lt;/div&gt;\n      &lt;div&gt;Item 4.&lt;/div&gt;\n      &lt;div&gt;Item 5.&lt;/div&gt;\n    &lt;/div&gt;\n  &lt;/div&gt;\n        </code>\n      </pre>\n</div>\n");
 $templateCache.put("exampleDirectiveWithModel/exampleDirectiveWithModel.html","<div class=\'parent\'>\n  <h2>Directive - with model</h2>\n  <label for=\'hy\'>Same as custom classes example, but showing use of directive.</label>\n  <div class=\'wrapper\' ng-controller=\"DirectiveModel\">\n    <div class=\'tableRow\'>\n      <div class=\'containerVertical\' dragular=\"dragularOptions\">\n        <div ng-repeat=\"item in items1\">{{item.content}}</div>\n      </div>\n      <div class=\'containerVertical\' dragular=\'{\"containersModel\":\"items2\",\"classes\":{\"mirror\":\"custom-green-mirror\"},\"nameSpace\":\"common\"}\'>\n        <div ng-repeat=\"item in items2\">{{item.content}}</div>\n      </div>\n    </div>\n    <div class=\"tableRow\">\n      <div class=\'containerVertical\'>\n        <div>Items1:\n          <br/>{{items1 | json}}</div>\n      </div>\n      <div class=\'containerVertical\'>\n        <div>Items2:\n          <br/>{{items2 | json}}</div>\n      </div>\n    </div>\n  </div>\n  <pre>\n       \n        <code>\n// JS\n  controller(\'DirectiveModel\', [\'$scope\', function TodoCtrl($scope) {\n    $scope.items1 = [{\n      content: \'Move me, and make copy on drop.\'\n    }, {\n      content: \'If you try to drop me somewhere other than these containers, I\\\'ll just come back.\'\n    }, {\n      content: \'Item 3\'\n    }, {\n      content: \'Item 4\'\n    }];\n    $scope.items2 = [{\n      content: \'Item 5\'\n    }, {\n      content: \'Item 6\'\n    }, {\n      content: \'Item 7\'\n    }, {\n      content: \'Item 8\'\n    }];\n    $scope.dragularOptions = {\n      containersModel: $scope.items1,\n      classes: {\n        mirror: \'custom-green-mirror\'\n      },\n      nameSpace: \'common\' // just connecting left and right container\n    };\n  }])\n        </code>\n        <code>\n&lt;!-- HTML --&gt;\n &lt;div class=\'wrapper\' ng-controller=&quot;DirectiveModel&quot;&gt;\n  &lt;div class=\'containerVertical\' dragular=&quot;dragularOptions&quot;&gt;\n    &lt;div ng-repeat=&quot;item in items1&quot;&gt;{{item.content}}&lt;/div&gt;\n  &lt;/div&gt;\n  &lt;div class=\'containerVertical\' dragular=\'{&quot;containersModel&quot;:&quot;items2&quot;,&quot;classes&quot;:{&quot;mirror&quot;:&quot;custom-green-mirror&quot;},&quot;nameSpace&quot;:&quot;common&quot;}\'&gt;\n    &lt;div ng-repeat=&quot;item in items2&quot;&gt;{{item.content}}&lt;/div&gt;\n  &lt;/div&gt;\n&lt;/div&gt;\n        </code>\n      </pre>\n</div>\n");
-$templateCache.put("exampleDragOverEvents/exampleDragOverEvents.html","<div class=\'parent\'>\n  <h2>Drag-over events</h2>\n  <p>You can interact with dragging element by litening to dragOver events. Usually you want to containers show wheather they accepts element or not, but you can use it anywhere. DragOver events are: dragenter, dragleave and dragrelease. On dragOver events dragularService reveals several useful properties.</p>\n\n<div class=\"table-responsive\">\n  <table class=\"table table-hover\">\n    <tr>\n      <td>dragularService.item</td>\n      <td>item beeing dragged (it is copy of item if copy is enabled via options)</td>\n    </tr>\n    <tr>\n      <td>dragularService.source</td>\n      <td>source container item is dragged from</td>\n    </tr>\n    <tr>\n      <td>dragularService.sourceModel</td>\n      <td>source container model representation if model was porvided</td>\n    </tr>\n    <tr>\n      <td>dragularService.initialIndex</td>\n      <td>original index of item, can be used to get item model from sourceModel</td>\n    </tr>\n    <tr>\n      <td>dragularService.extra</td>\n      <td>contains accepting information (boolean) on dragenter, element drag is leaving to on dragleave and element behind the cursor on dragrelease</td>\n    </tr>\n  </table>\n</div>\n\n  <p> Try to drag over the not-container too.</p>\n  <div class=\'wrapper\' ng-controller=\"DragOverEvents\">\n    <div class=\'containerVertical width25\'>\n      <div>apples and oranges cannot be mixed</div>\n      <div>apple 2</div>\n      <div>apple 3</div>\n      <div>apple 4</div>\n    </div>\n    <div class=\'containerVertical width25\'>\n      <div>orange 1</div>\n      <div>orange 2</div>\n      <div>orange 3</div>\n      <div>orange 4</div>\n    </div>\n    <div class=\'containerVertical width25\'>\n      <div>apple 5</div>\n      <div>apple 6</div>\n      <div>apple 7</div>\n      <div>apple 8</div>\n    </div>\n    <div class=\'containerVertical width25\'>\n      <div>orange 5</div>\n      <div>orange 6</div>\n      <div>orange 7</div>\n      <div>orange 8</div>\n    </div>\n  </div>\n  <div class=\"notContainer gu-over-active\"> Test active class on NOT container.</div>\n\n  <pre>\n    <code>\n&lt;!-- HTML --&gt;\n  &lt;div class=\'wrapper\' ng-controller=&quot;DragOverEvents&quot;&gt;\n    &lt;div class=\'container width25\'&gt;\n      &lt;div&gt;apples and oranges cannot be mixed&lt;/div&gt;\n      &lt;div&gt;apple 2&lt;/div&gt;\n      ...\n    &lt;/div&gt;\n    &lt;div class=\'container width25\'&gt;\n      &lt;div&gt;orange 1&lt;/div&gt;\n      &lt;div&gt;orange 2&lt;/div&gt;\n      ...\n    &lt;/div&gt;\n    &lt;div class=\'container width25\'&gt;\n      &lt;div&gt;apple 5&lt;/div&gt;\n      &lt;div&gt;apple 6&lt;/div&gt;\n      ...\n    &lt;/div&gt;\n    &lt;div class=\'container width25\'&gt;\n      &lt;div&gt;orange 5&lt;/div&gt;\n      &lt;div&gt;orange 6&lt;/div&gt;\n      ...\n    &lt;/div&gt;\n  &lt;/div&gt;\n  &lt;div class=&quot;notContainer&quot;&gt; Test active class on NOT container.&lt;/div&gt;\n    </code>\n  </pre>\n\n  <pre>\n    <code>\n  // CSS\n  \n.notContainer.gu-over {\n  background-color: yellow;\n}\n\n.containerVertical.gu-over-accept {\n  background-color: green;\n}\n\n.containerVertical.gu-over-decline {\n  background-color: red;\n}\n    </code>\n  </pre>\n\n  <pre>\n    <code>\n  // JS\n  controller(\'DragOverEvents\', [\'$element\', \'dragularService\', function TodoCtrl($element, dragularService) {\n    dragularService.cleanEnviroment();\n    dragularService([$element.children()[0], $element.children()[2]], {\n      nameSpace: \'apples\'\n    });\n    dragularService([$element.children()[1], $element.children()[3]], {\n      nameSpace: \'oranges\'\n    });\n\n    // containers events handling\n    function registerEvents(el) {\n      el.on(\'dragularenter\', function(e) {\n        if (el[0] === e.target) { // filter bubbled\n          el.addClass(dragularService.extra ? \'gu-over-accept\' : \'gu-over-decline\');\n        }\n      });\n      el.on(\'dragularleave dragularrelease\', function(e) {\n        if ((el[0] === e.target && // filter bubbled\n          dragularService.extra && // extra on dragleave contains element the drag is leaving to\n          dragularService.extra.parentElement !== e.target) // is that element child of this container?\n          || e.type === \'dragularrelease\') {\n          el.removeClass(\'gu-over-accept\');\n          el.removeClass(\'gu-over-decline\');\n        }\n      });\n    }\n\n    angular.forEach($element.children(), function forEachChild(el) {\n      registerEvents(angular.element(el));\n    });\n\n    // notContainer events handling\n    var notContainer = angular.element(document.getElementsByClassName(\'notContainer\'));\n    notContainer.on(\'dragularenter\', function() {\n      notContainer.addClass(\'gu-over\');\n    });\n    notContainer.on(\'dragularleave dragularrelease\', function() {\n      notContainer.removeClass(\'gu-over\');\n    });\n  }])\n    </code>\n  </pre>\n</div>\n");
+$templateCache.put("exampleDragOverEvents/exampleDragOverEvents.html","<div class=\'parent\'>\n  <h2>Drag-over events</h2>\n  <p>You can interact with dragging element by litening to dragOver events. Usually you want to containers show wheather they accepts element or not, but you can use it anywhere. DragOver events are: dragenter, dragleave and dragrelease. On dragOver events dragularService reveals several useful properties.</p>\n\n<div class=\"table-responsive\">\n  <table class=\"table table-hover\">\n    <tr>\n      <td>dragularService.shared.item</td>\n      <td>item beeing dragged (it is copy of item if copy is enabled via options)</td>\n    </tr>\n    <tr>\n      <td>dragularService.shared.source</td>\n      <td>source container item is dragged from</td>\n    </tr>\n    <tr>\n      <td>dragularService.shared.sourceModel</td>\n      <td>source container model representation if model was porvided</td>\n    </tr>\n    <tr>\n      <td>dragularService.shared.initialIndex</td>\n      <td>original index of item, can be used to get item model from sourceModel</td>\n    </tr>\n    <tr>\n      <td>dragularService.shared.extra</td>\n      <td>contains accepting information (boolean) on dragenter, element drag is leaving to on dragleave and element behind the cursor on dragrelease</td>\n    </tr>\n  </table>\n</div>\n\n  <p> Try to drag over the not-container too.</p>\n  <div class=\'wrapper\' ng-controller=\"DragOverEvents\">\n    <div class=\'containerVertical width25\'>\n      <div>apples and oranges cannot be mixed</div>\n      <div>apple 2</div>\n      <div>apple 3</div>\n      <div>apple 4</div>\n    </div>\n    <div class=\'containerVertical width25\'>\n      <div>orange 1</div>\n      <div>orange 2</div>\n      <div>orange 3</div>\n      <div>orange 4</div>\n    </div>\n    <div class=\'containerVertical width25\'>\n      <div>apple 5</div>\n      <div>apple 6</div>\n      <div>apple 7</div>\n      <div>apple 8</div>\n    </div>\n    <div class=\'containerVertical width25\'>\n      <div>orange 5</div>\n      <div>orange 6</div>\n      <div>orange 7</div>\n      <div>orange 8</div>\n    </div>\n  </div>\n  <div class=\"notContainer gu-over-active\"> Test active class on NOT container.</div>\n\n  <pre>\n    <code>\n&lt;!-- HTML --&gt;\n  &lt;div class=\'wrapper\' ng-controller=&quot;DragOverEvents&quot;&gt;\n    &lt;div class=\'container width25\'&gt;\n      &lt;div&gt;apples and oranges cannot be mixed&lt;/div&gt;\n      &lt;div&gt;apple 2&lt;/div&gt;\n      ...\n    &lt;/div&gt;\n    &lt;div class=\'container width25\'&gt;\n      &lt;div&gt;orange 1&lt;/div&gt;\n      &lt;div&gt;orange 2&lt;/div&gt;\n      ...\n    &lt;/div&gt;\n    &lt;div class=\'container width25\'&gt;\n      &lt;div&gt;apple 5&lt;/div&gt;\n      &lt;div&gt;apple 6&lt;/div&gt;\n      ...\n    &lt;/div&gt;\n    &lt;div class=\'container width25\'&gt;\n      &lt;div&gt;orange 5&lt;/div&gt;\n      &lt;div&gt;orange 6&lt;/div&gt;\n      ...\n    &lt;/div&gt;\n  &lt;/div&gt;\n  &lt;div class=&quot;notContainer&quot;&gt; Test active class on NOT container.&lt;/div&gt;\n    </code>\n  </pre>\n\n  <pre>\n    <code>\n  // CSS\n  \n.notContainer.gu-over {\n  background-color: yellow;\n}\n\n.containerVertical.gu-over-accept {\n  background-color: green;\n}\n\n.containerVertical.gu-over-decline {\n  background-color: red;\n}\n    </code>\n  </pre>\n\n  <pre>\n    <code>\n  // JS\n  controller(\'DragOverEvents\', [\'$element\', \'dragularService\', function TodoCtrl($element, dragularService) {\n    dragularService.cleanEnviroment();\n    dragularService([$element.children()[0], $element.children()[2]], {\n      nameSpace: \'apples\'\n    });\n    dragularService([$element.children()[1], $element.children()[3]], {\n      nameSpace: \'oranges\'\n    });\n\n    // containers events handling\n    function registerEvents(el) {\n      el.on(\'dragularenter\', function(e) {\n        if (el[0] === e.target) { // filter bubbled\n          el.addClass(dragularService.shared.extra ? \'gu-over-accept\' : \'gu-over-decline\');\n        }\n      });\n      el.on(\'dragularleave dragularrelease\', function(e) {\n        if ((el[0] === e.target && // filter bubbled\n          dragularService.shared.extra && // extra on dragleave contains element the drag is leaving to\n          dragularService.shared.extra.parentElement !== e.target) // is that element child of this container?\n          || e.type === \'dragularrelease\') {\n          el.removeClass(\'gu-over-accept\');\n          el.removeClass(\'gu-over-decline\');\n        }\n      });\n    }\n\n    angular.forEach($element.children(), function forEachChild(el) {\n      registerEvents(angular.element(el));\n    });\n\n    // notContainer events handling\n    var notContainer = angular.element(document.getElementsByClassName(\'notContainer\'));\n    notContainer.on(\'dragularenter\', function() {\n      notContainer.addClass(\'gu-over\');\n    });\n    notContainer.on(\'dragularleave dragularrelease\', function() {\n      notContainer.removeClass(\'gu-over\');\n    });\n  }])\n    </code>\n  </pre>\n</div>\n");
 $templateCache.put("exampleEvents/exampleEvents.html","<div class=\'parent\'>\n    <h2>Events</h2>\n    <label for=\'hy\'>Add some fantastic events!</label>\n    <div class=\'wrapper\' ng-controller=\"Events\">\n        <div id=\'left3\' class=\'containerVertical\'>\n            <div>Move me, but you can only drop me in one of these containers.</div>\n            <div>If you try to drop me somewhere other than these containers, I\'ll just come back.</div>\n            <div>Item 3.</div>\n            <div>Item 6.</div>\n        </div>\n        <div id=\'right3\' class=\'containerVertical\'>\n            <div>You can drop me in the left container, otherwise I\'ll stay here.</div>\n            <div>Item 4.</div>\n            <div>Item 5.</div>\n        </div>\n    </div>\n    <pre>\n        <code>\n  dragularService.cleanEnviroment();\n  dragularService([document.getElementById(left), document.getElementById(right)], {\n    scope: $scope\n  });\n  $scope.$on(\'drag\', function(e, el) {\n    e.stopPropagation();\n    el.className = el.className.replace(\' ex-moved\', \'\');\n  });\n  $scope.$on(\'drop\', function(e, el) {\n    e.stopPropagation();\n    $timeout(function() {\n      el.className += \' ex-moved\';\n    }, 0);\n  });\n        </code>\n      </pre>\n</div>\n");
 $templateCache.put("exampleHandle/exampleHandle.html","<div class=\'parent\'>\n    <h2>Handle</h2>\n    <label for=\'hy\'>Drag handles float your cruise?</label>\n    <div class=\'wrapper\' ng-controller=\"Handle\">\n        <div id=\'left5\' class=\'containerVertical\'>\n            <div><span class=\'handle\'>+</span>Move me, but you can use the plus sign to drag me around.</div>\n        </div>\n        <div id=\'right5\' class=\'containerVertical\'>\n        </div>\n    </div>\n    <pre>\n        <code>\n  dragularService([document.getElementById(left), document.getElementById(right)], {\n    moves: function (el, container, handle) {\n      return handle.className === \'handle\';\n    }\n  });\n        </code>\n      </pre>\n</div>\n");
 $templateCache.put("exampleIsContainerWithModel/exampleIsContainerWithModel.html","<div class=\'parent\'>\n  <h2>isContainer - with model</h2>\n  <label for=\'hy\'>Possible use case of <code>options.isContainer</code> combined with model. When you provide function <code>isContainer</code> and in case it returns true and you are providing models (<code>options.containersModel</code>), dragular check for model calling <code>options.isContainerModel(el)</code> function. If not provided, model is discarted.</label>\n  <div class=\'wrapper\' ng-controller=\"IsContainerModel\">\n    <div class=\'tableRow\'>\n      <div id=\"containerLeft\" class=\'containerVertical\'>\n        <div ng-repeat=\"item in items1\">{{item.content}}</div>\n      </div>\n      <div id=\"cart\" class=\'containerVertical\'>\n        <div class=\'cursorDefault\' ng-repeat=\"item in cartModel\">{{item.content}} \n        <button class=\'cursorDefault\' ng-click=\"removeItem()\">x</button></div>\n      </div>\n    </div>\n    <div class=\"tableRow\">\n      <div class=\'containerVertical\'>\n        <pre>Items1:\n          <br/>{{items1 | json}}</pre>\n      </div>\n      <div class=\'containerVertical\'>\n        <pre>Cart:\n          <br/>{{cartModel | json}}</pre>\n      </div>\n    </div>\n  </div>\n  <pre>\n        <code>\n// JS\n  .controller(\'IsContainerModel\', [\'$scope\', \'$element\', \'dragularService\', function TodoCtrl($scope, $element, dragularService) {\n    $scope.items1 = [{\n      content: \'Move me, but you can only drop me in one of these containers.\'\n    }, {\n      content: \'If you try to drop me somewhere other than these containers, I\\\'ll just come back.\'\n    }, {\n      content: \'Item 3\'\n    }, {\n      content: \'Item 4\'\n    }];\n    $scope.cartModel = [];\n\n    var containerLeft = document.querySelector(\'#containerLeft\');\n\n    dragularService.cleanEnviroment();\n    dragularService([containerLeft], {\n      containersModel: [$scope.items1],\n      copy: true,\n      isContainer: function isContainer (el) {\n        return el.id === \'cart\';\n      },\n      isContainerModel: function getModel (){\n        return $scope.cartModel;\n      }\n    });\n\n    $scope.removeItem = function removeItem() {\n      var index = $scope.cartModel.indexOf(this.item);\n      $scope.cartModel.splice(index, 1);\n    };\n\n  }])\n        </code>\n        <code>\n&lt;!-- HTML --&gt;\n &lt;div class=\'wrapper\' ng-controller=&quot;IsContainerModel&quot;&gt;\n    &lt;div class=\'tableRow\'&gt;\n      &lt;div id=&quot;containerLeft&quot; class=\'containerVertical\'&gt;\n        &lt;div ng-repeat=&quot;item in items1&quot;&gt;{{item.content}}&lt;/div&gt;\n      &lt;/div&gt;\n      &lt;div id=&quot;cart&quot; class=\'containerVertical\'&gt;\n        &lt;div class=\'cursorDefault\' ng-repeat=&quot;item in cartModel&quot;&gt;{{item.content}} \n        &lt;button class=\'cursorDefault\' ng-click=&quot;removeItem()&quot;&gt;x&lt;/button&gt;&lt;/div&gt;\n      &lt;/div&gt;\n    &lt;/div&gt;\n    &lt;div class=&quot;tableRow&quot;&gt;\n      &lt;div class=\'containerVertical\'&gt;\n        &lt;pre&gt;Items1:\n          &lt;br/&gt;{{items1 | json}}&lt;/pre&gt;\n      &lt;/div&gt;\n      &lt;div class=\'containerVertical\'&gt;\n        &lt;pre&gt;Cart:\n          &lt;br/&gt;{{cartModel | json}}&lt;/pre&gt;\n      &lt;/div&gt;\n    &lt;/div&gt;\n  &lt;/div&gt;\n        </code>\n      </pre>\n</div>\n");
@@ -997,7 +997,7 @@ $templateCache.put("exampleRevertOnSpill/exampleRevertOnSpill.html","        <di
 $templateCache.put("exampleScrollingDrag/exampleScrollingDrag.html","<div class=\'parent\'>\n  <h2>Scrolling drag</h2>\n  <label for=\'hy\'> Containers can be scrolled by hovering up/down bar near containers. Bars on right side are transparent and moved a bit over containers. It can be scrolled also by mouse wheel.\n  </label>\n  <div ng-controller=\"ScrollingDrag\">\n    <div class=\"containerVertical scrollingDrag\">\n      <div class=\"scrollBar\" id=\"leftTopBar\">up</div>\n      <div id=\"leftScroll\" class=\"scrollingDragInner\">\n        <div>Item 1.</div>\n        <div>Item 2.</div>\n        <div>Item 3.</div>\n        <div>Item 4.</div>\n        <div>Item 5.</div>\n        <div>Item 6.</div>\n        <div>Item 7.</div>\n        <div>Item 9.</div>\n        <div>Item 10.</div>\n        <div>Item 11.</div>\n        <div>Item 12.</div>\n        <div>Item 13.</div>\n      </div>\n      <div class=\"scrollBar\" id=\"leftBottomBar\">down</div>\n    </div>\n    <div class=\"containerVertical scrollingDrag\">\n      <div class=\"scrollBar\" id=\"rightTopBar\"></div>\n      <div id=\"rightScroll\" class=\"scrollingDragInner\">\n        <div>Item 1.</div>\n        <div>Item 2.</div>\n        <div>Item 3.</div>\n        <div>Item 4.</div>\n        <div>Item 5.</div>\n        <div>Item 6.</div>\n        <div>Item 7.</div>\n        <div>Item 9.</div>\n        <div>Item 10.</div>\n        <div>Item 11.</div>\n        <div>Item 12.</div>\n        <div>Item 13.</div>\n      </div>\n      <div class=\"scrollBar\" id=\"rightBottomBar\"></div>\n    </div>\n  </div>\n   <pre>\n        <code>\n// JS\ncontroller(\'ScrollingDrag\', [\'$interval\', \'$element\', \'dragularService\', function TodoCtrl($interval, $element, dragularService) {\n\n\n    var timer,\n      leftScrollContainer = document.getElementById(\'leftScroll\'),\n      rightScrollContainer = document.getElementById(\'rightScroll\'),\n      leftTopBar = document.getElementById(\'leftTopBar\'),\n      leftBottomBar = document.getElementById(\'leftBottomBar\'),\n      rightTopBar = document.getElementById(\'rightTopBar\'),\n      rightBottomBar = document.getElementById(\'rightBottomBar\');\n\n    dragularService.cleanEnviroment();\n    dragularService([leftScrollContainer, rightScrollContainer]);\n\n    registerEvents(leftTopBar, leftScrollContainer, -5);\n    registerEvents(leftBottomBar, leftScrollContainer, 5);\n    registerEvents(rightTopBar, rightScrollContainer, -5);\n    registerEvents(rightBottomBar, rightScrollContainer, 5);\n\n    function registerEvents(bar, container, inc, speed) {\n      if (!speed) {\n        speed = 20;\n      }\n      angular.element(bar).on(\'dragularenter\', function() {\n        container.scrollTop += inc;\n        timer = $interval(function moveScroll() {\n          container.scrollTop += inc;\n        }, speed);\n      });\n      angular.element(bar).on(\'dragularleave dragularrelease\', function() {\n        $interval.cancel(timer);\n      });\n    }\n  }])\n        </code>\n      </pre>\n      <pre>\n        <code>\n&lt;!-- HTML --&gt;\n&lt;div ng-controller=&quot;ScrollingDrag&quot;&gt;\n    &lt;div class=&quot;containerVertical scrollingDrag&quot;&gt;\n      &lt;div class=&quot;scrollBar&quot; id=&quot;leftTopBar&quot;&gt;up&lt;/div&gt;\n      &lt;div id=&quot;leftScroll&quot; class=&quot;scrollingDragInner&quot;&gt;\n        &lt;div&gt;Item 1&lt;/div&gt;\n        &lt;div&gt;Item 2&lt;/div&gt;\n            ...\n      &lt;/div&gt;\n      &lt;div class=&quot;scrollBar&quot; id=&quot;leftBottomBar&quot;&gt;down&lt;/div&gt;\n    &lt;/div&gt;\n    &lt;div class=&quot;containerVertical scrollingDrag&quot;&gt;\n      &lt;div class=&quot;scrollBar&quot; id=&quot;rightTopBar&quot;&gt;up&lt;/div&gt;\n      &lt;div id=&quot;rightScroll&quot; class=&quot;scrollingDragInner&quot;&gt;\n        &lt;div&gt;Item 1&lt;/div&gt;\n        &lt;div&gt;Item 2&lt;/div&gt;\n            ...\n      &lt;/div&gt;\n      &lt;div class=&quot;scrollBar&quot; id=&quot;rightBottomBar&quot;&gt;down&lt;/div&gt;\n    &lt;/div&gt;\n  &lt;/div&gt;\n        </code>\n      </pre>\n       <pre>\n        <code>\n// CSS\n.scrollingDrag {\n  width: 45%;\n  display: inline-block;\n}\n\n.scrollingDragInner {\n  max-height: 200px;\n  overflow-y: auto;\n}\n\n#rightTopBar,\n#rightBottomBar {\n  background: transparent;\n  position: relative;\n  height: 20px;\n}\n\n#rightTopBar {\n  top: 10px;\n}\n\n#rightBottomBar {\n  bottom: 10px;\n}\n\ndiv.scrollBar {\n  background: yellow;\n  text-align: center;\n  padding: 1px;\n}\n\n        </code>\n      </pre>\n</div>\n");
 $templateCache.put("partials/partial-contribute.html","<div class=\'container\'>\n  <div class=\"row\">\n    <div class=\"col-lg-12\">\n      <ng-include src=\"\'partials/autogenerated/contribute.html\'\"> </ng-include>\n    </div>\n  </div>\n</div>\n");
 $templateCache.put("partials/partial-docs.html","<div class=\'container\'>\n  <div id=\"rowOffcanvas\" class=\"row row-offcanvas row-offcanvas-left\">\n    <div class=\"col-xs-6 col-sm-3 sidebar-offcanvas\" id=\"sidebar\">\n      <div class=\"list-group\">\n        <a ng-repeat=\"example in examplesList\" ui-sref=\"docs.detail({link:example.link})\" ui-sref-active=\"active\" class=\"list-group-item\">{{example.title}}</a>\n      </div>\n    </div>\n    <!--/.sidebar-offcanvas-->\n    <div class=\"col-xs-12 col-sm-9\">\n      <p class=\"pull-left visible-xs\">\n        <button type=\"button\" ng-click=\"toggleSidebar()\" class=\"btn btn-primary btn-xs\">Toggle nav</button>\n      </p>\n      <!-- docs.detail -->\n      <div ui-view onload=\"highlightCode()\"></div>\n    </div>\n    <!--/.col-xs-12.col-sm-9-->\n  </div>\n  <!--/row-->\n</div>\n");
-$templateCache.put("partials/partial-home.html","<div class=\'container\'>\n  <div class=\"row\">\n    <!--/.sidebar-offcanvas-->\n    <div class=\"col-lg-12\">\n      <div class=\"jumbotron\">\n        <h1>DRAGULAR</h1>\n        <p>Angular drag&drop based on <a href=\"http://github.com/bevacqua/dragula\">dragula</a>.</p>\n        <p><a class=\"btn btn-primary btn-lg\" ui-sref=\"docs\" role=\"button\">Live examples in docs</a></p>\n      </div>\n      <div class=\"row\">\n        <div class=\"col-lg-12\">\n          <p>Browser support includes every sane browser and **IE7+**. <sub>_(Granted you polyfill the functional `Array` methods in ES5)_</sub></p>\n          <h2>Inspiration</h2>\n          <p>Have you ever wanted a drag and drop library that just works? That actually understands where to place the elements when they are dropped? That doesn’t need you to do a zillion things to get it to work? Well, so did <a href=\"https://github.com/bevacqua\">Nicolas Bevacqua</a> and I have forked it into angular module and also put some features!</p>\n          <p><b>Actual version 2.1.3 is based on dragula 3.0.3 and tested with angular 1.4.3.</b></p>\n          <h2>Differences of dragular (against dragula)</h2>\n          <ul>\n            <li>replaced crossvent with angulars event binding</li>\n            <li>replaced contra.emitter with $scope.$emit if scope provided in options (options.scope)</li>\n            <li>encapsulated the code into angular factory (dragularService)</li>\n            <li>created directive dragular where options can be passed providing scope property name</li>\n            <li>both service and directive provided as angular module (dragularModule)</li>\n            <li>automatic direction if not provided in options, instead of default vertical</li>\n            <li>accepting arraylike objects as containers array</li>\n            <li>accepting custom classes via option.classes</li>\n            <li>namespaced containers groups available via option.nameSpace</li>\n            <li>boundingBox (dragging element can me moved only in specific area)</li>\n            <li>lockX/Y (dragging element can me moved only in specific direction)</li>\n            <li>more examples</li>\n            <li>accept JSON options in dragular directive (#2)</li>\n            <li>add/remove with ng-repeat</li>\n            <li>added syntax highlighter to example codes</li>\n          </ul>\n          <h2>Todo</h2>\n          <ul>\n            <li>example for delay</li>\n            <li>o.isContainer in _isContainer (fn o.isContainerGetModel(containerElm))</li>\n            <li>solve mixing with and without model containers</li>\n            <li>remove npm workflow</li>\n            <li>support selectors in service (#2)?</li>\n          </ul>\n          <h2>Features</h2>\n          <ul>\n            <li>provided as service and also as directive</li>\n            <li>Super easy to set up</li>\n            <li>No bloated dependencies</li>\n            <li><strong>Figures out sort order</strong> on its own</li>\n            <li>A shadow where the item would be dropped offers <strong>visual feedback</strong></li>\n            <li>Touch events!</li>\n          </ul>\n          <h2>For installation, usage and examples go to <a ui-sref=\"docs\">docs</a></h2>\n        </div>\n      </div>\n      <!--/row-->\n    </div>\n    <!--/.col-xs-12.col-sm-9-->\n  </div>\n  <!--/row-->\n</div>\n");
+$templateCache.put("partials/partial-home.html","<div class=\'container\'>\n  <div class=\"row\">\n    <!--/.sidebar-offcanvas-->\n    <div class=\"col-lg-12\">\n      <div class=\"jumbotron\">\n        <h1>DRAGULAR</h1>\n        <p>Angular drag&drop based on <a href=\"http://github.com/bevacqua/dragula\">dragula</a>.</p>\n        <p><a class=\"btn btn-primary btn-lg\" ui-sref=\"docs\" role=\"button\">Live examples in docs</a></p>\n      </div>\n      <div class=\"row\">\n        <div class=\"col-lg-12\">\n          <p>Browser support includes every sane browser and **IE7+**. <sub>_(Granted you polyfill the functional `Array` methods in ES5)_</sub></p>\n          <h2>Inspiration</h2>\n          <p>Have you ever wanted a drag and drop library that just works? That actually understands where to place the elements when they are dropped? That doesn’t need you to do a zillion things to get it to work? Well, so did <a href=\"https://github.com/bevacqua\">Nicolas Bevacqua</a> and I have forked it into angular module and also put some features!</p>\n          <p><b>Actual version 2.1.3 is based on dragula 3.0.3 and tested with angular 1.4.3.</b></p>\n          <h2>Differences of dragular (against dragula)</h2>\n          <ul>\n            <li>replaced crossvent with angulars event binding</li>\n            <li>replaced contra.emitter with $scope.$emit if scope provided in options (options.scope)</li>\n            <li>encapsulated the code into angular factory (dragularService)</li>\n            <li>created directive dragular where options can be passed providing scope property name</li>\n            <li>both service and directive provided as angular module (dragularModule)</li>\n            <li>automatic direction if not provided in options, instead of default vertical</li>\n            <li>accepting arraylike objects as containers array</li>\n            <li>accepting custom classes via option.classes</li>\n            <li>namespaced containers groups available via option.nameSpace</li>\n            <li>boundingBox (dragging element can me moved only in specific area)</li>\n            <li>lockX/Y (dragging element can me moved only in specific direction)</li>\n            <li>more examples</li>\n            <li>accept JSON options in dragular directive (#2)</li>\n            <li>add/remove with ng-repeat</li>\n            <li>added syntax highlighter to example codes</li>\n          </ul>\n          <h2>Todo</h2>\n          <ul>\n            <li>improve docs</li>\n          </ul>\n          <h2>Features</h2>\n          <ul>\n            <li>provided as service and also as directive</li>\n            <li>Super easy to set up</li>\n            <li>No bloated dependencies</li>\n            <li><strong>Figures out sort order</strong> on its own</li>\n            <li>A shadow where the item would be dropped offers <strong>visual feedback</strong></li>\n            <li>Touch events!</li>\n          </ul>\n          <h2>For installation, usage and examples go to <a ui-sref=\"docs\">docs</a></h2>\n        </div>\n      </div>\n      <!--/row-->\n    </div>\n    <!--/.col-xs-12.col-sm-9-->\n  </div>\n  <!--/row-->\n</div>\n");
 $templateCache.put("partials/autogenerated/contribute.html","<h1 id=\"how-to-contribute\">How to contribute</h1>\n<p>It&#39;s important to us that you feel you can contribute towards the evolution of Dragular. This can take many forms: from helping to fix bugs or improve the docs, to adding in new features to the source. This guide should help you in making that process as smooth as possible.</p>\n<p>Before contributing, please read the <a href=\"https://github.com/luckylooke/dragular/blob/master/CODE_OF_CONDUCT.md\">code of conduct</a>.</p>\n<h2 id=\"reporting-issues\">Reporting issues</h2>\n<p><a href=\"https://github.com/luckylooke/dragular/issues\">GitHub Issues</a> is the place to report bugs you may have found in either the core library or any of the examples that are part of the repository. When submitting a bug please do the following:</p>\n<p><strong>1. Search for existing issues.</strong> Your bug may have already been fixed or addressed in a development branch version of Dragular, so be sure to search the issues first before putting in a duplicate issue.</p>\n<p><strong>2. Not sure if it&#39;s a bug?.</strong> Then please ask via issues and tag it [question].</p>\n<p><strong>3. Create an isolated and reproducible test case.</strong> If you are reporting a bug, make sure you also have a minimal, runnable, code example that reproduces the problem you have.</p>\n<p><strong>4. Include a live example.</strong> After narrowing your code down to only the problem areas, make use of <a href=\"http://jsfiddle.net\">jsFiddle</a>, <a href=\"http://jsbin.com/\">jsBin</a>, or a link to your live site so that we can view a live example of the problem.</p>\n<p><strong>5. Share as much information as possible.</strong> Include browser version affected, your OS, version of the library, steps to reproduce, etc. &quot;X isn&#39;t working!!!1!&quot; will probably just be closed.</p>\n<h2 id=\"dev-vs-master\">Dev vs. Master</h2>\n<p>The dev branch of Dragular is our &#39;current working&#39; version. It is always ahead of the master branch in terms of features and fixes. However it&#39;s also bleeding-edge and experimental and we cannot and do not guarantee it will compile or work for you. Very often we have to break things for a few days while we rebuild and patch. So by all means please export the dev branch and contribute towards it, indeed that is where all Pull Requests should be sent, but do so understanding the API may change beneath you.</p>\n<h2 id=\"making-changes\">Making Changes</h2>\n<p>To take advantage of our npm build script and jshint config it will be easiest for you if you have node.js installed locally.</p>\n<p>You can download node.js from <a href=\"http://nodejs.org\">nodejs.org</a>.</p>\n<p>After that you can clone the repository and run <code>npm i</code> inside the cloned folder. This will install dependencies necessary for building the project. For development workflow automation dragular uses <code>gulp &gt;= 3.9.0</code>. Before starting development, make sure that <code>gulp</code> is installed on your machine globally: <code>npm i -g gulp</code>.</p>\n<h3 id=\"developing\">Developing</h3>\n<p>There are several gulp tasks that are used for generating different builds:</p>\n<ul>\n<li><code>gulp dev</code> - Serves files with BrowserSync server, watches &amp; automatically refreshes connected browsers on changes, generates non-minified but concatenated styles &amp; scripts from the dragular source.</li>\n<li><code>gulp dev:docs</code> - Does exactly the same as <code>gulp dev</code>, except it works with the documentation source.</li>\n<li><code>gulp build</code> - Concatenates and minifies dragular source files.</li>\n<li><code>gulp build:docs</code> - Concatenates and minifies documentation source files.</li>\n</ul>\n<h3 id=\"linting\">Linting</h3>\n<ul>\n<li><code>gulp lint</code> &amp; <code>gulp lint:docs</code> - Lint JavaScript files.</li>\n</ul>\n<h3 id=\"making-a-pull-request\">Making a pull request</h3>\n<p>Once that is ready, make your changes and submit a Pull Request:</p>\n<ul>\n<li><p><strong>Send Pull Requests to the <code>dev</code> branch.</strong> All Pull Requests must be sent to the <code>dev</code> branch, <code>master</code> is the latest release and PRs to that branch will be closed.</p>\n</li>\n<li><p><strong>Ensure changes are jshint validated.</strong> Our JSHint configuration file is provided in the repository and you should check against it before submitting.</p>\n</li>\n<li><p><strong>Only commit relevant changes.</strong> Don&#39;t include changes that are not directly relevant to the fix you are making. The more focused a PR is, the faster it will get attention and be merged. Extra files changing only whitespace or trash files will likely get your PR closed.</p>\n</li>\n</ul>\n<p>Dependencies for building from source and running tests:</p>\n<h2 id=\"coding-style-preferences-are-not-contributions\">Coding style preferences are not contributions</h2>\n<p>If your PR is doing little more than changing the Dragular source code into a format / coding style that you prefer then we will automatically close it. All PRs must adhere to the coding style already set-out across the lines of code in Dragular. Your personal preferences for how things should &quot;look&quot; or be structured do not apply here, sorry. PRs should fix bugs, fix documentation or add features. No changes for the sake of change.</p>\n<h2 id=\"i-don-t-really-like-git-node-js-but-i-can-fix-this-bug\">I don&#39;t really like git / node.js, but I can fix this bug</h2>\n<p>That is fine too. While Pull Requests are the best thing in the world for us, they are not the only way to help. You&#39;re welcome to post fixes to our forum or even just email them to us. All we ask is that you still adhere to the guidelines presented here re: JSHint, etc.</p>\n");}]);
 },{}],28:[function(require,module,exports){
 'use strict';
@@ -1063,823 +1063,823 @@ var dragularModule = require('./dragularModule');
 
 dragularModule.factory('dragularService', ['$rootScope', function dragula($rootScope) {
 
-  var serviceFn, // function returned as service
-    _classesCache = {}, // classes lookup cache
-    _containersModel = {}, // containers model
-    _containers = {}, // containers managed by the drake
-    _mirror; // mirror image
+  var shared = { // function returned as service
+      classesCache: {}, // classes lookup cache
+      containersModel: {}, // containers model
+      containers: {}, // containers managed by the drake
+      mirror: null, // mirror image
+      source: null, // source container
+      item: null, // item being dragged
+      sourceItem: null, // item originaly dragged if copy is enabled
+      sourceModel: null, // source container model
+      lastDropTarget: null, // last container item was over
+      offsetX: null, // reference x
+      offsetY: null, // reference y
+      offsetXr: null, // reference x right for boundingBox feature
+      offsetYb: null, // reference y bottom for boundingBox feature
+      clientX: null, // cache client x, init at grab, update at drag
+      clientY: null, // cache client y, init at grab, update at drag
+      mirrorWidth: null, // mirror width for boundingBox feature
+      mirrorHeight: null, // mirror height for boundingBox feature
+      initialSibling: null, // reference sibling when grabbed
+      currentSibling: null, // reference sibling now
+      initialIndex: null, // reference model index when grabbed
+      currentIndex: null, // reference model index now
+      isContainerModel: null, // if o.isContainer is used, model can be provided as well, here it is kept
+      targetContainer: null, // droppable container under drag item
+      dragOverEvents: {}, // drag over events fired on element behind cursor
+      lastElementBehindCursor: null, // last element behind cursor
+      grabbed: null // holds mousedown context until first mousemove
+    },
+    serviceFn = function(initialContainers, options) {
 
-  serviceFn = function(initialContainers, options) {
+      if (arguments.length === 1 && !Array.isArray(initialContainers) && !angular.isElement(initialContainers) && !initialContainers[0]) {
+        // then containers are not provided, only options
+        options = initialContainers;
+        initialContainers = [];
+      }
 
-    if (arguments.length === 1 && !Array.isArray(initialContainers) && !angular.isElement(initialContainers) && !initialContainers[0]) {
-      // then containers are not provided, only options
-      options = initialContainers;
-      initialContainers = [];
-    }
+      var body = document.body,
+        documentElement = document.documentElement,
+        defaultClasses = {
+          mirror: 'gu-mirror',
+          hide: 'gu-hide',
+          unselectable: 'gu-unselectable',
+          transit: 'gu-transit'
+        },
+        isContainer, // internal isContainer
+        o = { // options
+          dragOverEventNames: ['dragularenter', 'dragularleave', 'dragularrelease'],
+          classes: defaultClasses,
+          containers: false,
+          moves: always,
+          accepts: always,
+          isContainer: never,
+          copy: false,
+          invalid: invalidTarget,
+          revertOnSpill: false,
+          removeOnSpill: false,
+          lockX: false,
+          lockY: false,
+          boundingBox: false,
+          containersModel: false,
+          isContainerModel: emptyObj
+        };
 
-    var body = document.body,
-      documentElement = document.documentElement,
-      _source, // source container
-      _item, // item being dragged
-      _sourceItem, // item originaly dragged if copy is enabled
-      _sourceModel, // source container model
-      _lastDropTarget = null, // last container item was over
-      _offsetX, // reference x
-      _offsetY, // reference y
-      _offsetXr, // reference x right for boundingBox feature
-      _offsetYb, // reference y bottom for boundingBox feature
-      _clientX, // cache client x, init at grab, update at drag
-      _clientY, // cache client y, init at grab, update at drag
-      _mirrorWidth, // mirror width for boundingBox feature
-      _mirrorHeight, // mirror height for boundingBox feature
-      _initialSibling, // reference sibling when grabbed
-      _currentSibling, // reference sibling now
-      _initialIndex, // reference model index when grabbed
-      _currentIndex, // reference model index now
-      _isContainer, // internal isContainer
-      _isContainerModel, // if o.isContainer is used, model can be provided as well, here it is kept
-      _targetContainer, // droppable container under drag item
-      _dragOverEvents = {}, // drag over events fired on element behind cursor
-      _lastElementBehindCursor, // last element behind cursor
-      _grabbed, // holds mousedown context until first mousemove
-      defaultClasses = {
-        mirror: 'gu-mirror',
-        hide: 'gu-hide',
-        unselectable: 'gu-unselectable',
-        transit: 'gu-transit'
-          // overActive: 'gu-over-active',
-          // overAccepts: 'gu-over-accept',
-          // overDeclines: 'gu-over-decline'
-      },
-      o = { // options
-        dragOverEventNames: ['dragularenter', 'dragularleave', 'dragularrelease'],
-        classes: defaultClasses,
-        containers: false,
-        moves: always,
-        accepts: always,
-        isContainer: never,
-        copy: false,
-        invalid: invalidTarget,
-        revertOnSpill: false,
-        removeOnSpill: false,
-        lockX: false,
-        lockY: false,
-        boundingBox: false,
-        containersModel: false,
-        isContainerModel: emptyObj
+      if (!isElement(o.boundingBox)) {
+        o.boundingBox = null;
+      }
+
+      if (options && options.classes) {
+        angular.extend(defaultClasses, options.classes);
+        angular.extend(options.classes, defaultClasses);
+      }
+
+      angular.extend(o, options);
+
+      if (!o.mirrorContainer) {
+        o.mirrorContainer = document.body;
+      }
+
+      // get initial containers from options, argument or fall back to empty array (containers can be also added later)
+      initialContainers = o.containers || initialContainers || [];
+      initialContainers = makeArray(initialContainers);
+
+      if (o.containersModel) {
+        //                            is 2D array?
+        o.containersModel = Array.isArray(o.containersModel[0]) ? o.containersModel : [o.containersModel];
+      }
+
+      function proceedContainers(containers, nameSpace, initial) {
+        if (!containers[nameSpace]) {
+          containers[nameSpace] = [];
+        }
+        Array.prototype.push.apply(containers[nameSpace], initial);
+      }
+
+      // feed containers groups and optionaly shadow it by models
+      if (!o.nameSpace) {
+        o.nameSpace = ['dragularCommon'];
+      }
+      if (!Array.isArray(o.nameSpace)) {
+        o.nameSpace = [o.nameSpace];
+      }
+      o.nameSpace.forEach(function eachNameSpace(nameSpace) {
+        proceedContainers(shared.containers, nameSpace, initialContainers);
+        if (o.containersModel) {
+          proceedContainers(shared.containersModel, nameSpace, o.containersModel);
+        }
+      });
+
+      //register events
+      events();
+
+      angular.forEach(o.dragOverEventNames, function prepareDragOverEvents(dragOverEvent) {
+        if (document.createEvent) {
+          shared.dragOverEvents[dragOverEvent] = document.createEvent('HTMLEvents');
+          shared.dragOverEvents[dragOverEvent].initEvent(dragOverEvent, true, true);
+        } else {
+          shared.dragOverEvents[dragOverEvent] = document.createEventObject();
+          shared.dragOverEvents[dragOverEvent].eventType = dragOverEvent;
+        }
+      });
+
+      isContainer = function isContainer(el) {
+        var i = o.nameSpace.length;
+        while (i--) {
+          if (shared.containers[o.nameSpace[i]].indexOf(el) !== -1) {
+            return true;
+          }
+        }
+        if (o.isContainer(el)) {
+          shared.isContainerModel = o.isContainerModel(el);
+          return true;
+        } else {
+          shared.isContainerModel = null;
+        }
+        return false;
       };
 
-    if (!isElement(o.boundingBox)) {
-      o.boundingBox = null;
-    }
+      var drake = {
+        containers: shared.containers,
+        containersModel: shared.containersModel,
+        isContainer: isContainer,
+        start: manualStart,
+        end: end,
+        cancel: cancel,
+        remove: remove,
+        destroy: destroy,
+        dragging: false
+      };
 
-    if (options && options.classes) {
-      angular.extend(defaultClasses, options.classes);
-      angular.extend(options.classes, defaultClasses);
-    }
+      return drake;
 
-    angular.extend(o, options);
-
-    if (!o.mirrorContainer) {
-      o.mirrorContainer = document.body;
-    }
-
-    // get initial containers from options, argument or fall back to empty array (containers can be also added later)
-    initialContainers = o.containers || initialContainers || [];
-    initialContainers = makeArray(initialContainers);
-
-    if (o.containersModel) {
-      //                            is 2D array?
-      o.containersModel = Array.isArray(o.containersModel[0]) ? o.containersModel : [o.containersModel];
-    }
-
-    function proceedContainers(containers, nameSpace, initial) {
-      if (!containers[nameSpace]) {
-        containers[nameSpace] = [];
+      // make array from array-like objects or from single element (based on bevacqua/atoa)
+      function makeArray(all, startIndex) {
+        if (Array.isArray(all)) {
+          return all;
+        }
+        if (all.length) { // is array-like
+          return Array.prototype.slice.call(all, startIndex);
+        } else { // is one element
+          return [all];
+        }
       }
-      Array.prototype.push.apply(containers[nameSpace], initial);
-    }
 
-    // feed containers groups and optionaly shadow it by models
-    if (!o.nameSpace) {
-      o.nameSpace = ['dragularCommon'];
-    }
-    if (!Array.isArray(o.nameSpace)) {
-      o.nameSpace = [o.nameSpace];
-    }
-    o.nameSpace.forEach(function eachNameSpace(nameSpace) {
-      proceedContainers(_containers, nameSpace, initialContainers);
-      if (o.containersModel) {
-        proceedContainers(_containersModel, nameSpace, o.containersModel);
-      }
-    });
-    _isContainer = isContainer;
-
-    //register events
-    events();
-
-    angular.forEach(o.dragOverEventNames, function prepareDragOverEvents(dragOverEvent) {
-      if (document.createEvent) {
-        _dragOverEvents[dragOverEvent] = document.createEvent('HTMLEvents');
-        _dragOverEvents[dragOverEvent].initEvent(dragOverEvent, true, true);
-      } else {
-        _dragOverEvents[dragOverEvent] = document.createEventObject();
-        _dragOverEvents[dragOverEvent].eventType = dragOverEvent;
-      }
-    });
-
-    var drake = {
-      containers: _containers,
-      containersModel: _containersModel,
-      start: manualStart,
-      end: end,
-      cancel: cancel,
-      remove: remove,
-      destroy: destroy,
-      dragging: false
-    };
-
-    return drake;
-
-    // make array from array-like objects or from single element (based on bevacqua/atoa)
-    function makeArray(all, startIndex) {
-      if (Array.isArray(all)) {
-        return all;
-      }
-      if (all.length) { // is array-like
-        return Array.prototype.slice.call(all, startIndex);
-      } else { // is one element
-        return [all];
-      }
-    }
-
-    // add or remove containers - deprecated
-    function removeContainers(all) {
-      $rootScope.applyAsync(function applyDestroyed() {
-        var changes = Array.isArray(all) ? all : makeArray(all);
-        changes.forEach(function forEachContainer(container) {
-          angular.forEach(o.nameSpace, function forEachNs(nameSpace) {
-            var index;
-            index = _containers[nameSpace].indexOf(container);
-            _containers[nameSpace].splice(index, 1);
-            if (o.containersModel) {
-              _containersModel[nameSpace].splice(index, 1);
-            }
+      // add or remove containers - deprecated
+      function removeContainers(all) {
+        $rootScope.applyAsync(function applyDestroyed() {
+          var changes = Array.isArray(all) ? all : makeArray(all);
+          changes.forEach(function forEachContainer(container) {
+            angular.forEach(o.nameSpace, function forEachNs(nameSpace) {
+              var index;
+              index = shared.containers[nameSpace].indexOf(container);
+              shared.containers[nameSpace].splice(index, 1);
+              if (o.containersModel) {
+                shared.containersModel[nameSpace].splice(index, 1);
+              }
+            });
           });
         });
-      });
-    }
-
-    function isContainer(el) {
-      var i = o.nameSpace.length;
-      while (i--) {
-        if (drake.containers[o.nameSpace[i]].indexOf(el) !== -1) {
-          return true;
-        }
-      }
-      if (o.isContainer(el)) {
-        _isContainerModel = o.isContainerModel(el);
-        return true;
-      } else {
-        _isContainerModel = null;
-      }
-      return false;
-    }
-
-    function events(remove) {
-      var op = remove ? 'off' : 'on';
-      regEvent(documentElement, op, 'mouseup', release);
-
-      initialContainers.forEach(function addMouseDown(container) {
-        regEvent(container, 'on', 'mousedown', grab);
-      });
-    }
-
-    function eventualMovements(remove) {
-      var op = remove ? 'off' : 'on';
-      regEvent(documentElement, op, 'mousemove', startBecauseMouseMoved);
-    }
-
-    function movements(remove) {
-      var op = remove ? 'off' : 'on';
-      regEvent(documentElement, op, 'selectstart', preventGrabbed); // IE8
-      regEvent(documentElement, op, 'click', preventGrabbed);
-      regEvent(documentElement, op, 'touchmove', preventGrabbed); // fixes touch devices scrolling while drag
-    }
-
-    function destroy() {
-      events(true);
-      removeContainers(initialContainers);
-      release({});
-    }
-
-    function preventGrabbed(e) {
-      if (_grabbed) {
-        e.preventDefault();
-      }
-    }
-
-    function grab(e) {
-      e = e || window.event;
-
-      // filter some odd situations
-      if ((e.which !== 0 && e.which !== 1) || e.metaKey || e.ctrlKey) {
-        return; // we only care about honest-to-god left clicks and touch events
       }
 
-      var context = canStart(e.target);
-      if (!context) {
-        return;
-      }
+      function events(remove) {
+        var op = remove ? 'off' : 'on';
+        regEvent(documentElement, op, 'mouseup', release);
 
-      _grabbed = context;
-      eventualMovements();
-      if (e.type === 'mousedown') {
-        e.preventDefault(); // fixes https://github.com/bevacqua/dragula/issues/155
-      }
-    }
-
-    function startBecauseMouseMoved(e) {
-      eventualMovements(true); // remove mousemove listener
-      movements();
-      end();
-      start(_grabbed);
-
-      // automaticly detect direction of elements if not set in options
-      if (!o.direction) {
-        var parent = _sourceItem.parentElement,
-          parentHeight = parent.offsetHeight,
-          parentWidth = parent.offsetWidth,
-          childHeight = _sourceItem.clientHeight,
-          childWidth = _sourceItem.clientWidth;
-        o.direction = parentHeight / childHeight < parentWidth / childWidth ? 'horizontal' : 'vertical';
-      }
-
-      // get initial coordinates, used to render _mirror for first time
-      var offset = getOffset(_sourceItem);
-      _offsetX = getCoord('pageX', e) - offset.left;
-      _offsetY = getCoord('pageY', e) - offset.top;
-      _clientX = getCoord('clientX', e);
-      _clientY = getCoord('clientY', e);
-
-      // limiting area of _mirror movement, get initial coordinates
-      if (o.boundingBox) {
-        _offsetXr = getCoord('pageX', e) - offset.right;
-        _offsetYb = getCoord('pageY', e) - offset.bottom;
-      }
-
-      e.preventDefault();
-
-      addClass(_item, o.classes.transit);
-      renderMirrorImage();
-      // initial position
-      _mirror.style.left = _clientX - _offsetX + 'px';
-      _mirror.style.top = _clientY - _offsetY + 'px';
-
-      drag(e);
-    }
-
-
-    function canStart(item) {
-      if (drake.dragging && _mirror) {
-        return; // already dragging
-      }
-
-      var handle = item;
-
-      while (item.parentElement &&
-        !_isContainer(item.parentElement)) {
-        // break loop if user tries to drag item which is considered invalid handle
-        if (o.invalid(item, handle)) {
-          return;
-        }
-        item = item.parentElement; // drag target should be immediate child of container
-        if (!item) {
-          return;
-        }
-      }
-
-      var source = item.parentElement;
-      if (!source ||
-        o.invalid(item, handle) ||
-        !o.moves(item, source, handle)) {
-        return;
-      }
-
-      return {
-        item: item,
-        source: source
-      };
-    }
-
-    function manualStart(item) {
-      var context = canStart(item);
-      if (context) {
-        start(context);
-      }
-    }
-
-    function start(context) {
-      _sourceItem = _item = context.item;
-      _source = context.source;
-      _initialSibling = _currentSibling = nextEl(context.item);
-
-      if (o.copy) {
-        _item = context.item.cloneNode(true);
-        if (o.scope) {
-          o.scope.$emit('cloned', _item, context.item);
-        }
-      }
-
-      // prepare models operations
-      if (o.containersModel) {
-        var containerIndex = initialContainers.indexOf(context.source);
-        _sourceModel = o.containersModel[containerIndex];
-        _initialIndex = domIndexOf(context.item, context.source);
-      }
-
-      drake.dragging = true;
-      if (o.scope) {
-        o.scope.$emit('drag', _sourceItem, _source);
-      }
-
-      return true;
-    }
-
-    function invalidTarget() {
-      return false;
-    }
-
-    function end() {
-      if (!drake.dragging) {
-        return;
-      }
-      drop(_item, _item.parentElement);
-    }
-
-    function ungrab() {
-      _grabbed = false;
-      eventualMovements(true);
-      movements(true);
-    }
-
-    function release(e) {
-      ungrab();
-      if (!drake.dragging) {
-        return;
-      }
-      e = e || window.event;
-
-      _clientX = getCoord('clientX', e);
-      _clientY = getCoord('clientY', e);
-
-      var elementBehindCursor = getElementBehindPoint(_mirror, _clientX, _clientY),
-        dropTarget = findDropTarget(elementBehindCursor, _clientX, _clientY);
-
-      if (dropTarget && (o.copy === false || dropTarget !== _source)) {
-        // found valid target and (is not copy case or target is not initial container)
-        drop(_item, dropTarget);
-      } else if (o.removeOnSpill) {
-        remove();
-      } else {
-        cancel();
-      }
-
-      // after release there is no container hovered
-      _targetContainer = null;
-
-      if (_lastElementBehindCursor) {
-        fireEvent(_lastElementBehindCursor, _dragOverEvents['dragularrelease'], _item, _source, _sourceModel, _initialIndex, elementBehindCursor);
-      }
-
-      if (o.scope) {
-        o.scope.$emit('release', _item, _source);
-      }
-    }
-
-    function drop(item, target) {
-      if (o.scope && isInitialPlacement(target)) {
-        o.scope.$emit('cancel', item, _source, _sourceModel, _initialIndex);
-      } else if (o.scope) {
-        o.scope.$emit('drop', item, target, _source, _sourceModel, _initialIndex);
-      }
-      if (o.containersModel && !isInitialPlacement(target)) {
-        var dropElm = item,
-          dropIndex = domIndexOf(dropElm, target);
-        $rootScope.$applyAsync(function applyDrop() {
-          if (target === _source) {
-            _sourceModel.splice(dropIndex, 0, _sourceModel.splice(_initialIndex, 1)[0]);
-          } else {
-            var targetModel,
-              dropElmModel = o.copy ? angular.copy(_sourceModel[_initialIndex]) : _sourceModel[_initialIndex];
-
-            if (!_isContainerModel) {
-              var i = o.nameSpace.length;
-              while (i--) {
-                if (drake.containers[o.nameSpace[i]].indexOf(target) !== -1) {
-                  targetModel = _containersModel[o.nameSpace[i]][drake.containers[o.nameSpace[i]].indexOf(target)];
-                  break;
-                }
-              }
-            } else {
-              targetModel = _isContainerModel;
-            }
-
-            target.removeChild(dropElm); // element must be removed for ngRepeat to apply correctly
-
-            if (!o.copy) {
-              _sourceModel.splice(_initialIndex, 1);
-            }
-            targetModel.splice(dropIndex, 0, dropElmModel);
-          }
-
-          if (item.parentElement) {
-            item.parentElement.removeChild(item);
-          }
-          cleanup();
-        });
-      } else {
-        cleanup();
-      }
-    }
-
-    function remove() {
-      if (!drake.dragging) {
-        return;
-      }
-      var parent = _item.parentElement;
-
-      if (parent) {
-        parent.removeChild(_item);
-      }
-
-      if (o.containersModel) {
-        $rootScope.$applyAsync(function removeModel() {
-          _sourceModel.splice(_initialIndex, 1);
-          cleanup();
+        initialContainers.forEach(function addMouseDown(container) {
+          regEvent(container, 'on', 'mousedown', grab);
         });
       }
 
-      if (o.scope) {
-        o.scope.$emit(o.copy ? 'cancel' : 'remove', _item, parent, _sourceModel, _initialIndex);
-      }
-      if (!o.containersModel) {
-        cleanup();
-      }
-    }
-
-    function cancel(revert) {
-      if (!drake.dragging) {
-        return;
-      }
-      var reverts = arguments.length > 0 ? revert : o.revertOnSpill,
-        parent = _item.parentElement;
-
-      var initial = isInitialPlacement(parent);
-      if (initial === false && o.copy === false && reverts) {
-        _source.insertBefore(_item, _initialSibling);
-      }
-      if (o.containersModel && !o.copy && !reverts) {
-        drop(_item, parent);
-      } else if (o.scope) {
-        if (initial || reverts) {
-          o.scope.$emit('cancel', _item, _source);
-        } else {
-          o.scope.$emit('drop', _item, parent, _source);
-        }
+      function eventualMovements(remove) {
+        var op = remove ? 'off' : 'on';
+        regEvent(documentElement, op, 'mousemove', startBecauseMouseMoved);
       }
 
-      if (!o.containersModel || o.copy || reverts || initial) {
-        cleanup();
-      }
-    }
-
-    function cleanup() {
-      ungrab();
-      removeMirrorImage();
-
-      if (_item) {
-        rmClass(_item, o.classes.transit);
+      function movements(remove) {
+        var op = remove ? 'off' : 'on';
+        regEvent(documentElement, op, 'selectstart', preventGrabbed); // IE8
+        regEvent(documentElement, op, 'click', preventGrabbed);
+        regEvent(documentElement, op, 'touchmove', preventGrabbed); // fixes touch devices scrolling while drag
       }
 
-      drake.dragging = false;
-
-      if (o.removeOnSpill === true) {
-        spillOut();
+      function destroy() {
+        events(true);
+        removeContainers(initialContainers);
+        release({});
       }
 
-      if (o.scope) {
-        o.scope.$emit('out', _item, _lastDropTarget, _source);
-        o.scope.$emit('dragend', _item);
-      }
-
-      _source = _item = _sourceItem = _initialSibling = _currentSibling = _sourceModel = null;
-      _initialIndex = _currentIndex = _lastDropTarget = _isContainerModel = null;
-    }
-
-    // is item currently placed in original container and original position?
-    function isInitialPlacement(target, s) {
-      var sibling = s || (_mirror ? _currentSibling : nextEl(_item));
-      return target === _source && sibling === _initialSibling;
-    }
-
-    // find valid drop container
-    function findDropTarget(elementBehindCursor, clientX, clientY) {
-      var target = elementBehindCursor;
-
-      while (target && !accepted()) {
-        target = target.parentElement;
-      }
-      return target;
-
-      function accepted() {
-        var accepts = false;
-
-        if (_isContainer(target)) { // is droppable?
-
-          var immediate = getImmediateChild(target, elementBehindCursor),
-            reference = getReference(target, immediate, clientX, clientY),
-            initial = isInitialPlacement(target, reference);
-
-          accepts = initial || o.accepts(_item, target, _source, reference, _sourceModel, _initialIndex);
-
-          if (_targetContainer !== target) { // used for scroll issue
-            _targetContainer = target;
-          }
-        }
-        return accepts;
-      }
-    }
-
-    function drag(e) {
-      if (!_mirror) {
-        return;
-      }
-      e = e || window.event;
-
-      // update coordinates
-      _clientX = getCoord('clientX', e);
-      _clientY = getCoord('clientY', e);
-
-      // count mirror coordiates
-      var x = _clientX - _offsetX,
-        y = _clientY - _offsetY,
-        pageX,
-        pageY,
-        offsetBox;
-
-      // fill extra properties if boundingBox is used
-      if (o.boundingBox) {
-        pageX = getCoord('pageX', e);
-        pageY = getCoord('pageY', e);
-        offsetBox = getOffset(o.boundingBox);
-      }
-
-      if (!o.lockY) {
-        if (!o.boundingBox || (pageX > offsetBox.left + _offsetX && pageX < offsetBox.right + _offsetXr)) {
-          _mirror.style.left = x + 'px';
-        } else if (o.boundingBox) { // check again in case user scrolled the view
-          if (pageX < offsetBox.left + _offsetX) {
-            _mirror.style.left = _clientX - (pageX - offsetBox.left) + 'px';
-          } else {
-            _mirror.style.left = _clientX - _mirrorWidth - (pageX - offsetBox.right) + 'px';
-          }
-        }
-      }
-      if (!o.lockX) {
-        if (!o.boundingBox || (pageY > offsetBox.top + _offsetY && pageY < offsetBox.bottom + _offsetYb)) {
-          _mirror.style.top = y + 'px';
-        } else if (o.boundingBox) { // check again in case user scrolled the view
-          if (pageY < offsetBox.top + _offsetY) {
-            _mirror.style.top = _clientY - (pageY - offsetBox.top) + 'px';
-          } else {
-            _mirror.style.top = _clientY - _mirrorHeight - (pageY - offsetBox.bottom) + 'px';
-          }
-        }
-      }
-
-      var elementBehindCursor = getElementBehindPoint(_mirror, _clientX, _clientY),
-        dropTarget = findDropTarget(elementBehindCursor, _clientX, _clientY),
-        changed = dropTarget !== _lastDropTarget;
-
-      if (elementBehindCursor !== _lastElementBehindCursor) {
-        fireEvent(elementBehindCursor, _dragOverEvents['dragularenter'], _item, _source, _sourceModel, _initialIndex, !!dropTarget);
-        if (_lastElementBehindCursor) {
-          fireEvent(_lastElementBehindCursor, _dragOverEvents['dragularleave'], _item, _source, _sourceModel, _initialIndex, elementBehindCursor);
-        }
-        _lastElementBehindCursor = elementBehindCursor;
-      }
-
-      if (changed) {
-        out();
-        _lastDropTarget = dropTarget;
-        over();
-      }
-
-      // do not copy in same container
-      if (dropTarget === _source && o.copy) {
-        if (_item.parentElement) {
-          _item.parentElement.removeChild(_item);
-        }
-        return;
-      }
-
-      var reference,
-        immediate = getImmediateChild(dropTarget, elementBehindCursor);
-
-      if (immediate !== null) {
-        reference = getReference(dropTarget, immediate, _clientX, _clientY);
-      } else if (o.revertOnSpill === true && !o.copy) {
-        // the case that mirror is not over valid target and reverting is on and copy is off
-        reference = _initialSibling;
-        dropTarget = _source;
-      } else {
-        // the case that mirror is not over valid target and removing is on or copy is on
-        if (o.copy && _item.parentElement !== null) {
-          // remove item or copy of item
-          _item.parentElement.removeChild(_item);
-        }
-        return;
-      }
-      if (reference === null ||
-        reference !== _item &&
-        reference !== nextEl(_item) &&
-        reference !== _currentSibling) {
-        // moving item/copy to new container from previous one
-        _currentSibling = reference;
-
-        dropTarget.insertBefore(_item, reference); // if reference is null item is inserted at the end
-
-        if (o.scope) {
-          o.scope.$emit('shadow', _item, dropTarget);
-        }
-      }
-
-      function moved(type) {
-        if (o.scope) {
-          o.scope.$emit(type, _item, _lastDropTarget, _source);
-        }
-        if (o.removeOnSpill === true) {
-          type === 'over' ? spillOver() : spillOut();
-        }
-      }
-
-      function over() {
-        if (changed) {
-          moved('over');
-        }
-      }
-
-      function out() {
-        if (_lastDropTarget) {
-          moved('out');
-        }
-      }
-    }
-
-    function spillOver() {
-      rmClass(_item, o.classes.hide);
-    }
-
-    function spillOut() {
-      if (drake.dragging) {
-        addClass(_item, o.classes.hide);
-      }
-    }
-
-    function scrollContainer(e) {
-      if (_targetContainer) {
-        var before = _targetContainer.scrollTop;
-        _targetContainer.scrollTop += e.deltaY;
-        // block scroll of the document when container can be scrolled
-        if (before !== _targetContainer.scrollTop) {
-          e.stopPropagation();
+      function preventGrabbed(e) {
+        if (shared.grabbed) {
           e.preventDefault();
         }
       }
-    }
 
-    function renderMirrorImage() {
-      if (_mirror) {
-        return;
-      }
-      var rect = _sourceItem.getBoundingClientRect();
-      _mirror = _sourceItem.cloneNode(true);
-      _mirrorWidth = rect.width;
-      _mirrorHeight = rect.height;
-      _mirror.style.width = getRectWidth(rect) + 'px';
-      _mirror.style.height = getRectHeight(rect) + 'px';
-      rmClass(_mirror, o.classes.transit);
-      addClass(_mirror, o.classes.mirror);
-      o.mirrorContainer.appendChild(_mirror);
-      regEvent(documentElement, 'on', 'mousemove', drag);
-      addClass(body, o.classes.unselectable);
-      regEvent(_mirror, 'on', 'wheel', scrollContainer);
-      if (o.scope) {
-        o.scope.$emit('cloned', _mirror, _sourceItem);
-      }
-    }
+      function grab(e) {
+        e = e || window.event;
 
-    function removeMirrorImage() {
-      if (_mirror) {
-        rmClass(body, o.classes.unselectable);
-        regEvent(documentElement, 'off', 'mousemove', drag);
-        regEvent(_mirror, 'off', 'wheel', scrollContainer);
-        _mirror.parentElement.removeChild(_mirror);
-        _mirror = null;
-      }
-    }
+        // filter some odd situations
+        if ((e.which !== 0 && e.which !== 1) || e.metaKey || e.ctrlKey) {
+          return; // we only care about honest-to-god left clicks and touch events
+        }
 
-    function getImmediateChild(dropTarget, target) {
-      var immediate = target;
-      while (immediate !== dropTarget && immediate.parentElement !== dropTarget) {
-        immediate = immediate.parentElement;
-      }
-      if (immediate === documentElement) {
-        return null;
-      }
-      return immediate;
-    }
+        var context = canStart(e.target);
+        if (!context) {
+          return;
+        }
 
-    function getReference(dropTarget, target, x, y) {
-      var horizontal = o.direction === 'horizontal';
-      var reference = target !== dropTarget ? inside() : outside();
-      return reference;
+        shared.grabbed = context;
+        eventualMovements();
+        if (e.type === 'mousedown') {
+          e.preventDefault(); // fixes https://github.com/bevacqua/dragula/issues/155
+        }
+      }
 
-      function outside() { // slower, but able to figure out any position
-        var len = dropTarget.children.length;
-        var i;
-        var el;
-        var rect;
-        for (i = 0; i < len; i++) {
-          el = dropTarget.children[i];
-          rect = el.getBoundingClientRect();
-          if (horizontal && rect.left > x) {
-            return el;
+      function startBecauseMouseMoved(e) {
+        eventualMovements(true); // remove mousemove listener
+        movements();
+        end();
+        start(shared.grabbed);
+
+        // automaticly detect direction of elements if not set in options
+        if (!o.direction) {
+          var parent = shared.sourceItem.parentElement,
+            parentHeight = parent.offsetHeight,
+            parentWidth = parent.offsetWidth,
+            childHeight = shared.sourceItem.clientHeight,
+            childWidth = shared.sourceItem.clientWidth;
+          o.direction = parentHeight / childHeight < parentWidth / childWidth ? 'horizontal' : 'vertical';
+        }
+
+        // get initial coordinates, used to render shared.mirror for first time
+        var offset = getOffset(shared.sourceItem);
+        shared.offsetX = getCoord('pageX', e) - offset.left;
+        shared.offsetY = getCoord('pageY', e) - offset.top;
+        shared.clientX = getCoord('clientX', e);
+        shared.clientY = getCoord('clientY', e);
+
+        // limiting area of shared.mirror movement, get initial coordinates
+        if (o.boundingBox) {
+          shared.offsetXr = getCoord('pageX', e) - offset.right;
+          shared.offsetYb = getCoord('pageY', e) - offset.bottom;
+        }
+
+        e.preventDefault();
+
+        addClass(shared.item, o.classes.transit);
+        renderMirrorImage();
+        // initial position
+        shared.mirror.style.left = shared.clientX - shared.offsetX + 'px';
+        shared.mirror.style.top = shared.clientY - shared.offsetY + 'px';
+
+        drag(e);
+      }
+
+
+      function canStart(item) {
+        if (drake.dragging && shared.mirror) {
+          return; // already dragging
+        }
+
+        var handle = item;
+
+        while (item.parentElement &&
+          !isContainer(item.parentElement)) {
+          // break loop if user tries to drag item which is considered invalid handle
+          if (o.invalid(item, handle)) {
+            return;
           }
-          if (!horizontal && rect.top > y) {
-            return el;
+          item = item.parentElement; // drag target should be immediate child of container
+          if (!item) {
+            return;
           }
         }
-        return null;
-      }
 
-      function inside() { // faster, but only available if dropped inside a child element
-        var rect = target.getBoundingClientRect();
-        if (horizontal) {
-          return resolve(x > rect.left + getRectWidth(rect) / 2);
+        var source = item.parentElement;
+        if (!source ||
+          o.invalid(item, handle) ||
+          !o.moves(item, source, handle)) {
+          return;
         }
-        return resolve(y > rect.top + getRectHeight(rect) / 2);
+
+        return {
+          item: item,
+          source: source
+        };
       }
 
-      function resolve(after) {
-        return after ? nextEl(target) : target;
+      function manualStart(item) {
+        var context = canStart(item);
+        if (context) {
+          start(context);
+        }
       }
-    }
 
-    function getScroll(scrollProp, offsetProp) {
-      if (typeof window[offsetProp] !== 'undefined') {
-        return window[offsetProp];
+      function start(context) {
+        shared.sourceItem = shared.item = context.item;
+        shared.source = context.source;
+        shared.initialSibling = shared.currentSibling = nextEl(context.item);
+
+        if (o.copy) {
+          shared.item = context.item.cloneNode(true);
+          if (o.scope) {
+            o.scope.$emit('cloned', shared.item, context.item);
+          }
+        }
+
+        // prepare models operations
+        if (o.containersModel) {
+          var containerIndex = initialContainers.indexOf(context.source);
+          shared.sourceModel = o.containersModel[containerIndex];
+          shared.initialIndex = domIndexOf(context.item, context.source);
+        }
+
+        drake.dragging = true;
+        if (o.scope) {
+          o.scope.$emit('drag', shared.sourceItem, shared.source);
+        }
+
+        return true;
       }
-      if (documentElement.clientHeight) {
-        return documentElement[scrollProp];
+
+      function invalidTarget() {
+        return false;
       }
-      return body[scrollProp];
-    }
 
-    function getOffset(el) {
-      var rect = el.getBoundingClientRect(),
-        scrollTop = getScroll('scrollTop', 'pageYOffset'),
-        scrollLeft = getScroll('scrollLeft', 'pageXOffset');
-      return {
-        left: rect.left + scrollLeft,
-        right: rect.right + scrollLeft,
-        top: rect.top + scrollTop,
-        bottom: rect.bottom + scrollTop
-      };
-    }
+      function end() {
+        if (!drake.dragging) {
+          return;
+        }
+        drop(shared.item, shared.item.parentElement);
+      }
 
-    function getElementBehindPoint(point, x, y) {
-      var p = point || {},
-        state = p.className,
-        el;
-      p.className += ' ' + o.classes.hide;
-      el = document.elementFromPoint(x, y);
-      p.className = state;
-      return el;
-    }
-  };
+      function ungrab() {
+        shared.grabbed = false;
+        eventualMovements(true);
+        movements(true);
+      }
+
+      function release(e) {
+        ungrab();
+        if (!drake.dragging) {
+          return;
+        }
+        e = e || window.event;
+
+        shared.clientX = getCoord('clientX', e);
+        shared.clientY = getCoord('clientY', e);
+
+        var elementBehindCursor = getElementBehindPoint(shared.mirror, shared.clientX, shared.clientY),
+          dropTarget = findDropTarget(elementBehindCursor, shared.clientX, shared.clientY);
+
+        if (dropTarget && (o.copy === false || dropTarget !== shared.source)) {
+          // found valid target and (is not copy case or target is not initial container)
+          drop(shared.item, dropTarget);
+        } else if (o.removeOnSpill) {
+          remove();
+        } else {
+          cancel();
+        }
+
+        // after release there is no container hovered
+        shared.targetContainer = null;
+
+        if (shared.lastElementBehindCursor) {
+          fireEvent(shared.lastElementBehindCursor, shared.dragOverEvents['dragularrelease'], elementBehindCursor);
+        }
+
+        if (o.scope) {
+          o.scope.$emit('release', shared.item, shared.source);
+        }
+      }
+
+      function drop(item, target) {
+        if (o.scope && isInitialPlacement(target)) {
+          o.scope.$emit('cancel', item, shared.source, shared.sourceModel, shared.initialIndex);
+        } else if (o.scope) {
+          o.scope.$emit('drop', item, target, shared.source, shared.sourceModel, shared.initialIndex);
+        }
+        if (o.containersModel && !isInitialPlacement(target)) {
+          var dropElm = item,
+            dropIndex = domIndexOf(dropElm, target);
+          $rootScope.$applyAsync(function applyDrop() {
+            if (target === shared.source) {
+              shared.sourceModel.splice(dropIndex, 0, shared.sourceModel.splice(shared.initialIndex, 1)[0]);
+            } else {
+              var targetModel,
+                dropElmModel = o.copy ? angular.copy(shared.sourceModel[shared.initialIndex]) : shared.sourceModel[shared.initialIndex];
+
+              if (!shared.isContainerModel) {
+                var i = o.nameSpace.length;
+                while (i--) {
+                  if (drake.containers[o.nameSpace[i]].indexOf(target) !== -1) {
+                    targetModel = shared.containersModel[o.nameSpace[i]][drake.containers[o.nameSpace[i]].indexOf(target)];
+                    break;
+                  }
+                }
+              } else {
+                targetModel = shared.isContainerModel;
+              }
+
+              target.removeChild(dropElm); // element must be removed for ngRepeat to apply correctly
+
+              if (!o.copy) {
+                shared.sourceModel.splice(shared.initialIndex, 1);
+              }
+              targetModel.splice(dropIndex, 0, dropElmModel);
+            }
+
+            if (item.parentElement) {
+              item.parentElement.removeChild(item);
+            }
+            cleanup();
+          });
+        } else {
+          cleanup();
+        }
+      }
+
+      function remove() {
+        if (!drake.dragging) {
+          return;
+        }
+        var parent = shared.item.parentElement;
+
+        if (parent) {
+          parent.removeChild(shared.item);
+        }
+
+        if (o.containersModel) {
+          $rootScope.$applyAsync(function removeModel() {
+            shared.sourceModel.splice(shared.initialIndex, 1);
+            cleanup();
+          });
+        }
+
+        if (o.scope) {
+          o.scope.$emit(o.copy ? 'cancel' : 'remove', shared.item, parent, shared.sourceModel, shared.initialIndex);
+        }
+        if (!o.containersModel) {
+          cleanup();
+        }
+      }
+
+      function cancel(revert) {
+        if (!drake.dragging) {
+          return;
+        }
+        var reverts = arguments.length > 0 ? revert : o.revertOnSpill,
+          parent = shared.item.parentElement;
+
+        var initial = isInitialPlacement(parent);
+        if (initial === false && o.copy === false && reverts) {
+          shared.source.insertBefore(shared.item, shared.initialSibling);
+        }
+        if (o.containersModel && !o.copy && !reverts) {
+          drop(shared.item, parent);
+        } else if (o.scope) {
+          if (initial || reverts) {
+            o.scope.$emit('cancel', shared.item, shared.source);
+          } else {
+            o.scope.$emit('drop', shared.item, parent, shared.source);
+          }
+        }
+
+        if (!o.containersModel || o.copy || reverts || initial) {
+          cleanup();
+        }
+      }
+
+      function cleanup() {
+        ungrab();
+        removeMirrorImage();
+
+        if (shared.item) {
+          rmClass(shared.item, o.classes.transit);
+        }
+
+        drake.dragging = false;
+
+        if (o.removeOnSpill === true) {
+          spillOut();
+        }
+
+        if (o.scope) {
+          o.scope.$emit('out', shared.item, shared.lastDropTarget, shared.source);
+          o.scope.$emit('dragend', shared.item);
+        }
+
+        shared.source = shared.item = shared.sourceItem = shared.initialSibling = shared.currentSibling = shared.sourceModel = null;
+        shared.initialIndex = shared.currentIndex = shared.lastDropTarget = shared.isContainerModel = null;
+      }
+
+      // is item currently placed in original container and original position?
+      function isInitialPlacement(target, s) {
+        var sibling = s || (shared.mirror ? shared.currentSibling : nextEl(shared.item));
+        return target === shared.source && sibling === shared.initialSibling;
+      }
+
+      // find valid drop container
+      function findDropTarget(elementBehindCursor, clientX, clientY) {
+        var target = elementBehindCursor;
+
+        while (target && !accepted()) {
+          target = target.parentElement;
+        }
+        return target;
+
+        function accepted() {
+          var accepts = false;
+
+          if (isContainer(target)) { // is droppable?
+
+            var immediate = getImmediateChild(target, elementBehindCursor),
+              reference = getReference(target, immediate, clientX, clientY),
+              initial = isInitialPlacement(target, reference);
+
+            accepts = initial || o.accepts(shared.item, target, shared.source, reference, shared.sourceModel, shared.initialIndex);
+
+            if (shared.targetContainer !== target) { // used for scroll issue
+              shared.targetContainer = target;
+            }
+          }
+          return accepts;
+        }
+      }
+
+      function drag(e) {
+        if (!shared.mirror) {
+          return;
+        }
+        e = e || window.event;
+
+        // update coordinates
+        shared.clientX = getCoord('clientX', e);
+        shared.clientY = getCoord('clientY', e);
+
+        // count mirror coordiates
+        var x = shared.clientX - shared.offsetX,
+          y = shared.clientY - shared.offsetY,
+          pageX,
+          pageY,
+          offsetBox;
+
+        // fill extra properties if boundingBox is used
+        if (o.boundingBox) {
+          pageX = getCoord('pageX', e);
+          pageY = getCoord('pageY', e);
+          offsetBox = getOffset(o.boundingBox);
+        }
+
+        if (!o.lockY) {
+          if (!o.boundingBox || (pageX > offsetBox.left + shared.offsetX && pageX < offsetBox.right + shared.offsetXr)) {
+            shared.mirror.style.left = x + 'px';
+          } else if (o.boundingBox) { // check again in case user scrolled the view
+            if (pageX < offsetBox.left + shared.offsetX) {
+              shared.mirror.style.left = shared.clientX - (pageX - offsetBox.left) + 'px';
+            } else {
+              shared.mirror.style.left = shared.clientX - shared.mirrorWidth - (pageX - offsetBox.right) + 'px';
+            }
+          }
+        }
+        if (!o.lockX) {
+          if (!o.boundingBox || (pageY > offsetBox.top + shared.offsetY && pageY < offsetBox.bottom + shared.offsetYb)) {
+            shared.mirror.style.top = y + 'px';
+          } else if (o.boundingBox) { // check again in case user scrolled the view
+            if (pageY < offsetBox.top + shared.offsetY) {
+              shared.mirror.style.top = shared.clientY - (pageY - offsetBox.top) + 'px';
+            } else {
+              shared.mirror.style.top = shared.clientY - shared.mirrorHeight - (pageY - offsetBox.bottom) + 'px';
+            }
+          }
+        }
+
+        var elementBehindCursor = getElementBehindPoint(shared.mirror, shared.clientX, shared.clientY),
+          dropTarget = findDropTarget(elementBehindCursor, shared.clientX, shared.clientY),
+          changed = dropTarget !== shared.lastDropTarget;
+
+        if (elementBehindCursor !== shared.lastElementBehindCursor) {
+          fireEvent(elementBehindCursor, shared.dragOverEvents['dragularenter'], !!dropTarget);
+          if (shared.lastElementBehindCursor) {
+            fireEvent(shared.lastElementBehindCursor, shared.dragOverEvents['dragularleave'], elementBehindCursor);
+          }
+          shared.lastElementBehindCursor = elementBehindCursor;
+        }
+
+        if (changed) {
+          out();
+          shared.lastDropTarget = dropTarget;
+          over();
+        }
+
+        // do not copy in same container
+        if (dropTarget === shared.source && o.copy) {
+          if (shared.item.parentElement) {
+            shared.item.parentElement.removeChild(shared.item);
+          }
+          return;
+        }
+
+        var reference,
+          immediate = getImmediateChild(dropTarget, elementBehindCursor);
+
+        if (immediate !== null) {
+          reference = getReference(dropTarget, immediate, shared.clientX, shared.clientY);
+        } else if (o.revertOnSpill === true && !o.copy) {
+          // the case that mirror is not over valid target and reverting is on and copy is off
+          reference = shared.initialSibling;
+          dropTarget = shared.source;
+        } else {
+          // the case that mirror is not over valid target and removing is on or copy is on
+          if (o.copy && shared.item.parentElement !== null) {
+            // remove item or copy of item
+            shared.item.parentElement.removeChild(shared.item);
+          }
+          return;
+        }
+        if (reference === null ||
+          reference !== shared.item &&
+          reference !== nextEl(shared.item) &&
+          reference !== shared.currentSibling) {
+          // moving item/copy to new container from previous one
+          shared.currentSibling = reference;
+
+          dropTarget.insertBefore(shared.item, reference); // if reference is null item is inserted at the end
+
+          if (o.scope) {
+            o.scope.$emit('shadow', shared.item, dropTarget);
+          }
+        }
+
+        function moved(type) {
+          if (o.scope) {
+            o.scope.$emit(type, shared.item, shared.lastDropTarget, shared.source);
+          }
+          if (o.removeOnSpill === true) {
+            type === 'over' ? spillOver() : spillOut();
+          }
+        }
+
+        function over() {
+          if (changed) {
+            moved('over');
+          }
+        }
+
+        function out() {
+          if (shared.lastDropTarget) {
+            moved('out');
+          }
+        }
+      }
+
+      function spillOver() {
+        rmClass(shared.item, o.classes.hide);
+      }
+
+      function spillOut() {
+        if (drake.dragging) {
+          addClass(shared.item, o.classes.hide);
+        }
+      }
+
+      function scrollContainer(e) {
+        if (shared.targetContainer) {
+          var before = shared.targetContainer.scrollTop;
+          shared.targetContainer.scrollTop += e.deltaY;
+          // block scroll of the document when container can be scrolled
+          if (before !== shared.targetContainer.scrollTop) {
+            e.stopPropagation();
+            e.preventDefault();
+          }
+        }
+      }
+
+      function renderMirrorImage() {
+        if (shared.mirror) {
+          return;
+        }
+        var rect = shared.sourceItem.getBoundingClientRect();
+        shared.mirror = shared.sourceItem.cloneNode(true);
+        shared.mirrorWidth = rect.width;
+        shared.mirrorHeight = rect.height;
+        shared.mirror.style.width = getRectWidth(rect) + 'px';
+        shared.mirror.style.height = getRectHeight(rect) + 'px';
+        rmClass(shared.mirror, o.classes.transit);
+        addClass(shared.mirror, o.classes.mirror);
+        o.mirrorContainer.appendChild(shared.mirror);
+        regEvent(documentElement, 'on', 'mousemove', drag);
+        addClass(body, o.classes.unselectable);
+        regEvent(shared.mirror, 'on', 'wheel', scrollContainer);
+        if (o.scope) {
+          o.scope.$emit('cloned', shared.mirror, shared.sourceItem);
+        }
+      }
+
+      function removeMirrorImage() {
+        if (shared.mirror) {
+          rmClass(body, o.classes.unselectable);
+          regEvent(documentElement, 'off', 'mousemove', drag);
+          regEvent(shared.mirror, 'off', 'wheel', scrollContainer);
+          shared.mirror.parentElement.removeChild(shared.mirror);
+          shared.mirror = null;
+        }
+      }
+
+      function getImmediateChild(dropTarget, target) {
+        var immediate = target;
+        while (immediate !== dropTarget && immediate.parentElement !== dropTarget) {
+          immediate = immediate.parentElement;
+        }
+        if (immediate === documentElement) {
+          return null;
+        }
+        return immediate;
+      }
+
+      function getReference(dropTarget, target, x, y) {
+        var horizontal = o.direction === 'horizontal',
+          reference = target !== dropTarget ? inside() : outside();
+        return reference;
+
+        function outside() { // slower, but able to figure out any position
+          var len = dropTarget.children.length,
+          i, el, rect;
+          for (i = 0; i < len; i++) {
+            el = dropTarget.children[i];
+            rect = el.getBoundingClientRect();
+            if (horizontal && rect.left > x) {
+              return el;
+            }
+            if (!horizontal && rect.top > y) {
+              return el;
+            }
+          }
+          return null;
+        }
+
+        function inside() { // faster, but only available if dropped inside a child element
+          var rect = target.getBoundingClientRect();
+          if (horizontal) {
+            return resolve(x > rect.left + getRectWidth(rect) / 2);
+          }
+          return resolve(y > rect.top + getRectHeight(rect) / 2);
+        }
+
+        function resolve(after) {
+          return after ? nextEl(target) : target;
+        }
+      }
+
+      function getScroll(scrollProp, offsetProp) {
+        if (typeof window[offsetProp] !== 'undefined') {
+          return window[offsetProp];
+        }
+        if (documentElement.clientHeight) {
+          return documentElement[scrollProp];
+        }
+        return body[scrollProp];
+      }
+
+      function getOffset(el) {
+        var rect = el.getBoundingClientRect(),
+          scrollTop = getScroll('scrollTop', 'pageYOffset'),
+          scrollLeft = getScroll('scrollLeft', 'pageXOffset');
+        return {
+          left: rect.left + scrollLeft,
+          right: rect.right + scrollLeft,
+          top: rect.top + scrollTop,
+          bottom: rect.bottom + scrollTop
+        };
+      }
+
+      function getElementBehindPoint(point, x, y) {
+        var p = point || {},
+          state = p.className,
+          el;
+        p.className += ' ' + o.classes.hide;
+        el = document.elementFromPoint(x, y);
+        p.className = state;
+        return el;
+      }
+    };
 
   // clean common/shared objects
   serviceFn.cleanEnviroment = function cleanEnviroment() {
-    _classesCache = {};
-    _containersModel = {};
-    _containers = {};
-    _mirror = undefined;
+    shared.classesCache = {};
+    shared.containersModel = {};
+    shared.containers = {};
+    shared.mirror = undefined;
   };
+
+  serviceFn.shared = shared;
 
   return serviceFn;
 
+  /****************************************************************************************************************************/
+  /****************************************************************************************************************************/
+  /****************************************************************************************************************************/
 
   // HELPERS FUNCTIONS:
 
@@ -1930,11 +1930,11 @@ dragularModule.factory('dragularService', ['$rootScope', function dragula($rootS
   }
 
   function lookupClass(className) {
-    var cached = _classesCache[className];
+    var cached = shared.classesCache[className];
     if (cached) {
       cached.lastIndex = 0;
     } else {
-      _classesCache[className] = cached = new RegExp('(?:^|\\s)' + className + '(?:\\s|$)', 'g');
+      shared.classesCache[className] = cached = new RegExp('(?:^|\\s)' + className + '(?:\\s|$)', 'g');
     }
     return cached;
   }
@@ -1989,15 +1989,11 @@ dragularModule.factory('dragularService', ['$rootScope', function dragula($rootS
     return Array.prototype.indexOf.call(angular.element(parent).children(), child);
   }
 
-  function fireEvent(target, e, item, source, sourceModel, initialIndex, extra) {
+  function fireEvent(target, e, extra) {
     if (!target) {
       return;
     }
-    serviceFn.item = item;
-    serviceFn.source = source;
-    serviceFn.sourceModel = sourceModel;
-    serviceFn.initialIndex = initialIndex;
-    serviceFn.extra = extra;
+    shared.extra = extra;
     if (target.dispatchEvent) {
       target.dispatchEvent(e);
     } else {
