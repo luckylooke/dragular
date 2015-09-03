@@ -31,6 +31,7 @@ examplesAppModule
       containerRight = document.querySelector('#containerRight');
 
     function accepts(el, target, source) {
+      // left->right || in same container 
       if (source === containerLeft || source === target) {
         return true;
       }
