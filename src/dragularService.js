@@ -340,7 +340,7 @@ dragularModule.factory('dragularService', ['$rootScope', function dragula($rootS
         if (o.copy) {
           shared.item = context.item.cloneNode(true);
           if (o.scope) {
-            o.scope.$emit('cloned', shared.item, context.item);
+            o.scope.$emit('dragularcloned', shared.item, context.item);
           }
         }
 
@@ -351,7 +351,7 @@ dragularModule.factory('dragularService', ['$rootScope', function dragula($rootS
 
         drake.dragging = true;
         if (o.scope) {
-          o.scope.$emit('drag', shared.sourceItem, shared.source);
+          o.scope.$emit('dragulardrag', shared.sourceItem, shared.source);
         }
 
         return true;
@@ -404,15 +404,15 @@ dragularModule.factory('dragularService', ['$rootScope', function dragula($rootS
         }
 
         if (o.scope) {
-          o.scope.$emit('release', shared.item, shared.source);
+          o.scope.$emit('dragularrelease', shared.item, shared.source);
         }
       }
 
       function drop(item, target) {
         if (o.scope && isInitialPlacement(target)) {
-          o.scope.$emit('cancel', item, shared.source, shared.sourceModel, shared.initialIndex);
+          o.scope.$emit('dragularcancel', item, shared.source, shared.sourceModel, shared.initialIndex);
         } else if (o.scope) {
-          o.scope.$emit('drop', item, target, shared.source, shared.sourceModel, shared.initialIndex);
+          o.scope.$emit('dragulardrop', item, target, shared.source, shared.sourceModel, shared.initialIndex);
         }
         if (shared.sourceModel && !isInitialPlacement(target)) {
           var dropElm = item,
@@ -465,7 +465,7 @@ dragularModule.factory('dragularService', ['$rootScope', function dragula($rootS
         }
 
         if (o.scope) {
-          o.scope.$emit(o.copy ? 'cancel' : 'remove', shared.item, parent, shared.sourceModel, shared.initialIndex);
+          o.scope.$emit(o.copy ? 'dragularcancel' : 'dragularremove', shared.item, parent, shared.sourceModel, shared.initialIndex);
         }
         if (!shared.sourceModel) {
           cleanup();
@@ -487,9 +487,9 @@ dragularModule.factory('dragularService', ['$rootScope', function dragula($rootS
           drop(shared.item, parent);
         } else if (o.scope) {
           if (initial || reverts) {
-            o.scope.$emit('cancel', shared.item, shared.source);
+            o.scope.$emit('dragularcancel', shared.item, shared.source);
           } else {
-            o.scope.$emit('drop', shared.item, parent, shared.source);
+            o.scope.$emit('dragulardrop', shared.item, parent, shared.source);
           }
         }
 
@@ -513,8 +513,8 @@ dragularModule.factory('dragularService', ['$rootScope', function dragula($rootS
         }
 
         if (o.scope) {
-          o.scope.$emit('out', shared.item, shared.lastDropTarget, shared.source);
-          o.scope.$emit('dragend', shared.item);
+          o.scope.$emit('dragularout', shared.item, shared.lastDropTarget, shared.source);
+          o.scope.$emit('dragulardragend', shared.item);
         }
 
         shared.source = shared.item = shared.sourceItem = shared.initialSibling = shared.currentSibling = shared.sourceModel = null;
@@ -669,13 +669,13 @@ dragularModule.factory('dragularService', ['$rootScope', function dragula($rootS
           dropTarget.insertBefore(shared.item, reference); // if reference is null item is inserted at the end
 
           if (o.scope) {
-            o.scope.$emit('shadow', shared.item, dropTarget);
+            o.scope.$emit('dragularshadow', shared.item, dropTarget);
           }
         }
 
         function moved(type) {
           if (o.scope) {
-            o.scope.$emit(type, shared.item, shared.lastDropTarget, shared.source);
+            o.scope.$emit('dragular'+type, shared.item, shared.lastDropTarget, shared.source);
           }
           if (o.removeOnSpill === true) {
             type === 'over' ? spillOver() : spillOut();
@@ -734,7 +734,7 @@ dragularModule.factory('dragularService', ['$rootScope', function dragula($rootS
         addClass(body, o.classes.unselectable);
         regEvent(shared.mirror, 'on', 'wheel', scrollContainer);
         if (o.scope) {
-          o.scope.$emit('cloned', shared.mirror, shared.sourceItem);
+          o.scope.$emit('dragularcloned', shared.mirror, shared.sourceItem);
         }
       }
 

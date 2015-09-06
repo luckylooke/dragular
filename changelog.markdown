@@ -1,5 +1,6 @@
 # upcoming
 
+- **[Braking change!]** scope events are renamed (drop => dragulardrop, shadow => dragularshadow, etc..)
 - **[Braking change!]** options.accepts is splited into two methods options.accepts applied with target container options and options.canBeAccepted applied with source container options
 - if options.isContainer is used model can be provided via function options.isContainerModel(containerElm)
 - **[Braking change!]** removed dragOverClasses (dragOver events can be used instead);

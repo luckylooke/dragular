@@ -29,8 +29,6 @@ Have you ever wanted a drag and drop library that just works? That actually unde
 # Todo towards 3.0.0
 
 - improving docs
-- use destination container settings (will help in mixed enviroment see bellow)
-- renaming dragular events to be more dragular specific (dragulardrop instead of drop etc..)
 - options.isCopy function (allows conditional copy option)
 - fixing mixed enviroment with containers with model and without model
 - solve ngRepeat filtered
@@ -160,10 +158,10 @@ If `copy` is set to `true`, items will be copied rather than moved. This implies
 
 Event     | Move                                     | Copy
 ----------|------------------------------------------|---------------------------------------------
-`drag`    | Element will be concealed from `source`  | Nothing happens
-`drop`    | Element will be moved into `target`      | Element will be cloned into `target`
-`remove`  | Element will be removed from DOM         | Nothing happens
-`cancel`  | Element will stay in `source`            | Nothing happens
+`dragulardrag`    | Element will be concealed from `source`  | Nothing happens
+`dragulardrop`    | Element will be moved into `target`      | Element will be cloned into `target`
+`dragularremove`  | Element will be removed from DOM         | Nothing happens
+`dragularcancel`  | Element will stay in `source`            | Nothing happens
 
 #### `options.revertOnSpill`
 
@@ -187,13 +185,13 @@ If $scope is provided as options.scope the following events can be tracked using
 
 Event Name | Listener Arguments      | Event Description
 -----------|-------------------------|-------------------------------------------------------------------------------------
-`drag`     | `el, container`         | `el` was lifted from `container`
-`dragend`  | `el`                    | Dragging event for `el` ended with either `cancel`, `remove`, or `drop`
-`drop`     | `el, container, source` | `el` was dropped into `container`, and originally came from `source`
-`cancel`   | `el, container`         | `el` was being dragged but it got nowhere and went back into `container`, its last stable parent
-`remove`   | `el, container`         | `el` was being dragged but it got nowhere and it was removed from the DOM. Its last stable parent was `container`.
-`shadow`   | `el, container`         | `el`, _the visual aid shadow_, was moved into `container`. May trigger many times as the position of `el` changes, even within the same `container`
-`cloned`   | `clone, original`       | DOM element `original` was cloned as `clone`. Triggers for mirror images and when `copy: true`
+`dragulardrag`     | `el, container`         | `el` was lifted from `container`
+`dragulardragend`  | `el`                    | Dragging event for `el` ended with either `cancel`, `remove`, or `drop`
+`dragulardrop`     | `el, container, source` | `el` was dropped into `container`, and originally came from `source`
+`dragularcancel`   | `el, container`         | `el` was being dragged but it got nowhere and went back into `container`, its last stable parent
+`dragularremove`   | `el, container`         | `el` was being dragged but it got nowhere and it was removed from the DOM. Its last stable parent was `container`.
+`dragularshadow`   | `el, container`         | `el`, _the visual aid shadow_, was moved into `container`. May trigger many times as the position of `el` changes, even within the same `container`
+`dragularcloned`   | `clone, original`       | DOM element `original` was cloned as `clone`. Triggers for mirror images and when `copy: true`
 
 ## API
 
