@@ -240,31 +240,6 @@ footer {
   }
 }
 
-.clickedClass {
-  background-color: orange !important;
-}
-
-.notContainer {
-  width: 100%;
-  padding: 1em;
-  margin-top: 1em;
-  margin-bottom: 1em;
-  text-align: center;
-  background-color: rgba(0, 0, 0, 0.2);
-}
-
-.notContainer.gu-over {
-  background-color: yellow;
-}
-
-.containerVertical.gu-over-accept {
-  background-color: green;
-}
-
-.containerVertical.gu-over-decline {
-  background-color: red;
-}
-
 /*!
  * Bootstrap v3.3.5 (http://getbootstrap.com)
  * Copyright 2011-2015 Twitter, Inc.
@@ -392,6 +367,31 @@ github.com style (c) Vasily Polovnyov <vast@whiteants.net>
 
 .hljs-chunk {
   color: #aaa;
+}
+
+.clickedClass {
+  background-color: orange !important;
+}
+
+.notContainer {
+  width: 100%;
+  padding: 1em;
+  margin-top: 1em;
+  margin-bottom: 1em;
+  text-align: center;
+  background-color: rgba(0, 0, 0, 0.2);
+}
+
+.notContainer.gu-over {
+  background-color: yellow;
+}
+
+.containerVertical.gu-over-accept {
+  background-color: green;
+}
+
+.containerVertical.gu-over-decline {
+  background-color: red;
 }
 
 .scrollingDrag {

@@ -1073,6 +1073,9 @@ dragularModule.factory('dragularService', ['$rootScope', function dragula($rootS
       item: null, // item being dragged
       sourceItem: null, // item originaly dragged if copy is enabled
       sourceModel: null, // source container model
+      target: null, // droppable container under drag item
+      targetCtx: null, // target container context
+      targetModel: null, // target container model
       lastDropTarget: null, // last container item was over
       offsetX: null, // reference x
       offsetY: null, // reference y
@@ -1087,7 +1090,6 @@ dragularModule.factory('dragularService', ['$rootScope', function dragula($rootS
       initialIndex: null, // reference model index when grabbed
       currentIndex: null, // reference model index now
       isContainerModel: null, // if o.isContainer is used, model can be provided as well, here it is kept
-      targetContainer: null, // droppable container under drag item
       dragOverEvents: {}, // drag over events fired on element behind cursor
       lastElementBehindCursor: null, // last element behind cursor
       grabbed: null // holds mousedown context until first mousemove
@@ -1115,6 +1117,7 @@ dragularModule.factory('dragularService', ['$rootScope', function dragula($rootS
           containers: false,
           moves: always,
           accepts: always,
+          canBeAccepted: always,
           isContainer: never,
           copy: false,
           invalid: invalidTarget,
@@ -1149,7 +1152,7 @@ dragularModule.factory('dragularService', ['$rootScope', function dragula($rootS
       if (o.containersModel) {
         //                            is 2D array?
         o.containersModel = Array.isArray(o.containersModel[0]) ? o.containersModel : [o.containersModel];
-      }else{
+      } else {
         o.containersModel = [];
       }
 
@@ -1168,8 +1171,8 @@ dragularModule.factory('dragularService', ['$rootScope', function dragula($rootS
         var len = initialContainers.length,
           shLen = shared.containers[nameSpace].length;
         for (var i = 0; i < len; i++) {
-          shared.containers[nameSpace][i+shLen] = initialContainers[i];
-          shared.containersCtx[nameSpace][i+shLen] = {
+          shared.containers[nameSpace][i + shLen] = initialContainers[i];
+          shared.containersCtx[nameSpace][i + shLen] = {
             o: o,
             m: o.containersModel[i] // can be undefined
           };
@@ -1444,7 +1447,7 @@ dragularModule.factory('dragularService', ['$rootScope', function dragula($rootS
         }
 
         // after release there is no container hovered
-        shared.targetContainer = null;
+        shared.target = null;
 
         if (shared.lastElementBehindCursor) {
           fireEvent(shared.lastElementBehindCursor, shared.dragOverEvents['dragularrelease'], elementBehindCursor);
@@ -1471,14 +1474,8 @@ dragularModule.factory('dragularService', ['$rootScope', function dragula($rootS
               shared.dropElmModel = o.copy ? angular.copy(shared.sourceModel[shared.initialIndex]) : shared.sourceModel[shared.initialIndex];
 
               if (!shared.isContainerModel) {
-                var i = o.nameSpace.length;
-                while (i--) {
-                  if (shared.containers[o.nameSpace[i]].indexOf(target) !== -1) {
-                    shared.targetModel = shared.containersCtx[o.nameSpace[i]][shared.containers[o.nameSpace[i]].indexOf(target)].m;
-                    break;
-                  }
-                }
-              } else {
+                shared.targetModel = shared.targetCtx.m;
+              }else{
                 shared.targetModel = shared.isContainerModel;
               }
 
@@ -1572,7 +1569,7 @@ dragularModule.factory('dragularService', ['$rootScope', function dragula($rootS
 
         shared.source = shared.item = shared.sourceItem = shared.initialSibling = shared.currentSibling = shared.sourceModel = null;
         shared.initialIndex = shared.currentIndex = shared.lastDropTarget = shared.isContainerModel = shared.targetModel = null;
-        shared.dropElmModel;
+        shared.dropElmModel = shared.targetCtx = null;
       }
 
       // is item currently placed in original container and original position?
@@ -1597,12 +1594,25 @@ dragularModule.factory('dragularService', ['$rootScope', function dragula($rootS
 
             var immediate = getImmediateChild(target, elementBehindCursor),
               reference = getReference(target, immediate, clientX, clientY),
-              initial = isInitialPlacement(target, reference);
+              initial = isInitialPlacement(target, reference),
+              i = o.nameSpace.length;
 
-            accepts = initial || o.accepts(shared.item, target, shared.source, reference, shared.sourceModel, shared.initialIndex);
+            while (i--) {
+              if (shared.containers[o.nameSpace[i]].indexOf(target) !== -1) {
+                shared.targetCtx = shared.containersCtx[o.nameSpace[i]][shared.containers[o.nameSpace[i]].indexOf(target)];
+                break;
+              }
+              if(!shared.targetCtx){
+                shared.targetCtx = shared.containersCtx['dragularCommon'][shared.containers['dragularCommon'].indexOf(target)];
+              }
+            }
 
-            if (shared.targetContainer !== target) { // used for scroll issue
-              shared.targetContainer = target;
+            accepts = initial ||
+              (shared.targetCtx.o.accepts(shared.item, target, shared.source, reference, shared.sourceModel, shared.initialIndex) &&
+              o.canBeAccepted(shared.item, target, shared.source, reference, shared.sourceModel, shared.initialIndex));
+
+            if (shared.target !== target) { // used for scroll issue
+              shared.target = target;
             }
           }
           return accepts;
@@ -1746,11 +1756,11 @@ dragularModule.factory('dragularService', ['$rootScope', function dragula($rootS
       }
 
       function scrollContainer(e) {
-        if (shared.targetContainer) {
-          var before = shared.targetContainer.scrollTop;
-          shared.targetContainer.scrollTop += e.deltaY;
+        if (shared.target) {
+          var before = shared.target.scrollTop;
+          shared.target.scrollTop += e.deltaY;
           // block scroll of the document when container can be scrolled
-          if (before !== shared.targetContainer.scrollTop) {
+          if (before !== shared.target.scrollTop) {
             e.stopPropagation();
             e.preventDefault();
           }

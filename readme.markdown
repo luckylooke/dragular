@@ -99,7 +99,10 @@ dragularService(containers, {
   moves: function (el, container, handle) {
     return true;         // elements are always draggable by default
   },
-  accepts: function (el, target, source, sibling) {
+  accepts: function (el, target, source, sibling) { // applied with target container options
+    return true;         // elements can be dropped in any of the `containers` by default
+  },
+  canBeAccepted: function (el, target, source, sibling) { // applied with source container options 
     return true;         // elements can be dropped in any of the `containers` by default
   },
   direction: 'vertical', // Y axis is considered when determining where an element would be dropped
@@ -143,9 +146,13 @@ You can define a `moves` method which will be invoked with `(el, container, hand
 
 #### `options.accepts`
 
-You can set `accepts` to a method with the following signature: `(el, target, source, sibling)`. It'll be called to make sure that an element `el`, that came from container `source`, can be dropped on container `target` before a `sibling` element. The `sibling` can be `null`, which would mean that the element would be placed as the last element in the container. Note that if `options.copy` is set to `true`, `el` will be set to the copy, instead of the originally dragged element.
+You can set `accepts` to a method with the following signature: `(el, target, source, sibling)`. It'll be called to make sure that an element `el`, that came from container `source`, can be dropped on container `target` before a `sibling` element. The `sibling` can be `null`, which would mean that the element would be placed as the last element in the container. Note that if `options.copy` is set to `true`, `el` will be set to the copy, instead of the originally dragged element. Applied with options provided with initialisation of target container.
 
 Also note that **the position where a drag starts is always going to be a valid place where to drop the element**, even if `accepts` returned `false` for all cases.
+
+#### `options.canBeAccepted`
+
+Same as options.accepts but applied with options provided with initialisation of source container.
 
 #### `options.copy`
 
