@@ -1,5 +1,6 @@
 # upcoming
 
+- **[Braking change!]** options.accepts is splited into two methods options.accepts applied with target container options and options.canBeAccepted applied with source container options
 - if options.isContainer is used model can be provided via function options.isContainerModel(containerElm)
 - **[Braking change!]** removed dragOverClasses (dragOver events can be used instead);
 - share containers between instances, so no need to nameSpace if containers are initialised separately (CAUTION: in case of nested containers you need to use nameSpace for each group/level_of_nesting)
