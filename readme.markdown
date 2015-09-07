@@ -10,7 +10,7 @@ Browser support includes every sane browser and **IE7+**. <sub>_(Granted you pol
 
 Have you ever wanted a drag and drop library that just works? That actually understands where to place the elements when they are dropped? That doesn't need you to do a zillion things to get it to work? Well, so did [Nicolas Bevacqua](https://github.com/bevacqua) and I have forked it into angular module and also put some features!
 
-<b>Actual version 2.1.3 is based on dragula 3.0.3 and tested with angular 1.4.3.</b>
+<b>Actual version 3.0.0_beta is based on dragula 3.1.0 and tested with angular 1.4.3.</b>
 
 # Differences of dragular (against dragula)
 
@@ -26,11 +26,9 @@ Have you ever wanted a drag and drop library that just works? That actually unde
 - DOM can be synced with scope model
 - added syntax highlighter to example codes
 
-# Todo towards 3.0.0
+# Todo towards next versions
 
 - improving docs
-- options.isCopy function (allows conditional copy option)
-- fixing mixed enviroment with containers with model and without model
 - solve ngRepeat filtered
 - support selectors in service (#2)
 
@@ -154,7 +152,7 @@ Same as options.accepts but applied with options provided with initialisation of
 
 #### `options.copy`
 
-If `copy` is set to `true`, items will be copied rather than moved. This implies the following differences:
+If `copy` is set to `true` _(or a method that returns `true`)_, items will be copied rather than moved. This implies the following differences:
 
 Event     | Move                                     | Copy
 ----------|------------------------------------------|---------------------------------------------
@@ -162,6 +160,14 @@ Event     | Move                                     | Copy
 `dragulardrop`    | Element will be moved into `target`      | Element will be cloned into `target`
 `dragularremove`  | Element will be removed from DOM         | Nothing happens
 `dragularcancel`  | Element will stay in `source`            | Nothing happens
+
+If a method is passed, it'll be called whenever an element starts being dragged in order to decide whether it should follow `copy` behavior or not. Consider the following example.
+
+```js
+copy: function (el, source) {
+  return el.className === 'you-may-copy-us';
+}
+```
 
 #### `options.revertOnSpill`
 

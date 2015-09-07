@@ -10,7 +10,10 @@
 - **[Braking change!]** Models are not updated until drag ends
 - removed npm workflow
 
-### Changes merged from dragula 3.0.3:
+### Changes merged from dragula 3.1.0:
+- You can now set `options.copy` to a method. It'll be invoked once per drag to ask whether the element being dragged should be treated as a copy or not
+- Fixed a bug where starting a drag programatically while an element was being dragged resulted in an exception
+- Fixed a bug where `mousedown` would be prevented and focusing draggable inputs wouldn't be possible
 - Fixed a historical bug, where click on anchors would be ignored within dragula containers in mobile
 - Fixed a bug where events wouldn't be gracefully removed if drake were destroyed during a drag event
 - Now emits dragend after out to preserve consistency (because drag is emitted before over)
