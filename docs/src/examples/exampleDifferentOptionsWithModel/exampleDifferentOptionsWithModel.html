@@ -73,24 +73,24 @@
 &lt;!-- HTML --&gt;
 &lt;div class='wrapper' ng-controller=&quot;DifferentOptionsModel&quot;&gt;
     &lt;div class='tableRow'&gt;
-        &lt;div class='containerVertical'&gt;
-            &lt;div ng-repeat=&quot;item in items1&quot;&gt;{{item.content}}&lt;/div&gt;
-        &lt;/div&gt;
-        &lt;div class='containerVertical'&gt;
-            &lt;div ng-repeat=&quot;item in items2&quot;&gt;{{item.content}}&lt;/div&gt;
-        &lt;/div&gt;
+      &lt;div id=&quot;containerLeft&quot; class='containerVertical'&gt;
+        &lt;div ng-repeat=&quot;item in items1&quot;&gt;{{item.content}}&lt;/div&gt;
+      &lt;/div&gt;
+      &lt;div id=&quot;containerRight&quot; class='containerVertical'&gt;
+        &lt;div ng-repeat=&quot;item in items2&quot;&gt;{{item.content}}&lt;/div&gt;
+      &lt;/div&gt;
     &lt;/div&gt;
     &lt;div class=&quot;tableRow&quot;&gt;
-        &lt;div class=&quot;container&quot;&gt;
-            &lt;div&gt;Items1:
-                &lt;br/&gt;{{items1 | json}}&lt;/div&gt;
-        &lt;/div&gt;
-        &lt;div class=&quot;container&quot;&gt;
-            &lt;div&gt;Items2:
-                &lt;br/&gt;{{items2 | json}}&lt;/div&gt;
-        &lt;/div&gt;
+      &lt;div class='containerVertical'&gt;
+        &lt;pre&gt;Items1:
+          &lt;br/&gt;{{items1 | json}}&lt;/pre&gt;
+      &lt;/div&gt;
+      &lt;div class='containerVertical'&gt;
+        &lt;pre&gt;Items2:
+          &lt;br/&gt;{{items2 | json}}&lt;/pre&gt;
+      &lt;/div&gt;
     &lt;/div&gt;
-&lt;/div&gt;
+  &lt;/div&gt;
         </code>
       </pre>
 </div>

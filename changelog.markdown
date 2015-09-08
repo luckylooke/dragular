@@ -8,6 +8,7 @@
 - example with containers which has different options each
 - **[Braking change!]** Now all non-nameSpaced continers are in same domain
 - **[Braking change!]** Models are not updated until drag ends
+- css selectors supportet in service `containers` parameter
 - removed npm workflow
 
 ### Changes merged from dragula 3.1.0:

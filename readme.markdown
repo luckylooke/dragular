@@ -24,13 +24,14 @@ Have you ever wanted a drag and drop library that just works? That actually unde
 - boundingBox (dragging element can me moved only in specific area)
 - lockX/Y (dragging element can me moved only in specific direction)
 - DOM can be synced with scope model
+- support css selectors to define containers
 - added syntax highlighter to example codes
+- etc..
 
 # Todo towards next versions
 
 - improving docs
 - solve ngRepeat filtered
-- support selectors in service (#2)
 
 # Features
 
@@ -85,10 +86,18 @@ Note that dragging is only triggered on left clicks, and only if no meta keys ar
 The example below allows the user to drag elements from `left` into `right`, and from `right` into `left`.
 
 ```js
-dragularService([document.querySelector('#left'), document.querySelector('#right')]);
+dragularService('#left, #right');
 ```
 
-You can also provide an `options` object into service.
+Containers supported types:
+Type     | Description                                     
+----------|---------------------------------------------------------------------------------------
+`element`    | single element of container
+`string`    | css selector (document.querySelectorAll, beware browser support), one or multiple containers
+`array`    | array of DOM elements
+`array-like`    | object containing elements on numerical properties (jQuery wrapper, jQlite, etc..), must have length property
+
+You can also provide an `options` object into service as second parameter.
 
 ```js
 dragularService(containers, {
@@ -202,14 +211,6 @@ Event Name | Listener Arguments      | Event Description
 ## API
 
 The `dragularService` method returns a tiny object with a concise API. We'll refer to the API returned by `dragularService` as `drake`.
-
-#### `drake.addContainer(container)`
-
-Adds a `container` to the `containers` collection. It can be a single DOM element or an array.
-
-#### `drake.removeContainer(container)`
-
-Removes a `container` from the `containers` collection. It can be a single DOM element or an array.
 
 #### `drake.dragging`
 

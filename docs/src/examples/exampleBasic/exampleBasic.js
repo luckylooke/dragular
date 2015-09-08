@@ -9,5 +9,5 @@ var examplesAppModule = require('../examplesApp');
 examplesAppModule
   .controller('Basic', ['$element', 'dragularService', function TodoCtrl($element, dragularService) {
     dragularService.cleanEnviroment();
-	dragularService($element.children());
+	dragularService('.containerVertical');
   }]);

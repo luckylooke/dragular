@@ -95,10 +95,12 @@ dragularModule.factory('dragularService', ['$rootScope', function dragula($rootS
     },
     serviceFn = function(initialContainers, options) {
 
-      if (arguments.length === 1 && !Array.isArray(initialContainers) && !angular.isElement(initialContainers) && !initialContainers[0]) {
+      if (arguments.length === 1 && !Array.isArray(initialContainers) && !angular.isElement(initialContainers) && !initialContainers[0] && typeof initialContainers !== 'string') {
         // then containers are not provided, only options
         options = initialContainers;
         initialContainers = [];
+      }else if(typeof initialContainers === 'string'){
+        initialContainers = document.querySelectorAll(initialContainers);
       }
 
       var body = document.body,
