@@ -8,7 +8,7 @@ Browser support includes every sane browser and **IE7+**. <sub>_(Granted you pol
 
 # Inspiration
 
-Have you ever wanted a drag and drop library that just works? That actually understands where to place the elements when they are dropped? That doesn't need you to do a zillion things to get it to work? Well, so did [Nicolas Bevacqua](https://github.com/bevacqua) and I have forked it into angular module and also put some features!
+I am working on huge angular project and I am using several drag&drop libraries in it, one for UI, one for lists, etc.. I want to use one full-featured drag&drop library for whole project. As I could not find any suitable, I decided to create one. I have choosen great library [dragula](http://github.com/bevacqua/dragula) by [Nicolas Bevacqua](http://github.com/bevacqua) as my starting point, make it more angular and started to put features in it! If you wish light-weight angular version of dragula, there is [official angular version of dragula](http://github.com/bevacqua/angular-dragula).
 
 <b>Actual version 3.0.0_beta is based on dragula 3.1.0 and tested with angular 1.4.3.</b>
 
@@ -31,7 +31,6 @@ Have you ever wanted a drag and drop library that just works? That actually unde
 # Todo towards next versions
 
 - improving docs
-- solve ngRepeat filtered
 
 # Features
 
@@ -144,6 +143,25 @@ OR providing options as JSON
 ### Options
 
 The options are detailed below.
+
+#### `options.containersModel`
+
+If you wish to have model synced with containers state, you need to provide it within this property. For single container you can provide an array with items in it. Items can by any type. For multiple containers you need to provide array of arrays (2D-array), where order of arrays representing containers (models) must be same as order of containers elements provided in `containers` parameter of service.
+
+Please note that if you are using filters on your items you must provide filtered array no source one!
+```html
+  <input ng-model="query">
+  <div id="container">
+     <div ng-repeat="item in filteredItems = (sourceItems | orderBy:'order_prop' | filter:query | limitTo:4)">
+       {{item}}
+     </div>
+  </div>
+ ```
+ ```js
+dragularService('#container', {
+  containersModel: filteredItems
+});
+ ```
 
 #### `options.moves`
 

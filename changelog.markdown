@@ -1,4 +1,4 @@
-# upcoming
+# 3.0.0 Interdragular
 
 - **[Braking change!]** scope events are renamed (drop => dragulardrop, shadow => dragularshadow, etc..)
 - **[Braking change!]** options.accepts is splited into two methods options.accepts applied with target container options and options.canBeAccepted applied with source container options
