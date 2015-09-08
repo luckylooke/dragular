@@ -12,25 +12,24 @@ examplesAppModule
     dragularService($element.children(), {
       scope: $scope
     });
-    $scope.$on('drag', function(e, el) {
+    $scope.$on('dragulardrag', function(e, el) {
       e.stopPropagation();
       el.className = el.className.replace(' ex-moved', '');
     });
-    $scope.$on('drop', function(e, el) {
+    $scope.$on('dragulardrop', function(e, el) {
       e.stopPropagation();
       $timeout(function() {
         el.className += ' ex-moved';
       }, 0);
     });
 
-    // $scope.$on('cloned', myFn('cloned'));
-    // $scope.$on('drag', myFn('drag'));
-    // $scope.$on('cancel', myFn('cancel'));
-    // $scope.$on('drop', myFn('drop'));
-    // $scope.$on('remove', myFn('remove'));
-    // $scope.$on('dragend', myFn('dragend'));
-    // $scope.$on('shadow', myFn('shadow'));
-    // $scope.$on('shadowRemoved', myFn('shadow'));
+    // $scope.$on('dragularcloned', myFn('cloned'));
+    // $scope.$on('dragulardrag', myFn('drag'));
+    // $scope.$on('dragularcancel', myFn('cancel'));
+    // $scope.$on('dragulardrop', myFn('drop'));
+    // $scope.$on('dragularremove', myFn('remove'));
+    // $scope.$on('dragulardragend', myFn('dragend'));
+    // $scope.$on('dragularshadow', myFn('shadow'));
 
     // function myFn(eventName) {
     //   return function() {
