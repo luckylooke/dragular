@@ -1,3 +1,7 @@
+# 3.0.1 fix
+
+- Fixed shared.item undefined in grab fn in some cases
+
 # 3.0.0 Interdragular
 
 - **[Braking change!]** scope events are renamed (drop => dragulardrop, shadow => dragularshadow, etc..)
