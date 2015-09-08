@@ -300,8 +300,8 @@ dragularModule.factory('dragularService', ['$rootScope', function dragula($rootS
         eventualMovements();
         if (e.type === 'mousedown') {
           e.preventDefault(); // fixes https://github.com/bevacqua/dragula/issues/155
-          if (shared.item.tagName === 'INPUT' || shared.item.tagName === 'TEXTAREA') {
-            shared.item.focus(); // fixes https://github.com/bevacqua/dragula/issues/176
+          if (context.item.tagName === 'INPUT' || context.item.tagName === 'TEXTAREA') {
+            context.item.focus(); // fixes https://github.com/bevacqua/dragula/issues/176
           }
         }
       }
