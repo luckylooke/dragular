@@ -89,8 +89,9 @@ dragularService('#left, #right');
 ```
 
 Containers supported types:
-Type     | Description                                     
-----------|---------------------------------------------------------------------------------------
+
+Type                    | Description                                     
+--------------------------|----------------------------------------------------------------------------
 `element`    | single element of container
 `string`    | css selector (document.querySelectorAll, beware browser support), one or multiple containers
 `array`    | array of DOM elements
