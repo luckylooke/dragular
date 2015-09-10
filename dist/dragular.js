@@ -476,7 +476,7 @@ dragularModule.factory('dragularService', ['$rootScope', function dragula($rootS
             if (isInitialPlacement(target)) {
               o.scope.$emit('dragularcancel', item, shared.source, shared.sourceModel, shared.initialIndex);
             } else {
-              o.scope.$emit('dragulardrop', item, target, shared.source, shared.sourceModel, shared.initialIndex);
+              o.scope.$emit('dragulardrop', item, target, shared.source, shared.sourceModel, shared.initialIndex, shared.targetModel);
             }
           }
         }

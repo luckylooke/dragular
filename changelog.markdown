@@ -1,3 +1,7 @@
+# 3.0.2 fix
+
+- Fixed drop event firing before models updated
+
 # 3.0.1 fix
 
 - Fixed shared.item undefined in grab fn in some cases
