@@ -1042,6 +1042,10 @@ dragularModule.directive('dragular', ['dragularService', function(dragularServic
 
 
 
+/**
+ * Dragular 3.0.2 by Luckylooke https://github.com/luckylooke/dragular
+ * Angular version of dragula https://github.com/bevacqua/dragula
+ */
 module.exports = angular.module('dragularModule', []);
 
 ({"dragularDirective":require("./dragularDirective.js"),"dragularService":require("./dragularService.js")});
@@ -1051,7 +1055,7 @@ module.exports = angular.module('dragularModule', []);
 'use strict';
 
 /**
- * dragular Module and Service by Luckylooke https://github.com/luckylooke/dragular
+ * dragular Service by Luckylooke https://github.com/luckylooke/dragular
  * Angular version of dragula https://github.com/bevacqua/dragula
  */
 
@@ -1100,7 +1104,7 @@ dragularModule.factory('dragularService', ['$rootScope', function dragula($rootS
         // then containers are not provided, only options
         options = initialContainers;
         initialContainers = [];
-      }else if(typeof initialContainers === 'string'){
+      } else if (typeof initialContainers === 'string') {
         initialContainers = document.querySelectorAll(initialContainers);
       }
 
@@ -1468,10 +1472,14 @@ dragularModule.factory('dragularService', ['$rootScope', function dragula($rootS
       }
 
       function drop(item, target) {
-        if (o.scope && isInitialPlacement(target)) {
-          o.scope.$emit('dragularcancel', item, shared.source, shared.sourceModel, shared.initialIndex);
-        } else if (o.scope) {
-          o.scope.$emit('dragulardrop', item, target, shared.source, shared.sourceModel, shared.initialIndex);
+        function emitDropEvent() {
+          if (o.scope) {
+            if (isInitialPlacement(target)) {
+              o.scope.$emit('dragularcancel', item, shared.source, shared.sourceModel, shared.initialIndex);
+            } else {
+              o.scope.$emit('dragulardrop', item, target, shared.source, shared.sourceModel, shared.initialIndex);
+            }
+          }
         }
         if (shared.sourceModel && !isInitialPlacement(target)) {
           var dropElm = item,
@@ -1499,9 +1507,12 @@ dragularModule.factory('dragularService', ['$rootScope', function dragula($rootS
             if (item.parentElement) {
               item.parentElement.removeChild(item);
             }
+
+            emitDropEvent();
             cleanup();
           });
         } else {
+          emitDropEvent();
           cleanup();
         }
       }
@@ -1547,8 +1558,6 @@ dragularModule.factory('dragularService', ['$rootScope', function dragula($rootS
         } else if (o.scope) {
           if (initial || reverts) {
             o.scope.$emit('dragularcancel', shared.item, shared.source);
-          } else {
-            o.scope.$emit('dragulardrop', shared.item, parent, shared.source);
           }
         }
 
