@@ -1,3 +1,4 @@
+/* global angular */
 'use strict';
 
 /**
@@ -15,7 +16,7 @@ dragularModule.directive('dragular', ['dragularService', function(dragularServic
     restrict: 'A',
     link: function($scope, iElm, iAttrs) {
 
-      var options = $scope[iAttrs.dragular] || tryJson(iAttrs.dragular);
+      var options = $scope.$eval(iAttrs.dragular) || tryJson(iAttrs.dragular) || {};
 
       function tryJson(json) {
         try { // I dont like try catch solutions but I havent find sattisfying way of chcecking json validity.
@@ -25,7 +26,9 @@ dragularModule.directive('dragular', ['dragularService', function(dragularServic
         }
       }
 
-      if(options && options.containersModel && typeof options.containersModel === 'string'){
+      if(iAttrs.dragularModel){
+        options = angular.extend({containersModel: $scope.$eval(iAttrs.dragularModel)}, options);
+      }else if(options && options.containersModel && typeof options.containersModel === 'string'){
         options.containersModel = $scope.$eval(options.containersModel);
       }
 
