@@ -1,7 +1,7 @@
 {
-  "name": "dragular",
-  "version": "3.0.1",
-  "description": "Angular drag and drop based on dragula",
+  "name": "352-dragular",
+  "version": "1.0.0",
+  "description": "A fork of the dragular library that supports touch events for drag and drop",
   "main": "./dist/dragular.js",
   "repository": {
     "type": "git",

@@ -1,7 +1,7 @@
 {
-  "name": "dragular.js",
-  "version": "3.0.2",
-  "description": "Angular drag and drop based on dragula",
+  "name": "352-dragular",
+  "version": "1.0.0",
+  "description": "A fork of dragular that supports touch events",
   "main": [
     "dist/dragular.min.js",
     "dist/dragular.min.css"
