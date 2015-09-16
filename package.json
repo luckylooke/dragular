@@ -1,6 +1,6 @@
 {
   "name": "352-dragular",
-  "version": "1.0.0",
+  "version": "3.0.3",
   "description": "A fork of the dragular library that supports touch events for drag and drop",
   "main": "./dist/dragular.js",
   "repository": {
