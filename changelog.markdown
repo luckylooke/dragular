@@ -1,3 +1,7 @@
+# implemented
+
+- added `dragular-model` atribute as new optional way of provideng model when using dragular directive
+
 # 3.0.2 fix
 
 - Fixed drop event firing before models updated

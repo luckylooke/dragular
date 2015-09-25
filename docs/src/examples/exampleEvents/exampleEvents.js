@@ -23,18 +23,18 @@ examplesAppModule
       }, 0);
     });
 
-    // $scope.$on('dragularcloned', myFn('cloned'));
-    // $scope.$on('dragulardrag', myFn('drag'));
-    // $scope.$on('dragularcancel', myFn('cancel'));
-    // $scope.$on('dragulardrop', myFn('drop'));
-    // $scope.$on('dragularremove', myFn('remove'));
-    // $scope.$on('dragulardragend', myFn('dragend'));
-    // $scope.$on('dragularshadow', myFn('shadow'));
+    $scope.$on('dragularcloned', myFn('cloned'));
+    $scope.$on('dragulardrag', myFn('drag'));
+    $scope.$on('dragularcancel', myFn('cancel'));
+    $scope.$on('dragulardrop', myFn('drop'));
+    $scope.$on('dragularremove', myFn('remove'));
+    $scope.$on('dragulardragend', myFn('dragend'));
+    $scope.$on('dragularshadow', myFn('shadow'));
 
-    // function myFn(eventName) {
-    //   return function() {
-    //     console.log(eventName, arguments);
-    //   };
-    // }
+    function myFn(eventName) {
+      return function() {
+        console.log(eventName, arguments);
+      };
+    }
 
   }]);

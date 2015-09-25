@@ -1,7 +1,7 @@
 {
-  "name": "352-dragular",
-  "version": "3.0.3",
-  "description": "A fork of the dragular library that supports touch events for drag and drop",
+  "name": "dragular",
+  "version": "3.0.2",
+  "description": "Angular drag and drop based on dragula",
   "main": "./dist/dragular.js",
   "repository": {
     "type": "git",
@@ -40,7 +40,6 @@
     "gulp-sourcemaps": "^1.5.2",
     "gulp-uglify": "^1.2.0",
     "gulp-util": "^3.0.6",
-    "jshint-stylish": "^2.0.1",
     "run-sequence": "^1.1.2",
     "vinyl-buffer": "^1.0.0",
     "vinyl-source-stream": "^1.1.0",

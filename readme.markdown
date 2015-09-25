@@ -124,7 +124,7 @@ For now just as attribute (restrict: A)!
 <div dragular="dragularOptions"></div>
 ```
 
-The dragularOptions can be any name of property where options object is located.
+The dragularOptions can be any name of property where options object is located or angular expression resulting with options object.
 
 ```js
 $scope.dragularOptions = {
@@ -141,11 +141,19 @@ OR providing options as JSON
 <div dragular='{"classes":{"mirror":"custom-green-mirror"},"nameSpace":"common"}'></div>
 ```
 
-### Options
+### dragular-model atribute
+
+Model can be optionaly provided via `dragular-model` atribute, but only in case you are using dragular directive next to it. If presented it has higher priority than `options.containersModel` property and it **extends options provided in `dragula` attribute into new options object!**.
+
+```html
+<div dragular-model="items"></div>
+```
+
+## Options
 
 The options are detailed below.
 
-#### `options.containersModel`
+### `options.containersModel`
 
 If you wish to have model synced with containers state, you need to provide it within this property. For single container you can provide an array with items in it. Items can by any type. For multiple containers you need to provide array of arrays (2D-array), where order of arrays representing containers (models) must be same as order of containers elements provided in `containers` parameter of service.
 
@@ -164,21 +172,21 @@ dragularService('#container', {
 });
  ```
 
-#### `options.moves`
+### `options.moves`
 
 You can define a `moves` method which will be invoked with `(el, container, handle)` whenever an element is clicked. If this method returns `false`, a drag event won't begin, and the event won't be prevented either. The `handle` element will be the original click target, which comes in handy to test if that element is an expected _"drag handle"_.
 
-#### `options.accepts`
+### `options.accepts`
 
 You can set `accepts` to a method with the following signature: `(el, target, source, sibling)`. It'll be called to make sure that an element `el`, that came from container `source`, can be dropped on container `target` before a `sibling` element. The `sibling` can be `null`, which would mean that the element would be placed as the last element in the container. Note that if `options.copy` is set to `true`, `el` will be set to the copy, instead of the originally dragged element. Applied with options provided with initialisation of target container.
 
 Also note that **the position where a drag starts is always going to be a valid place where to drop the element**, even if `accepts` returned `false` for all cases.
 
-#### `options.canBeAccepted`
+### `options.canBeAccepted`
 
 Same as options.accepts but applied with options provided with initialisation of source container.
 
-#### `options.copy`
+### `options.copy`
 
 If `copy` is set to `true` _(or a method that returns `true`)_, items will be copied rather than moved. This implies the following differences:
 
@@ -197,19 +205,19 @@ copy: function (el, source) {
 }
 ```
 
-#### `options.revertOnSpill`
+### `options.revertOnSpill`
 
 By default, spilling an element outside of any containers will move the element back to the _drop position previewed by the feedback shadow_. Setting `revertOnSpill` to `true` will ensure elements dropped outside of any approved containers are moved back to the source element where the drag event began, rather than stay at the _drop position previewed by the feedback shadow_.
 
-#### `options.removeOnSpill`
+### `options.removeOnSpill`
 
 By default, spilling an element outside of any containers will move the element back to the _drop position previewed by the feedback shadow_. Setting `removeOnSpill` to `true` will ensure elements dropped outside of any approved containers are removed from the DOM. Note that `remove` events won't fire if `copy` is set to `true`.
 
-#### `options.direction`
+### `options.direction`
 
 When an element is dropped onto a container, it'll be placed near the point where the mouse was released. If the `direction` is `'vertical'`, the Y axis will be considered. Otherwise, if the `direction` is `'horizontal'`, the X axis will be considered. Default is automatic, where simple logic determines direction by comparison of dimensions of parent and its first child.
 
-#### `options.scope`
+### `options.scope`
 
 Scope can be provided for emitting events, you can provide whichever scope you like.
 
@@ -231,19 +239,19 @@ Event Name | Listener Arguments      | Event Description
 
 The `dragularService` method returns a tiny object with a concise API. We'll refer to the API returned by `dragularService` as `drake`.
 
-#### `drake.dragging`
+### `drake.dragging`
 
 This property will be `true` whenever an element is being dragged.
 
-#### `drake.start(item)`
+### `drake.start(item)`
 
 Enter drag mode **without a shadow**. This method is most useful when providing complementary keyboard shortcuts to an existing drag and drop solution. Even though a shadow won't be created at first, the user will get one as soon as they click on `item` and start dragging it around. Note that if they click and drag something else, `.end` will be called before picking up the new item.
 
-#### `drake.end()`
+### `drake.end()`
 
 Gracefully end the drag event as if using **the last position marked by the preview shadow** as the drop target. The proper `cancel` or `drop` event will be fired, depending on whether the item was dropped back where it was originally lifted from _(which is essentially a no-op that's treated as a `cancel` event)_.
 
-#### `drake.cancel(revert)`
+### `drake.cancel(revert)`
 
 If an element managed by `drake` is currently being dragged, this method will gracefully cancel the drag action. You can also pass in `revert` at the method invocation level, effectively producing the same result as if `revertOnSpill` was `true`.
 
@@ -252,11 +260,11 @@ Note that **a _"cancellation"_ will result in a `cancel` event** only in the fol
 - `revertOnSpill` is `true`
 - Drop target _(as previewed by the feedback shadow)_ is the source container **and** the item is dropped in the same position where it was originally dragged from
 
-#### `drake.remove()`
+### `drake.remove()`
 
 If an element managed by `drake` is currently being dragged, this method will gracefully remove it from the DOM.
 
-#### `drake.destroy()`
+### `drake.destroy()`
 
 Removes all drag and drop events used by `dragularService` to manage drag and drop between the `containers`. If `.destroy` is called while an element is being dragged, the drag will be effectively cancelled.
 
