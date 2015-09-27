@@ -31,7 +31,7 @@ examplesAppModule
       containerRight = document.querySelector('#containerRight');
 
     function accepts(el, target, source) {
-      // left->right || in same container 
+      // left->right || in same container
       if (source === containerLeft || source === target) {
         return true;
       }
@@ -41,14 +41,15 @@ examplesAppModule
     dragularService([containerLeft], {
       containersModel: [$scope.items1],
       copy: true,
-      //move only from left to right  
+      copySortSource: true,
+      //move only from left to right
       accepts: accepts
     });
 
     dragularService([containerRight], {
       containersModel: [$scope.items2],
       removeOnSpill: true,
-      //move only from left to right  
+      //move only from left to right
       accepts: accepts
     });
 

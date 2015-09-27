@@ -1,6 +1,11 @@
-# implemented
+# 3.1.0 Brotherhood
 
 - added `dragular-model` atribute as new optional way of provideng model when using dragular directive
+- fixed gh-pages missed prefixes in Events example
+
+### Changes merged from dragula 3.3.0:
+- You can now use `options.copySortSource` to enable sorting in `copy`-source containers
+- The `options.moves` callback now receives a fourth parameter, the `sibling` found after `el`
 
 # 3.0.2 fix
 
@@ -75,7 +80,7 @@
 - Added `out` event that fires whenever an element is dragged out of a container _(or whenever a drag event ends)_
 - Fixed a bug caused in `2.0.6` where anything would be regarded as a `drake` container
 - Fixed a bug where `isContainer` would be called with a `el=null` in some situations
-- Set `gu-transit` after a drag event has fully started 
+- Set `gu-transit` after a drag event has fully started
 - Fixed a bug where using `.cancel` would throw an exception
 - Fixed a bug where dragging a copy back to origin after hovering over another container would still result in a copy being made if you never spilled the item
 - Deprecated addContainer method

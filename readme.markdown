@@ -65,7 +65,7 @@ include files into your project
   <link href='styles/dragular.css' rel='stylesheet' type='text/css' />
   <script src='scripts/dragular.js'></script>
 ```
-AND 
+AND
 put dragularModule into dependency array
 ```javascript
 var app = angular.module('myApp', ['dragularModule', 'otherDependencies']);
@@ -90,7 +90,7 @@ dragularService('#left, #right');
 
 Containers supported types:
 
-Type                    | Description                                     
+Type                    | Description
 --------------------------|----------------------------------------------------------------------------
 `element`    | single element of container
 `string`    | css selector (document.querySelectorAll, beware browser support), one or multiple containers
@@ -107,7 +107,7 @@ dragularService(containers, {
   accepts: function (el, target, source, sibling) { // applied with target container options
     return true;         // elements can be dropped in any of the `containers` by default
   },
-  canBeAccepted: function (el, target, source, sibling) { // applied with source container options 
+  canBeAccepted: function (el, target, source, sibling) { // applied with source container options
     return true;         // elements can be dropped in any of the `containers` by default
   },
   direction: 'vertical', // Y axis is considered when determining where an element would be dropped
@@ -203,6 +203,15 @@ If a method is passed, it'll be called whenever an element starts being dragged 
 copy: function (el, source) {
   return el.className === 'you-may-copy-us';
 }
+```
+
+#### `options.copySortSource`
+
+If `copy` is set to `true` _(or a method that returns `true`)_ and `copySortSource` is `true` as well, users will be able to sort elements in `copy`-source containers.
+
+```js
+copy: true,
+copySortSource: true
 ```
 
 ### `options.revertOnSpill`

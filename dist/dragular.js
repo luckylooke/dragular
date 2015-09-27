@@ -85,6 +85,8 @@ dragularModule.factory('dragularService', ['$rootScope', function dragula($rootS
       lastDropTarget: null, // last container item was over
       offsetX: null, // reference x
       offsetY: null, // reference y
+      moveX: null, // reference move x
+      moveY: null, // reference move y
       offsetXr: null, // reference x right for boundingBox feature
       offsetYb: null, // reference y bottom for boundingBox feature
       clientX: null, // cache client x, init at grab, update at drag
@@ -260,6 +262,7 @@ dragularModule.factory('dragularService', ['$rootScope', function dragula($rootS
       function events(remove) {
         var op = remove ? 'off' : 'on';
         regEvent(documentElement, op, 'mouseup', release);
+        // regEvent(documentElement, op, 'mousemove', startBecauseMouseMoved);
 
         initialContainers.forEach(function addMouseDown(container) {
           regEvent(container, 'on', 'mousedown', grab);
@@ -292,6 +295,8 @@ dragularModule.factory('dragularService', ['$rootScope', function dragula($rootS
 
       function grab(e) {
         e = e || window.event;
+        shared.moveX = e.clientX;
+        shared.moveY = e.clientY;
 
         // filter some odd situations
         if ((e.which !== 0 && e.which !== 1) || e.metaKey || e.ctrlKey) {
@@ -299,7 +304,7 @@ dragularModule.factory('dragularService', ['$rootScope', function dragula($rootS
         }
 
         var context = canStart(e.target);
-        if (!context) {
+        if (!context || !context.item) {
           return;
         }
 
@@ -314,7 +319,16 @@ dragularModule.factory('dragularService', ['$rootScope', function dragula($rootS
       }
 
       function startBecauseMouseMoved(e) {
-        var grabbed = shared.grabbed; // call to end() unsets _grabbed
+        var grabbed = shared.grabbed; // call to end() unsets shared.grabbed
+
+        if (!grabbed) {
+          return;
+        }
+
+        if (e.clientX === shared.moveX && e.clientY === shared.moveY) {
+          return;
+        }
+
         eventualMovements(true); // remove mousemove listener
         movements();
         end();
@@ -377,9 +391,14 @@ dragularModule.factory('dragularService', ['$rootScope', function dragula($rootS
         var source = item.parentElement;
         if (!source ||
           o.invalid(item, handle) ||
-          !o.moves(item, source, handle)) {
+          !o.moves(item, source, handle, nextEl(item))) {
           return;
         }
+
+        console.log({
+          item: item,
+          source: source
+        });
 
         return {
           item: item,
@@ -427,9 +446,11 @@ dragularModule.factory('dragularService', ['$rootScope', function dragula($rootS
       }
 
       function end() {
-        if (!drake.dragging) {
+        if (!drake.dragging || !shared.item) {
+          console.log('end return');
           return;
         }
+        console.log('end drop');
         drop(shared.item, shared.item.parentElement);
       }
 
@@ -452,7 +473,7 @@ dragularModule.factory('dragularService', ['$rootScope', function dragula($rootS
         var elementBehindCursor = getElementBehindPoint(shared.mirror, shared.clientX, shared.clientY),
           dropTarget = findDropTarget(elementBehindCursor, shared.clientX, shared.clientY);
 
-        if (dropTarget && (!shared.copy || dropTarget !== shared.source)) {
+        if (dropTarget && ((shared.copy && o.copySortSource) || (!shared.copy || dropTarget !== shared.source))) {
           // found valid target and (is not copy case or target is not initial container)
           drop(shared.item, dropTarget);
         } else if (o.removeOnSpill) {
@@ -474,6 +495,10 @@ dragularModule.factory('dragularService', ['$rootScope', function dragula($rootS
       }
 
       function drop(item, target) {
+        if (shared.copy && o.copySortSource && target === shared.source) {
+          item.parentElement.removeChild(shared.sourceItem);
+        }
+
         function emitDropEvent() {
           if (o.scope) {
             if (isInitialPlacement(target)) {
@@ -483,6 +508,7 @@ dragularModule.factory('dragularService', ['$rootScope', function dragula($rootS
             }
           }
         }
+
         if (shared.sourceModel && !isInitialPlacement(target)) {
           var dropElm = item,
             dropIndex = domIndexOf(dropElm, target);
@@ -552,7 +578,7 @@ dragularModule.factory('dragularService', ['$rootScope', function dragula($rootS
           parent = shared.item.parentElement;
 
         var initial = isInitialPlacement(parent);
-        if (initial === false && shared.copy === false && reverts) {
+        if (!initial && !shared.copy && reverts) {
           shared.source.insertBefore(shared.item, shared.initialSibling);
         }
         if (shared.sourceModel && !shared.copy && !reverts) {
@@ -589,7 +615,7 @@ dragularModule.factory('dragularService', ['$rootScope', function dragula($rootS
 
         shared.source = shared.item = shared.sourceItem = shared.initialSibling = shared.currentSibling = shared.sourceModel = null;
         shared.initialIndex = shared.currentIndex = shared.lastDropTarget = shared.isContainerModel = shared.targetModel = null;
-        shared.dropElmModel = shared.targetCtx = shared.copy = null;
+        shared.dropElmModel = shared.targetCtx = shared.copy = shared.moveX = shared.moveY = null;
       }
 
       // is item currently placed in original container and original position?
@@ -705,7 +731,7 @@ dragularModule.factory('dragularService', ['$rootScope', function dragula($rootS
         }
 
         // do not copy in same container
-        if (dropTarget === shared.source && shared.copy) {
+        if (dropTarget === shared.source && shared.copy && !o.copySortSource) {
           if (shared.item.parentElement) {
             shared.item.parentElement.removeChild(shared.item);
           }
