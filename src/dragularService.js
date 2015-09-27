@@ -340,11 +340,6 @@ dragularModule.factory('dragularService', ['$rootScope', function dragula($rootS
           return;
         }
 
-        console.log({
-          item: item,
-          source: source
-        });
-
         return {
           item: item,
           source: source
@@ -392,10 +387,8 @@ dragularModule.factory('dragularService', ['$rootScope', function dragula($rootS
 
       function end() {
         if (!drake.dragging || !shared.item) {
-          console.log('end return');
           return;
         }
-        console.log('end drop');
         drop(shared.item, shared.item.parentElement);
       }
 
@@ -988,7 +981,19 @@ dragularModule.factory('dragularService', ['$rootScope', function dragula($rootS
     if (coord in missMap && !(coord in host) && missMap[coord] in host) {
       coord = missMap[coord];
     }
-    return host[coord];
+
+    // Adding support for touch events, as they are not functional in the original
+    if (host.type.indexOf('touch') < 0) {
+      return host[coord];
+    } else {
+      if (host.type.indexOf('end') > -1) {
+        // Nothing should happen for touchend
+        return;
+      } else {
+        // No clientX or clientY in a touch event
+        return host.originalEvent.touches[0][coord.replace('client', 'page')];
+      }
+    }
   }
 
   function domIndexOf(child, parent) {
