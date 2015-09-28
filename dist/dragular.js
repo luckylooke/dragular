@@ -395,11 +395,6 @@ dragularModule.factory('dragularService', ['$rootScope', function dragula($rootS
           return;
         }
 
-        console.log({
-          item: item,
-          source: source
-        });
-
         return {
           item: item,
           source: source
@@ -447,10 +442,8 @@ dragularModule.factory('dragularService', ['$rootScope', function dragula($rootS
 
       function end() {
         if (!drake.dragging || !shared.item) {
-          console.log('end return');
           return;
         }
-        console.log('end drop');
         drop(shared.item, shared.item.parentElement);
       }
 
