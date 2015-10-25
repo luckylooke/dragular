@@ -241,7 +241,7 @@ dragularModule.factory('dragularService', ['$rootScope', function dragula($rootS
 
       // add or remove containers - deprecated
       function removeContainers(all) {
-        $rootScope.applyAsync(function applyDestroyed() {
+        $rootScope.$applyAsync(function applyDestroyed() {
           var changes = Array.isArray(all) ? all : makeArray(all);
           changes.forEach(function forEachContainer(container) {
             angular.forEach(o.nameSpace, function forEachNs(nameSpace) {
@@ -311,6 +311,9 @@ dragularModule.factory('dragularService', ['$rootScope', function dragula($rootS
       }
 
       function startBecauseMouseMoved(e) {
+        if(drake.dragging) {
+          return;
+        }
         var grabbed = shared.grabbed; // call to end() unsets _grabbed
         eventualMovements(true); // remove mousemove listener
         movements();
