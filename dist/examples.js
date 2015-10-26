@@ -210,7 +210,7 @@ examplesAppModule
       containerRight = document.querySelector('#containerRight');
 
     function accepts(el, target, source) {
-      // left->right || in same container 
+      // left->right || in same container
       if (source === containerLeft || source === target) {
         return true;
       }
@@ -220,14 +220,15 @@ examplesAppModule
     dragularService([containerLeft], {
       containersModel: [$scope.items1],
       copy: true,
-      //move only from left to right  
+      copySortSource: true,
+      //move only from left to right
       accepts: accepts
     });
 
     dragularService([containerRight], {
       containersModel: [$scope.items2],
       removeOnSpill: true,
-      //move only from left to right  
+      //move only from left to right
       accepts: accepts
     });
 
@@ -944,6 +945,21 @@ examplesAppModule
   .config(["$stateProvider", "$urlRouterProvider", function($stateProvider, $urlRouterProvider) {
     $urlRouterProvider.otherwise('/home');
 
+    var timer,
+      ctrl = function routerCtrl($state, $stateParams, $timeout) {
+        // go to install notes by default
+        if (!$stateParams.link) {
+          timer = $timeout(function timer() {
+            $state.go('docs.detail', {
+              link: 'docsInstall'
+            });
+          },0);
+        }else{
+          $timeout.cancel(timer);
+        }
+      };
+      ctrl.$inject = ["$state", "$stateParams", "$timeout"];
+
     $stateProvider
       .state('home', {
         url: '/home',
@@ -952,16 +968,14 @@ examplesAppModule
       .state('docs', {
         url: '/docs',
         templateUrl: 'partials/partial-docs.html',
-        controller: ["$state", function ($state) {
-          // go to install notes by default
-          $state.go('docs.detail', {link: 'docsInstall'});
-        }]
+        controller: ctrl
       })
       .state('docs.detail', {
         url: '/:link',
         templateUrl: function($stateParams) {
           return $stateParams.link + '/' + $stateParams.link + '.html';
-        }
+        },
+        controller: ctrl
       })
       .state('contribute', {
         url: '/contribute',
@@ -988,8 +1002,8 @@ $templateCache.put("exampleHandle/exampleHandle.html","<div class=\'parent\'>\n 
 $templateCache.put("exampleIsContainerWithModel/exampleIsContainerWithModel.html","<div class=\'parent\'>\n  <h2>isContainer - with model</h2>\n  <label for=\'hy\'>Possible use case of <b>options.isContainer</b> combined with model. When you provide function <b>isContainer</b> and in case it returns true and you are providing models (<b>options.containersModel</b>), dragular check for model calling <b>options.isContainerModel(el)</b> function. If not provided, model is discarted.</label>\n  <div class=\'wrapper\' ng-controller=\"IsContainerModel\">\n    <div class=\'tableRow\'>\n      <div id=\"containerLeft\" class=\'containerVertical\'>\n        <div ng-repeat=\"item in items1\">{{item.content}}</div>\n      </div>\n      <div id=\"cart\" class=\'containerVertical\'>\n        <div class=\'cursorDefault\' ng-repeat=\"item in cartModel\">{{item.content}} \n        <button class=\'cursorDefault\' ng-click=\"removeItem()\">x</button></div>\n      </div>\n    </div>\n    <div class=\"tableRow\">\n      <div class=\'containerVertical\'>\n        <pre>Items1:\n          <br/>{{items1 | json}}</pre>\n      </div>\n      <div class=\'containerVertical\'>\n        <pre>Cart:\n          <br/>{{cartModel | json}}</pre>\n      </div>\n    </div>\n  </div>\n  <pre>\n        <code>\n// JS\n  .controller(\'IsContainerModel\', [\'$scope\', \'$element\', \'dragularService\', function TodoCtrl($scope, $element, dragularService) {\n    $scope.items1 = [{\n      content: \'Move me, but you can only drop me in one of these containers.\'\n    }, {\n      content: \'If you try to drop me somewhere other than these containers, I\\\'ll just come back.\'\n    }, {\n      content: \'Item 3\'\n    }, {\n      content: \'Item 4\'\n    }];\n    $scope.cartModel = [];\n\n    var containerLeft = document.querySelector(\'#containerLeft\');\n\n    dragularService.cleanEnviroment();\n    dragularService([containerLeft], {\n      containersModel: [$scope.items1],\n      copy: true,\n      isContainer: function isContainer (el) {\n        return el.id === \'cart\';\n      },\n      isContainerModel: function getModel (){\n        return $scope.cartModel;\n      }\n    });\n\n    $scope.removeItem = function removeItem() {\n      var index = $scope.cartModel.indexOf(this.item);\n      $scope.cartModel.splice(index, 1);\n    };\n\n  }])\n        </code>\n        <code>\n&lt;!-- HTML --&gt;\n &lt;div class=\'wrapper\' ng-controller=&quot;IsContainerModel&quot;&gt;\n    &lt;div class=\'tableRow\'&gt;\n      &lt;div id=&quot;containerLeft&quot; class=\'containerVertical\'&gt;\n        &lt;div ng-repeat=&quot;item in items1&quot;&gt;{{item.content}}&lt;/div&gt;\n      &lt;/div&gt;\n      &lt;div id=&quot;cart&quot; class=\'containerVertical\'&gt;\n        &lt;div class=\'cursorDefault\' ng-repeat=&quot;item in cartModel&quot;&gt;{{item.content}} \n        &lt;button class=\'cursorDefault\' ng-click=&quot;removeItem()&quot;&gt;x&lt;/button&gt;&lt;/div&gt;\n      &lt;/div&gt;\n    &lt;/div&gt;\n    &lt;div class=&quot;tableRow&quot;&gt;\n      &lt;div class=\'containerVertical\'&gt;\n        &lt;pre&gt;Items1:\n          &lt;br/&gt;{{items1 | json}}&lt;/pre&gt;\n      &lt;/div&gt;\n      &lt;div class=\'containerVertical\'&gt;\n        &lt;pre&gt;Cart:\n          &lt;br/&gt;{{cartModel | json}}&lt;/pre&gt;\n      &lt;/div&gt;\n    &lt;/div&gt;\n  &lt;/div&gt;\n        </code>\n      </pre>\n</div>\n");
 $templateCache.put("exampleNameSpaces/exampleNameSpaces.html","        <div class=\'parent\'>\n            <h2>NameSpaces</h2>\n            <label for=\'hy\'>Try to mix apples and oranges. You cannot place apples into oranges, but notice that you can place it into mixed. Mixed can be placed into apples and oranges. Notice that mixed becomes orange or apple if placed into their container. <b>So remember if you are using namespacing, then item is namespaced according to actual container it is placed in. If you need to item preserve thier state you need to use classes in combination with options.accepts and optionally options.isContainer.</b> It depends on setup. (See <a href=\"https://github.com/luckylooke/dragular/issues/9\">issue #9</a>.)</label>\n            <div class=\'wrapper\' ng-controller=\"NameSpaces\">\n                <div class=\'containerVertical width25\'>\n                    <div>try to mix oranges and apples</div>\n                    <div>apple 2</div>\n                    <div>apple 3</div>\n                    <div>apple 4</div>\n                </div>\n                <div class=\'containerVertical width25\'>\n                    <div>orange 1</div>\n                    <div>orange 2</div>\n                    <div>orange 3</div>\n                    <div>orange 4</div>\n                </div>\n                <div class=\'containerVertical width25\'>\n                    <div>apple 5</div>\n                    <div>apple 6</div>\n                    <div>apple 7</div>\n                    <div>apple 8</div>\n                </div>\n                <div class=\'containerVertical width25\'>\n                    <div>mixed 1</div>\n                    <div>mixed 2</div>\n                    <div>mixed 3</div>\n                    <div>mixed 4</div>\n                </div>\n            </div>\n            <pre>\n      <code>\ndragularService([$element.children()[0], $element.children()[2]], {\n  nameSpace: \'apples\'\n});\ndragularService($element.children()[1], {\n  nameSpace: \'oranges\'\n});\ndragularService($element.children()[3], { // mixed\n  nameSpace: [\'oranges\', \'apples\']\n});\n      </code>\n    </pre>\n        </div>");
 $templateCache.put("exampleNestedNgRepeat/exampleNestedNgRepeat.html","<div class=\'parent\'>\n    <h2>Nested ngRepeat</h2>\n    <label for=\'hy\'> You can move whole rows by grabing row title, all items it selves. Try it out!\n        <hr/>\n        <b>Old IE doesnt support Flexible Box Layout</b> so it can look weird. But in modern browsers it is awsome! Dragular will be working well also in old IE but you have to use different css for layout.\n        <hr/>\n    </label>\n    <div ng-controller=\"NestedNgRepeat\">\n        <div ng-repeat=\"item in items\" class=\'exampleRow\'>\n            <div class=\"row-handle\">Row {{$index}}</div>\n            <div ng-repeat=\"item in item.items\" class=\"exampleCell\">{{item.content}}</div>\n        </div>\n    </div>\n    <pre>\n        <code>\n  // HTML\n\n  &lt;div ng-controller=&quot;Example15&quot;&gt;\n    &lt;div ng-repeat=&quot;item in items&quot; class=\'exampleRow\'&gt;\n      &lt;div class=&quot;row-handle&quot;&gt;Row {{$index}}&lt;/div&gt;\n      &lt;div ng-repeat=&quot;item in item.items&quot; class=&quot;exampleCell&quot;&gt;{{item.content}}&lt;/div&gt;\n    &lt;/div&gt;\n  &lt;/div&gt;\n        </code>\n      </pre>\n    <pre>\n        <code>\n  // CSS\n\n  .exampleRow {\n    display: flex;\n    flex-direction: row;\n  }\n\n  .exampleCell {\n    flex-grow: 1;\n  }\n\n  .exampleRow,\n  .exampleCell {\n    margin: 10px;\n    padding: 10px;\n    background-color: rgba(0, 0, 0, 0.2);\n    cursor: move;\n    cursor: grab;\n    cursor: -moz-grab;\n    cursor: -webkit-grab;\n  }\n        </code>\n      </pre>\n    <pre>\n        <code>\n  // JS\n\n  .controller(\'NestedNgRepeat\', [\'$timeout\', \'$scope\', \'$element\', \'dragularService\', function NestedNgRepeatCtrl($timeout, $scope, $element, dragularService) {\n    $timeout(function() { // timeount due to ngRepeat to be ready\n      dragularService($element, {\n        nameSpace: \'rows\',\n        moves: function rowOnly (el, container, handle) {\n          return handle.classList.contains(\'row-handle\');\n        }\n      });\n      dragularService($element.children(), {\n        nameSpace: \'cells\',\n        moves: function excludeHandle (el, container, handle) {\n          return !handle.classList.contains(\'row-handle\');\n        }\n      });\n    }, 0);\n    $scope.items = [{\n      items: [{\n        content: \'Item a1\'\n      }, {\n        content: \'Item a2\'\n      }, {\n        content: \'Item a3\'\n      }, {\n        content: \'Item a4\'\n      }]\n    }, {\n      items: [{\n        content: \'Item b1\'\n      }, {\n        content: \'Item b2\'\n      }, {\n        content: \'Item b3\'\n      }, {\n        content: \'Item b4\'\n      }]\n    }, {\n      items: [{\n        content: \'Item c1\'\n      }, {\n        content: \'Item c2\'\n      }, {\n        content: \'Item c3\'\n      }, {\n        content: \'Item c4\'\n      }]\n    }];\n  }])\n        </code>\n      </pre>\n</div>\n");
-$templateCache.put("exampleNgRepeat/exampleNgRepeat.html","        <div class=\'parent\'>\n            <h2>ngRepeat</h2>\n            <label for=\'hy\'>Example of using ng-repeat with dragular and adding/removing items dynamicaly.</label>\n            <div class=\'wrapper\' ng-controller=\"NgRepeat\">\n                <div class=\'containerVertical\'>\n                    <div ng-repeat=\"item in items\">\n                        {{item.content}}\n                    </div>\n                </div>\n            </div>\n            <pre>\n        <code>\n  // HTML:\n  &lt;div class=\'containerVertical\'&gt;\n    &lt;div ng-repeat=&quot;item in items&quot;&gt;\n      {{item.content}}\n    &lt;/div&gt;\n  &lt;/div&gt;\n\n  // JS:\n  dragularService($element.children());\n  $scope.items = [{\n    content: \'Try to add or remove some elements (click on +- buttons), you will see that it is not problem for dragular.\'\n  },{\n    content: \'Item 2\'\n  },{\n    content: \'Item 3\'\n  },{\n    content: \'Item 4\'\n  }];\n        </code>\n      </pre>\n        </div>\n");
 $templateCache.put("exampleNestedNgRepeatWithModel/exampleNestedNgRepeatWithModel.html","<div class=\'parent\'>\n  <h2>Nested ngRepeat - with model</h2>\n  <label for=\'hy\'> You can move whole rows by grabing row title, all items it selves. Try it out!\n    <hr/>\n    <b>Old IE doesnt support Flexible Box Layout</b> so it can look weird. But in modern browsers it is awsome! Dragular will be working well also in old IE but you have to use different css for layout.\n    <hr/>\n  </label>\n  <div ng-controller=\"NestedNgRepeatWithModel\">\n    <div class=\'tableRow\'>\n      <div class=\'containerVertical\'>\n        <div ng-repeat=\"item in items\" class=\'exampleRow\'>\n          <div class=\"row-handle\">Row {{::$index}}</div>\n          <div class=\"exampleRow exampleCell containerNested\">\n            <div ng-repeat=\"item in item.items\" class=\"exampleCell\">{{item.content}}</div>\n          </div>\n        </div>\n      </div>\n    </div>\n    <div class=\"tableRow\">\n      <div class=\'containerVertical\'>\n        <pre>\n            <div>Items:\n              <br/>{{items | json}}</div>\n        </pre>\n      </div>\n    </div>\n  </div>\n  <pre>\n    <code>\n&lt;!-- HTML --&gt;\n&lt;div ng-controller=&quot;NestedNgRepeatWithModel&quot;&gt;\n  &lt;div class=\'containerVertical\'&gt;\n    &lt;div ng-repeat=&quot;item in items&quot; class=\'exampleRow\'&gt;\n      &lt;div class=&quot;row-handle&quot;&gt;Row {{::$index}}&lt;/div&gt;\n      &lt;div class=&quot;exampleRow exampleCell containerNested&quot;&gt;\n        &lt;div ng-repeat=&quot;item in item.items&quot; class=&quot;exampleCell&quot;&gt;{{item.content}}&lt;/div&gt;\n      &lt;/div&gt;\n    &lt;/div&gt;\n  &lt;/div&gt;\n&lt;/div&gt;\n    </code>\n  </pre>\n  <pre>\n    <code>\n  // CSS\n\n  .exampleRow {\n    display: flex;\n    flex-direction: row;\n  }\n\n  .exampleCell {\n    flex-grow: 1;\n  }\n\n  .exampleRow,\n  .exampleCell {\n    margin: 10px;\n    padding: 10px;\n    background-color: rgba(0, 0, 0, 0.2);\n    cursor: move;\n    cursor: grab;\n    cursor: -moz-grab;\n    cursor: -webkit-grab;\n  }\n    </code>\n  </pre>\n  <pre>\n    <code>\n  // JS\n.controller(\'NestedNgRepeatWithModel\', [\'$timeout\', \'$scope\', \'$element\', \'dragularService\', function NestedNgRepeatWithModelCtrl($timeout, $scope, $element, dragularService) {\n    $timeout(function() { // timeount due to nested ngRepeat to be ready\n      var container = $element.children().eq(0).children(),\n        parentContainers = container.children(),\n        nestedContainers = [];\n\n      dragularService(container, {\n        moves: function(el, container, handle) {\n          return handle.classList.contains(\'row-handle\');\n        },\n        containersModel: $scope.items,\n        nameSpace: \'rows\'\n      });\n\n      // collect nested contianers\n      for (var i = 0; i < parentContainers.length; i++) {\n        nestedContainers.push(parentContainers.eq(i).children()[1]);\n      }\n\n      dragularService(nestedContainers, {\n        moves: function(el, container, handle) {\n          return !handle.classList.contains(\'row-handle\');\n        },\n        containersModel: (function getNestedContainersModel(){\n          var parent = $scope.items,\n            containersModel = [];\n          for (var i = 0; i < parent.length; i++) {\n            containersModel.push(parent[i].items);\n          }\n          return containersModel;\n        })(),\n        nameSpace: \'cells\'\n      });\n    }, 0);\n    $scope.items = [{\n      items: [{\n        content: \'Item a1\'\n      }, {\n        content: \'Item a2\'\n      }, {\n        content: \'Item a3\'\n      }, {\n        content: \'Item a4\'\n      }]\n    }, {\n      items: [{\n        content: \'Item b1\'\n      }, {\n        content: \'Item b2\'\n      }, {\n        content: \'Item b3\'\n      }, {\n        content: \'Item b4\'\n      }]\n    }, {\n      items: [{\n        content: \'Item c1\'\n      }, {\n        content: \'Item c2\'\n      }, {\n        content: \'Item c3\'\n      }, {\n        content: \'Item c4\'\n      }]\n    }];\n  }])\n    </code>\n  </pre>\n</div>\n");
+$templateCache.put("exampleNgRepeat/exampleNgRepeat.html","        <div class=\'parent\'>\n            <h2>ngRepeat</h2>\n            <label for=\'hy\'>Example of using ng-repeat with dragular and adding/removing items dynamicaly.</label>\n            <div class=\'wrapper\' ng-controller=\"NgRepeat\">\n                <div class=\'containerVertical\'>\n                    <div ng-repeat=\"item in items\">\n                        {{item.content}}\n                    </div>\n                </div>\n            </div>\n            <pre>\n        <code>\n  // HTML:\n  &lt;div class=\'containerVertical\'&gt;\n    &lt;div ng-repeat=&quot;item in items&quot;&gt;\n      {{item.content}}\n    &lt;/div&gt;\n  &lt;/div&gt;\n\n  // JS:\n  dragularService($element.children());\n  $scope.items = [{\n    content: \'Try to add or remove some elements (click on +- buttons), you will see that it is not problem for dragular.\'\n  },{\n    content: \'Item 2\'\n  },{\n    content: \'Item 3\'\n  },{\n    content: \'Item 4\'\n  }];\n        </code>\n      </pre>\n        </div>\n");
 $templateCache.put("exampleNgRepeatWithModel/exampleNgRepeatWithModel.html","<div class=\'parent\'>\n  <h2>ngRepeat - with model</h2>\n  <label for=\'hy\'>Example of using ng-repeat with dragular and adding/removing items dynamicaly.</label>\n  <div class=\'wrapper\' ng-controller=\"NgRepeatWithModel\">\n    <div class=\'tableRow\'>\n      <div class=\'containerVertical\'>\n        <div ng-repeat=\"item in items\">\n          {{item.content}}\n          <button class=\'cursorDefault\' ng-click=\"addItem()\">+</button>\n          <button class=\'cursorDefault\' ng-click=\"removeItem()\">x</button>\n        </div>\n      </div>\n    </div>\n    <div class=\"tableRow\">\n      <div class=\'containerVertical\'>\n        <div>Items:\n          <br/>{{items | json}}</div>\n      </div>\n    </div>\n  </div>\n  <pre>\n    <code>\n  // HTML:\n   &lt;div class=\'wrapper\' ng-controller=&quot;NgRepeatWithModel&quot;&gt;\n      &lt;div class=\'containerVertical\'&gt;\n        &lt;div ng-repeat=&quot;item in items&quot;&gt;\n          {{item.content}}\n          &lt;button class=\'cursorDefault\' ng-click=&quot;addItem()&quot;&gt;+&lt;/button&gt;\n          &lt;button class=\'cursorDefault\' ng-click=&quot;removeItem()&quot;&gt;x&lt;/button&gt;\n        &lt;/div&gt;\n    &lt;/div&gt;\n  &lt;/div&gt;\n    </code>\n  </pre>\n  <pre>\n    <code>\n  // JS:\n  controller(\'NgRepeatWithModel\', [\'$scope\', \'$element\', \'dragularService\', function TodoCtrl($scope, $element, dragularService) {\n    $scope.items = [{\n      content: \'Try to add or remove some elements (click on +- buttons), you will see that it is not problem for dragular.\'\n    }, {\n      content: \'Item 2\'\n    }, {\n      content: \'Item 3\'\n    }, {\n      content: \'Item 4\'\n    }];\n    dragularService($element.children().eq(0).children(), {containersModel: $scope.items});\n    $scope.addItem = function addItem() {\n      var index = $scope.items.indexOf(this.item) + 1;\n      $scope.items.splice(index, 0, {\n        content: this.item.content + \'-copy\'\n      });\n    };\n    $scope.removeItem = function removeItem() {\n      var index = $scope.items.indexOf(this.item);\n      $scope.items.splice(index, 1);\n    };\n  }])\n    </code>\n  </pre>\n</div>\n");
 $templateCache.put("exampleRemoveOnSpill/exampleRemoveOnSpill.html","        <div class=\'parent\'>\n            <h2>Remove on spill</h2>\n            <label for=\'hy\'>Need to be able to quickly delete stuff when it spills out of the chosen containers?</label>\n            <div class=\'wrapper\' ng-controller=\"RemoveOnSpill\">\n                <div id=\'left\' class=\'containerVertical\'>\n                    <div>Move me, but you can only drop me in containers.</div>\n                    <div>If you try to drop me somewhere other than containers, I\'ll die a fiery death.</div>\n                    <div>Item 3.</div>\n                    <div>Item 6.</div>\n                    <div>Item 4.</div>\n                    <div>Item 5.</div>\n                </div>\n                <div id=\'right\' class=\'containerVertical\'>\n                    <div>You can drop me in the left container.</div>\n                    <div>Item 4.</div>\n                    <div>Item 5.</div>\n                </div>\n            </div>\n            <pre>\n        <code>\n  dragularService([document.getElementById(single)], { removeOnSpill: true });\n        </code>\n      </pre>\n        </div>");
 $templateCache.put("exampleRemoveOnSpillWithModel/exampleRemoveOnSpillWithModel.html","<div class=\'parent\'>\n  <h2>Remove on spill - with model</h2>\n  <label for=\'hy\'>Need to be able to quickly delete stuff when it spills out of the chosen containers?</label>\n  <div class=\'wrapper\' ng-controller=\"RemoveOnSpillWithModel\">\n    <div class=\'tableRow\'>\n      <div class=\'containerVertical\'>\n        <div ng-repeat=\"item in items1\">{{item.content}}</div>\n      </div>\n      <div class=\'containerVertical\'>\n        <div ng-repeat=\"item in items2\">{{item.content}}</div>\n      </div>\n    </div>\n    <div class=\"tableRow\">\n      <div class=\'containerVertical\'>\n        <pre>Items1:\n          <br/>{{items1 | json}}</pre>\n      </div>\n      <div class=\'containerVertical\'>\n        <pre>Items2:\n          <br/>{{items2 | json}}</pre>\n      </div>\n    </div>\n  </div>\n   <pre>\n        <code>\n// JS\n  .controller(\'RemoveOnSpillWithModel\', [\'$scope\', \'$element\', \'dragularService\', function TodoCtrl($scope, $element, dragularService) {\n    $scope.items1 = [{\n      content: \'Move me, but you can only drop me in containers.\'\n    }, {\n      content: \'If you try to drop me somewhere other than containers, I\\\'ll die a fiery death.\'\n    }, {\n      content: \'Item 3\'\n    }, {\n      content: \'Item 4\'\n    }];\n    $scope.items2 = [{\n      content: \'You can drop me in the left container.\'\n    }, {\n      content: \'Item 6\'\n    }, {\n      content: \'Item 7\'\n    }, {\n      content: \'Item 8\'\n    }];\n    var containers = $element.children().eq(0).children();\n    dragularService.cleanEnviroment();\n    dragularService([containers[0],containers[1]],{\n      containersModel: [$scope.items1, $scope.items2],\n      removeOnSpill: true\n    });\n  }])\n        </code>\n        <code>\n&lt;!-- HTML --&gt;\n&lt;div class=\'wrapper\' ng-controller=&quot;Basic&quot;&gt;\n    &lt;div class=\'tableRow\'&gt;\n        &lt;div class=\'containerVertical\'&gt;\n            &lt;div ng-repeat=&quot;item in items1&quot;&gt;{{item.content}}&lt;/div&gt;\n        &lt;/div&gt;\n        &lt;div class=\'containerVertical\'&gt;\n            &lt;div ng-repeat=&quot;item in items2&quot;&gt;{{item.content}}&lt;/div&gt;\n        &lt;/div&gt;\n    &lt;/div&gt;\n    &lt;div class=&quot;tableRow&quot;&gt;\n        &lt;div class=&quot;container&quot;&gt;\n            &lt;div&gt;Items1:\n                &lt;br/&gt;{{items1 | json}}&lt;/div&gt;\n        &lt;/div&gt;\n        &lt;div class=&quot;container&quot;&gt;\n            &lt;div&gt;Items2:\n                &lt;br/&gt;{{items2 | json}}&lt;/div&gt;\n        &lt;/div&gt;\n    &lt;/div&gt;\n&lt;/div&gt;\n        </code>\n      </pre>\n</div>\n");
@@ -997,7 +1011,7 @@ $templateCache.put("exampleRevertOnSpill/exampleRevertOnSpill.html","        <di
 $templateCache.put("exampleScrollingDrag/exampleScrollingDrag.html","<div class=\'parent\'>\n  <h2>Scrolling drag</h2>\n  <label for=\'hy\'> Containers can be scrolled by hovering up/down bar near containers. Bars on right side are transparent and moved a bit over containers. It can be scrolled also by mouse wheel.\n  </label>\n  <div ng-controller=\"ScrollingDrag\">\n    <div class=\"containerVertical scrollingDrag\">\n      <div class=\"scrollBar\" id=\"leftTopBar\">up</div>\n      <div id=\"leftScroll\" class=\"scrollingDragInner\">\n        <div>Item 1.</div>\n        <div>Item 2.</div>\n        <div>Item 3.</div>\n        <div>Item 4.</div>\n        <div>Item 5.</div>\n        <div>Item 6.</div>\n        <div>Item 7.</div>\n        <div>Item 9.</div>\n        <div>Item 10.</div>\n        <div>Item 11.</div>\n        <div>Item 12.</div>\n        <div>Item 13.</div>\n      </div>\n      <div class=\"scrollBar\" id=\"leftBottomBar\">down</div>\n    </div>\n    <div class=\"containerVertical scrollingDrag\">\n      <div class=\"scrollBar\" id=\"rightTopBar\"></div>\n      <div id=\"rightScroll\" class=\"scrollingDragInner\">\n        <div>Item 1.</div>\n        <div>Item 2.</div>\n        <div>Item 3.</div>\n        <div>Item 4.</div>\n        <div>Item 5.</div>\n        <div>Item 6.</div>\n        <div>Item 7.</div>\n        <div>Item 9.</div>\n        <div>Item 10.</div>\n        <div>Item 11.</div>\n        <div>Item 12.</div>\n        <div>Item 13.</div>\n      </div>\n      <div class=\"scrollBar\" id=\"rightBottomBar\"></div>\n    </div>\n  </div>\n   <pre>\n        <code>\n// JS\ncontroller(\'ScrollingDrag\', [\'$interval\', \'$element\', \'dragularService\', function TodoCtrl($interval, $element, dragularService) {\n\n\n    var timer,\n      leftScrollContainer = document.getElementById(\'leftScroll\'),\n      rightScrollContainer = document.getElementById(\'rightScroll\'),\n      leftTopBar = document.getElementById(\'leftTopBar\'),\n      leftBottomBar = document.getElementById(\'leftBottomBar\'),\n      rightTopBar = document.getElementById(\'rightTopBar\'),\n      rightBottomBar = document.getElementById(\'rightBottomBar\');\n\n    dragularService.cleanEnviroment();\n    dragularService([leftScrollContainer, rightScrollContainer]);\n\n    registerEvents(leftTopBar, leftScrollContainer, -5);\n    registerEvents(leftBottomBar, leftScrollContainer, 5);\n    registerEvents(rightTopBar, rightScrollContainer, -5);\n    registerEvents(rightBottomBar, rightScrollContainer, 5);\n\n    function registerEvents(bar, container, inc, speed) {\n      if (!speed) {\n        speed = 20;\n      }\n      angular.element(bar).on(\'dragularenter\', function() {\n        container.scrollTop += inc;\n        timer = $interval(function moveScroll() {\n          container.scrollTop += inc;\n        }, speed);\n      });\n      angular.element(bar).on(\'dragularleave dragularrelease\', function() {\n        $interval.cancel(timer);\n      });\n    }\n  }])\n        </code>\n      </pre>\n      <pre>\n        <code>\n&lt;!-- HTML --&gt;\n&lt;div ng-controller=&quot;ScrollingDrag&quot;&gt;\n    &lt;div class=&quot;containerVertical scrollingDrag&quot;&gt;\n      &lt;div class=&quot;scrollBar&quot; id=&quot;leftTopBar&quot;&gt;up&lt;/div&gt;\n      &lt;div id=&quot;leftScroll&quot; class=&quot;scrollingDragInner&quot;&gt;\n        &lt;div&gt;Item 1&lt;/div&gt;\n        &lt;div&gt;Item 2&lt;/div&gt;\n            ...\n      &lt;/div&gt;\n      &lt;div class=&quot;scrollBar&quot; id=&quot;leftBottomBar&quot;&gt;down&lt;/div&gt;\n    &lt;/div&gt;\n    &lt;div class=&quot;containerVertical scrollingDrag&quot;&gt;\n      &lt;div class=&quot;scrollBar&quot; id=&quot;rightTopBar&quot;&gt;up&lt;/div&gt;\n      &lt;div id=&quot;rightScroll&quot; class=&quot;scrollingDragInner&quot;&gt;\n        &lt;div&gt;Item 1&lt;/div&gt;\n        &lt;div&gt;Item 2&lt;/div&gt;\n            ...\n      &lt;/div&gt;\n      &lt;div class=&quot;scrollBar&quot; id=&quot;rightBottomBar&quot;&gt;down&lt;/div&gt;\n    &lt;/div&gt;\n  &lt;/div&gt;\n        </code>\n      </pre>\n       <pre>\n        <code>\n// CSS\n.scrollingDrag {\n  width: 45%;\n  display: inline-block;\n}\n\n.scrollingDragInner {\n  max-height: 200px;\n  overflow-y: auto;\n}\n\n#rightTopBar,\n#rightBottomBar {\n  background: transparent;\n  position: relative;\n  height: 20px;\n}\n\n#rightTopBar {\n  top: 10px;\n}\n\n#rightBottomBar {\n  bottom: 10px;\n}\n\ndiv.scrollBar {\n  background: yellow;\n  text-align: center;\n  padding: 1px;\n}\n\n        </code>\n      </pre>\n</div>\n");
 $templateCache.put("partials/partial-contribute.html","<div class=\'container\'>\n  <div class=\"row\">\n    <div class=\"col-lg-12\">\n      <ng-include src=\"\'partials/autogenerated/contribute.html\'\"> </ng-include>\n    </div>\n  </div>\n</div>\n");
 $templateCache.put("partials/partial-docs.html","<div class=\'container\'>\n  <div id=\"rowOffcanvas\" class=\"row row-offcanvas row-offcanvas-left\">\n    <div class=\"col-xs-6 col-sm-3 sidebar-offcanvas\" id=\"sidebar\">\n      <div class=\"list-group\">\n        <a ng-repeat=\"example in examplesList\" ui-sref=\"docs.detail({link:example.link})\" ui-sref-active=\"active\" class=\"list-group-item\">{{example.title}}</a>\n      </div>\n    </div>\n    <!--/.sidebar-offcanvas-->\n    <div class=\"col-xs-12 col-sm-9\">\n      <p class=\"pull-left visible-xs\">\n        <button type=\"button\" ng-click=\"toggleSidebar()\" class=\"btn btn-primary btn-xs\">Toggle nav</button>\n      </p>\n      <!-- docs.detail -->\n      <div ui-view onload=\"highlightCode()\"></div>\n    </div>\n    <!--/.col-xs-12.col-sm-9-->\n  </div>\n  <!--/row-->\n</div>\n");
-$templateCache.put("partials/partial-home.html","<div class=\'container\'>\n  <div class=\"row\">\n    <!--/.sidebar-offcanvas-->\n    <div class=\"col-lg-12\">\n      <div class=\"jumbotron\">\n        <h1>DRAGULAR</h1>\n        <p>Angular drag&drop based on <a href=\"http://github.com/bevacqua/dragula\">dragula</a>.</p>\n        <p><a class=\"btn btn-primary btn-lg\" ui-sref=\"docs\" role=\"button\">Live examples in docs</a></p>\n      </div>\n      <div class=\"row\">\n        <div class=\"col-lg-12\">\n          <p>Browser support includes every sane browser and **IE7+**. <sub>_(Granted you polyfill the functional `Array` methods in ES5)_</sub></p>\n          <h2>Inspiration</h2>\n          <p>I am working on huge angular project and I am using several drag&drop libraries in it, one for UI, one for lists, etc.. I want to use one full-featured drag&drop library for whole project. As I could not find any suitable, I decided to create one. I have choosen great library <a href=\"http://github.com/bevacqua/dragula\">dragula</a> by <a href=\"https://github.com/bevacqua\">Nicolas Bevacqua</a> as my starting point, make it more angular and started to put features in it! If you wish light-weight angular version of dragula, there is <a href=\"http://github.com/bevacqua/angular-dragula\">official angular version of dragula</a>.</p>\n          <p><b>Actual version 3.0.2 is based on dragula 3.1.0 and tested with angular 1.4.3.</b></p>\n          <h2>Differences of dragular (against dragula)</h2>\n          <ul>\n            <li>replaced dragula crossvent with angulars event binding</li>\n            <li>replaced dragula contra.emitter with $scope.$emit if scope provided in options (options.scope)</li>\n            <li>provided as service or directive dragular where options can be passed via atribute dragular</li>\n            <li>automatic direction if not provided in options, instead of default vertical</li>\n            <li>accepting arraylike objects as containers array (jQuery, jQlite collections etc..)</li>\n            <li>accepting custom classes via option.classes</li>\n            <li>namespaced containers groups available via option.nameSpace (containers in same nameSpace cooperate)</li>\n            <li>boundingBox (dragging element can me moved only in specific area)</li>\n            <li>lockX/Y (dragging element can me moved only in specific direction)</li>\n            <li>DOM can be synced with scope model</li>\n            <li>support css selectors to define containers</li>\n            <li>added syntax highlighter to example codes</li>\n            <li>etc..</li>\n          </ul>\n          <h2>Todo</h2>\n          <ul>\n            <li>improve docs</li>\n          </ul>\n          <h2>Features</h2>\n          <ul>\n            <li>provided as service and also as directive</li>\n            <li>Super easy to set up</li>\n            <li>No bloated dependencies</li>\n            <li><strong>Figures out sort order</strong> on its own</li>\n            <li>A shadow where the item would be dropped offers <strong>visual feedback</strong></li>\n            <li>Touch events!</li>\n          </ul>\n          <h2>For installation, usage and examples go to <a ui-sref=\"docs\">docs</a></h2>\n        </div>\n      </div>\n      <!--/row-->\n    </div>\n    <!--/.col-xs-12.col-sm-9-->\n  </div>\n  <!--/row-->\n</div>\n");
+$templateCache.put("partials/partial-home.html","<div class=\'container\'>\n  <div class=\"row\">\n    <!--/.sidebar-offcanvas-->\n    <div class=\"col-lg-12\">\n      <div class=\"jumbotron\">\n        <h1>DRAGULAR</h1>\n        <p>Angular drag&drop based on <a href=\"http://github.com/bevacqua/dragula\">dragula</a>.</p>\n        <p><a class=\"btn btn-primary btn-lg\" ui-sref=\"docs\" role=\"button\">Live examples in docs</a></p>\n      </div>\n      <div class=\"row\">\n        <div class=\"col-lg-12\">\n          <p>Browser support includes every sane browser and **IE7+**. <sub>_(Granted you polyfill the functional `Array` methods in ES5)_</sub></p>\n          <h2>Inspiration</h2>\n          <p>I am working on huge angular project and I am using several drag&drop libraries in it, one for UI, one for lists, etc.. I want to use one full-featured drag&drop library for whole project. As I could not find any suitable, I decided to create one. I have choosen great library <a href=\"http://github.com/bevacqua/dragula\">dragula</a> by <a href=\"https://github.com/bevacqua\">Nicolas Bevacqua</a> as my starting point, make it more angular and started to put features in it! If you wish light-weight angular version of dragula, there is <a href=\"http://github.com/bevacqua/angular-dragula\">official angular version of dragula</a>.</p>\n          <p><b>Actual version 3.1.0 is based on dragula 3.3.0 and tested with angular 1.4.3.</b></p>\n          <h2>Differences of dragular (against dragula)</h2>\n          <ul>\n            <li>replaced dragula crossvent with angulars event binding</li>\n            <li>replaced dragula contra.emitter with $scope.$emit if scope provided in options (options.scope)</li>\n            <li>provided as service or directive dragular where options can be passed via atribute dragular</li>\n            <li>automatic direction if not provided in options, instead of default vertical</li>\n            <li>accepting arraylike objects as containers array (jQuery, jQlite collections etc..)</li>\n            <li>accepting custom classes via option.classes</li>\n            <li>namespaced containers groups available via option.nameSpace (containers in same nameSpace cooperate)</li>\n            <li>boundingBox (dragging element can me moved only in specific area)</li>\n            <li>lockX/Y (dragging element can me moved only in specific direction)</li>\n            <li>DOM can be synced with scope model</li>\n            <li>support css selectors to define containers</li>\n            <li>added syntax highlighter to example codes</li>\n            <li>etc..</li>\n          </ul>\n          <h2>Todo</h2>\n          <ul>\n            <li>improve docs</li>\n          </ul>\n          <h2>Features</h2>\n          <ul>\n            <li>provided as service and also as directive</li>\n            <li>Super easy to set up</li>\n            <li>No bloated dependencies</li>\n            <li><strong>Figures out sort order</strong> on its own</li>\n            <li>A shadow where the item would be dropped offers <strong>visual feedback</strong></li>\n            <li>Touch events!</li>\n          </ul>\n          <h2>For installation, usage and examples go to <a ui-sref=\"docs\">docs</a></h2>\n        </div>\n      </div>\n      <!--/row-->\n    </div>\n    <!--/.col-xs-12.col-sm-9-->\n  </div>\n  <!--/row-->\n</div>\n");
 $templateCache.put("partials/autogenerated/contribute.html","<h1 id=\"how-to-contribute\">How to contribute</h1>\n<p>It&#39;s important to us that you feel you can contribute towards the evolution of Dragular. This can take many forms: from helping to fix bugs or improve the docs, to adding in new features to the source. This guide should help you in making that process as smooth as possible.</p>\n<p>Before contributing, please read the <a href=\"https://github.com/luckylooke/dragular/blob/master/CODE_OF_CONDUCT.md\">code of conduct</a>.</p>\n<h2 id=\"reporting-issues\">Reporting issues</h2>\n<p><a href=\"https://github.com/luckylooke/dragular/issues\">GitHub Issues</a> is the place to report bugs you may have found in either the core library or any of the examples that are part of the repository. When submitting a bug please do the following:</p>\n<p><strong>1. Search for existing issues.</strong> Your bug may have already been fixed or addressed in a development branch version of Dragular, so be sure to search the issues first before putting in a duplicate issue.</p>\n<p><strong>2. Not sure if it&#39;s a bug?.</strong> Then please ask via issues and tag it [question].</p>\n<p><strong>3. Create an isolated and reproducible test case.</strong> If you are reporting a bug, make sure you also have a minimal, runnable, code example that reproduces the problem you have.</p>\n<p><strong>4. Include a live example.</strong> After narrowing your code down to only the problem areas, make use of <a href=\"http://jsfiddle.net\">jsFiddle</a>, <a href=\"http://jsbin.com/\">jsBin</a>, or a link to your live site so that we can view a live example of the problem.</p>\n<p><strong>5. Share as much information as possible.</strong> Include browser version affected, your OS, version of the library, steps to reproduce, etc. &quot;X isn&#39;t working!!!1!&quot; will probably just be closed.</p>\n<h2 id=\"dev-vs-master\">Dev vs. Master</h2>\n<p>The dev branch of Dragular is our &#39;current working&#39; version. It is always ahead of the master branch in terms of features and fixes. However it&#39;s also bleeding-edge and experimental and we cannot and do not guarantee it will compile or work for you. Very often we have to break things for a few days while we rebuild and patch. So by all means please export the dev branch and contribute towards it, indeed that is where all Pull Requests should be sent, but do so understanding the API may change beneath you.</p>\n<h2 id=\"making-changes\">Making Changes</h2>\n<p>To take advantage of our npm build script and jshint config it will be easiest for you if you have node.js installed locally.</p>\n<p>You can download node.js from <a href=\"http://nodejs.org\">nodejs.org</a>.</p>\n<p>After that you can clone the repository and run <code>npm i</code> inside the cloned folder. This will install dependencies necessary for building the project. For development workflow automation dragular uses <code>gulp &gt;= 3.9.0</code>. Before starting development, make sure that <code>gulp</code> is installed on your machine globally: <code>npm i -g gulp</code>.</p>\n<h3 id=\"developing\">Developing</h3>\n<p>There are several gulp tasks that are used for generating different builds:</p>\n<ul>\n<li><code>gulp dev</code> - Serves files with BrowserSync server, watches &amp; automatically refreshes connected browsers on changes, generates non-minified but concatenated styles &amp; scripts from the dragular source.</li>\n<li><code>gulp dev:docs</code> - Does exactly the same as <code>gulp dev</code>, except it works with the documentation source.</li>\n<li><code>gulp build</code> - Concatenates and minifies dragular source files.</li>\n<li><code>gulp build:docs</code> - Concatenates and minifies documentation source files.</li>\n</ul>\n<h3 id=\"linting\">Linting</h3>\n<ul>\n<li><code>gulp lint</code> &amp; <code>gulp lint:docs</code> - Lint JavaScript files.</li>\n</ul>\n<h3 id=\"making-a-pull-request\">Making a pull request</h3>\n<p>Once that is ready, make your changes and submit a Pull Request:</p>\n<ul>\n<li><p><strong>Send Pull Requests to the <code>dev</code> branch.</strong> All Pull Requests must be sent to the <code>dev</code> branch, <code>master</code> is the latest release and PRs to that branch will be closed.</p>\n</li>\n<li><p><strong>Ensure changes are jshint validated.</strong> Our JSHint configuration file is provided in the repository and you should check against it before submitting.</p>\n</li>\n<li><p><strong>Only commit relevant changes.</strong> Don&#39;t include changes that are not directly relevant to the fix you are making. The more focused a PR is, the faster it will get attention and be merged. Extra files changing only whitespace or trash files will likely get your PR closed.</p>\n</li>\n</ul>\n<p>Dependencies for building from source and running tests:</p>\n<h2 id=\"coding-style-preferences-are-not-contributions\">Coding style preferences are not contributions</h2>\n<p>If your PR is doing little more than changing the Dragular source code into a format / coding style that you prefer then we will automatically close it. All PRs must adhere to the coding style already set-out across the lines of code in Dragular. Your personal preferences for how things should &quot;look&quot; or be structured do not apply here, sorry. PRs should fix bugs, fix documentation or add features. No changes for the sake of change.</p>\n<h2 id=\"i-don-t-really-like-git-node-js-but-i-can-fix-this-bug\">I don&#39;t really like git / node.js, but I can fix this bug</h2>\n<p>That is fine too. While Pull Requests are the best thing in the world for us, they are not the only way to help. You&#39;re welcome to post fixes to our forum or even just email them to us. All we ask is that you still adhere to the guidelines presented here re: JSHint, etc.</p>\n");}]);
 },{}],28:[function(require,module,exports){
 /* global angular */
@@ -1046,7 +1060,7 @@ dragularModule.directive('dragular', ['dragularService', function(dragularServic
 
 
 /**
- * Dragular 3.0.2 by Luckylooke https://github.com/luckylooke/dragular
+ * Dragular 3.1.0 by Luckylooke https://github.com/luckylooke/dragular
  * Angular version of dragula https://github.com/bevacqua/dragula
  */
 module.exports = angular.module('dragularModule', []);
@@ -1086,6 +1100,8 @@ dragularModule.factory('dragularService', ['$rootScope', function dragula($rootS
       lastDropTarget: null, // last container item was over
       offsetX: null, // reference x
       offsetY: null, // reference y
+      moveX: null, // reference move x
+      moveY: null, // reference move y
       offsetXr: null, // reference x right for boundingBox feature
       offsetYb: null, // reference y bottom for boundingBox feature
       clientX: null, // cache client x, init at grab, update at drag
@@ -1245,7 +1261,7 @@ dragularModule.factory('dragularService', ['$rootScope', function dragula($rootS
 
       // add or remove containers - deprecated
       function removeContainers(all) {
-        $rootScope.applyAsync(function applyDestroyed() {
+        $rootScope.$applyAsync(function applyDestroyed() {
           var changes = Array.isArray(all) ? all : makeArray(all);
           changes.forEach(function forEachContainer(container) {
             angular.forEach(o.nameSpace, function forEachNs(nameSpace) {
@@ -1261,6 +1277,7 @@ dragularModule.factory('dragularService', ['$rootScope', function dragula($rootS
       function events(remove) {
         var op = remove ? 'off' : 'on';
         regEvent(documentElement, op, 'mouseup', release);
+        // regEvent(documentElement, op, 'mousemove', startBecauseMouseMoved);
 
         initialContainers.forEach(function addMouseDown(container) {
           regEvent(container, 'on', 'mousedown', grab);
@@ -1293,29 +1310,51 @@ dragularModule.factory('dragularService', ['$rootScope', function dragula($rootS
 
       function grab(e) {
         e = e || window.event;
+        shared.moveX = e.clientX;
+        shared.moveY = e.clientY;
 
         // filter some odd situations
-        if ((e.which !== 0 && e.which !== 1) || e.metaKey || e.ctrlKey) {
+        if (whichMouseButton(e) !== 1 || e.metaKey || e.ctrlKey) {
           return; // we only care about honest-to-god left clicks and touch events
         }
 
         var context = canStart(e.target);
-        if (!context) {
+        if (!context || !context.item) {
           return;
         }
 
         shared.grabbed = context;
         eventualMovements();
         if (e.type === 'mousedown') {
-          e.preventDefault(); // fixes https://github.com/bevacqua/dragula/issues/155
-          if (context.item.tagName === 'INPUT' || context.item.tagName === 'TEXTAREA') {
+          if (isInput(context.item)) { // see also: https://github.com/bevacqua/dragula/issues/208
             context.item.focus(); // fixes https://github.com/bevacqua/dragula/issues/176
+          } else {
+            e.preventDefault(); // fixes https://github.com/bevacqua/dragula/issues/155
           }
         }
       }
 
       function startBecauseMouseMoved(e) {
-        var grabbed = shared.grabbed; // call to end() unsets _grabbed
+        if (!shared.grabbed || drake.dragging) {
+          return;
+        }
+        if (whichMouseButton(e) === 0) {
+          release({});
+          return; // when text is selected on an input and then dragged, mouseup doesn't fire. this is our only hope
+        }
+        if (e.clientX === shared.moveX && e.clientY === shared.moveY) {
+          return;
+        }
+        if (o.ignoreInputTextSelection) {
+          var clientX = getCoord('clientX', e),
+            clientY = getCoord('clientY', e),
+            elementBehindCursor = document.elementFromPoint(clientX, clientY);
+          if (isInput(elementBehindCursor)) {
+            return;
+          }
+        }
+
+        var grabbed = shared.grabbed; // call to end() unsets shared.grabbed
         eventualMovements(true); // remove mousemove listener
         movements();
         end();
@@ -1378,7 +1417,7 @@ dragularModule.factory('dragularService', ['$rootScope', function dragula($rootS
         var source = item.parentElement;
         if (!source ||
           o.invalid(item, handle) ||
-          !o.moves(item, source, handle)) {
+          !o.moves(item, source, handle, nextEl(item))) {
           return;
         }
 
@@ -1428,7 +1467,7 @@ dragularModule.factory('dragularService', ['$rootScope', function dragula($rootS
       }
 
       function end() {
-        if (!drake.dragging) {
+        if (!drake.dragging || !shared.item) {
           return;
         }
         drop(shared.item, shared.item.parentElement);
@@ -1453,7 +1492,7 @@ dragularModule.factory('dragularService', ['$rootScope', function dragula($rootS
         var elementBehindCursor = getElementBehindPoint(shared.mirror, shared.clientX, shared.clientY),
           dropTarget = findDropTarget(elementBehindCursor, shared.clientX, shared.clientY);
 
-        if (dropTarget && (!shared.copy || dropTarget !== shared.source)) {
+        if (dropTarget && ((shared.copy && o.copySortSource) || (!shared.copy || dropTarget !== shared.source))) {
           // found valid target and (is not copy case or target is not initial container)
           drop(shared.item, dropTarget);
         } else if (o.removeOnSpill) {
@@ -1475,6 +1514,10 @@ dragularModule.factory('dragularService', ['$rootScope', function dragula($rootS
       }
 
       function drop(item, target) {
+        if (shared.copy && o.copySortSource && target === shared.source) {
+          item.parentElement.removeChild(shared.sourceItem);
+        }
+
         function emitDropEvent() {
           if (o.scope) {
             if (isInitialPlacement(target)) {
@@ -1484,6 +1527,7 @@ dragularModule.factory('dragularService', ['$rootScope', function dragula($rootS
             }
           }
         }
+
         if (shared.sourceModel && !isInitialPlacement(target)) {
           var dropElm = item,
             dropIndex = domIndexOf(dropElm, target);
@@ -1553,7 +1597,7 @@ dragularModule.factory('dragularService', ['$rootScope', function dragula($rootS
           parent = shared.item.parentElement;
 
         var initial = isInitialPlacement(parent);
-        if (initial === false && shared.copy === false && reverts) {
+        if (!initial && !shared.copy && reverts) {
           shared.source.insertBefore(shared.item, shared.initialSibling);
         }
         if (shared.sourceModel && !shared.copy && !reverts) {
@@ -1584,13 +1628,15 @@ dragularModule.factory('dragularService', ['$rootScope', function dragula($rootS
         }
 
         if (o.scope) {
-          o.scope.$emit('dragularout', shared.item, shared.lastDropTarget, shared.source);
+          if(shared.lastDropTarget){
+           o.scope.$emit('dragularout', shared.item, shared.lastDropTarget, shared.source);
+          }
           o.scope.$emit('dragulardragend', shared.item);
         }
 
         shared.source = shared.item = shared.sourceItem = shared.initialSibling = shared.currentSibling = shared.sourceModel = null;
         shared.initialIndex = shared.currentIndex = shared.lastDropTarget = shared.isContainerModel = shared.targetModel = null;
-        shared.dropElmModel = shared.targetCtx = shared.copy = null;
+        shared.dropElmModel = shared.targetCtx = shared.copy = shared.moveX = shared.moveY = null;
       }
 
       // is item currently placed in original container and original position?
@@ -1706,7 +1752,7 @@ dragularModule.factory('dragularService', ['$rootScope', function dragula($rootS
         }
 
         // do not copy in same container
-        if (dropTarget === shared.source && shared.copy) {
+        if (dropTarget === shared.source && shared.copy && !o.copySortSource) {
           if (shared.item.parentElement) {
             shared.item.parentElement.removeChild(shared.item);
           }
@@ -2018,7 +2064,32 @@ dragularModule.factory('dragularService', ['$rootScope', function dragula($rootS
     if (coord in missMap && !(coord in host) && missMap[coord] in host) {
       coord = missMap[coord];
     }
-    return host[coord];
+
+    // Adding support for touch events, as they are not functional in the original
+    if (host.type.indexOf('touch') < 0) {
+      return host[coord];
+    } else {
+      if (host.type.indexOf('end') > -1) {
+        // Nothing should happen for touchend
+        return;
+      } else {
+        // No clientX or clientY in a touch event
+        return host.originalEvent.touches[0][coord.replace('client', 'page')];
+      }
+    }
+  }
+
+  function whichMouseButton (e) {
+    if (e.buttons !== undefined) { return e.buttons; }
+    if (e.which !== undefined) { return e.which; }
+    var button = e.button;
+    if (button !== undefined) { // see https://github.com/jquery/jquery/blob/99e8ff1baa7ae341e94bb89c3e84570c7c3ad9ea/src/event.js#L573-L575
+      return button & 1 ? 1 : button & 2 ? 3 : (button & 4 ? 2 : 0);
+    }
+  }
+
+  function isInput (el) {
+    return el.tagName === 'INPUT' || el.tagName === 'TEXTAREA' || el.tagName === 'SELECT';
   }
 
   function domIndexOf(child, parent) {
