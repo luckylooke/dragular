@@ -1,8 +1,16 @@
 {
   "name": "dragular",
-  "version": "3.1.0",
+  "version": "3.2.0",
   "description": "Angular drag and drop based on dragula",
-  "keywords": ["drag", "drop", "drag&drop", "drag & drop", "drag and drop", "angular", "angularjs"],
+  "keywords": [
+    "drag",
+    "drop",
+    "drag&drop",
+    "drag & drop",
+    "drag and drop",
+    "angular",
+    "angularjs"
+  ],
   "main": "./dist/dragular.js",
   "repository": {
     "type": "git",
