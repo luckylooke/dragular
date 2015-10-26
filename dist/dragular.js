@@ -45,7 +45,7 @@ dragularModule.directive('dragular', ['dragularService', function(dragularServic
 
 
 /**
- * Dragular 3.0.2 by Luckylooke https://github.com/luckylooke/dragular
+ * Dragular 3.1.0 by Luckylooke https://github.com/luckylooke/dragular
  * Angular version of dragula https://github.com/bevacqua/dragula
  */
 module.exports = angular.module('dragularModule', []);
@@ -246,7 +246,7 @@ dragularModule.factory('dragularService', ['$rootScope', function dragula($rootS
 
       // add or remove containers - deprecated
       function removeContainers(all) {
-        $rootScope.applyAsync(function applyDestroyed() {
+        $rootScope.$applyAsync(function applyDestroyed() {
           var changes = Array.isArray(all) ? all : makeArray(all);
           changes.forEach(function forEachContainer(container) {
             angular.forEach(o.nameSpace, function forEachNs(nameSpace) {
@@ -299,7 +299,7 @@ dragularModule.factory('dragularService', ['$rootScope', function dragula($rootS
         shared.moveY = e.clientY;
 
         // filter some odd situations
-        if ((e.which !== 0 && e.which !== 1) || e.metaKey || e.ctrlKey) {
+        if (whichMouseButton(e) !== 1 || e.metaKey || e.ctrlKey) {
           return; // we only care about honest-to-god left clicks and touch events
         }
 
@@ -311,23 +311,35 @@ dragularModule.factory('dragularService', ['$rootScope', function dragula($rootS
         shared.grabbed = context;
         eventualMovements();
         if (e.type === 'mousedown') {
-          e.preventDefault(); // fixes https://github.com/bevacqua/dragula/issues/155
-          if (context.item.tagName === 'INPUT' || context.item.tagName === 'TEXTAREA') {
+          if (isInput(context.item)) { // see also: https://github.com/bevacqua/dragula/issues/208
             context.item.focus(); // fixes https://github.com/bevacqua/dragula/issues/176
+          } else {
+            e.preventDefault(); // fixes https://github.com/bevacqua/dragula/issues/155
           }
         }
       }
 
       function startBecauseMouseMoved(e) {
-        var grabbed = shared.grabbed; // call to end() unsets shared.grabbed
-
-        if (!grabbed) {
+        if (!shared.grabbed || drake.dragging) {
           return;
         }
-
+        if (whichMouseButton(e) === 0) {
+          release({});
+          return; // when text is selected on an input and then dragged, mouseup doesn't fire. this is our only hope
+        }
         if (e.clientX === shared.moveX && e.clientY === shared.moveY) {
           return;
         }
+        if (o.ignoreInputTextSelection) {
+          var clientX = getCoord('clientX', e),
+            clientY = getCoord('clientY', e),
+            elementBehindCursor = document.elementFromPoint(clientX, clientY);
+          if (isInput(elementBehindCursor)) {
+            return;
+          }
+        }
+
+        var grabbed = shared.grabbed; // call to end() unsets shared.grabbed
 
         eventualMovements(true); // remove mousemove listener
         movements();
@@ -602,7 +614,9 @@ dragularModule.factory('dragularService', ['$rootScope', function dragula($rootS
         }
 
         if (o.scope) {
-          o.scope.$emit('dragularout', shared.item, shared.lastDropTarget, shared.source);
+          if(shared.lastDropTarget){
+           o.scope.$emit('dragularout', shared.item, shared.lastDropTarget, shared.source);
+          }
           o.scope.$emit('dragulardragend', shared.item);
         }
 
@@ -1049,6 +1063,19 @@ dragularModule.factory('dragularService', ['$rootScope', function dragula($rootS
         return host.originalEvent.touches[0][coord.replace('client', 'page')];
       }
     }
+  }
+
+  function whichMouseButton (e) {
+    if (e.buttons !== undefined) { return e.buttons; }
+    if (e.which !== undefined) { return e.which; }
+    var button = e.button;
+    if (button !== undefined) { // see https://github.com/jquery/jquery/blob/99e8ff1baa7ae341e94bb89c3e84570c7c3ad9ea/src/event.js#L573-L575
+      return button & 1 ? 1 : button & 2 ? 3 : (button & 4 ? 2 : 0);
+    }
+  }
+
+  function isInput (el) {
+    return el.tagName === 'INPUT' || el.tagName === 'TEXTAREA' || el.tagName === 'SELECT';
   }
 
   function domIndexOf(child, parent) {
