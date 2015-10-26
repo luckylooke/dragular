@@ -1,4 +1,6 @@
 # 3.2.0 Ladybugs
+- Fix for applyAsync typo and multiple executions of startBecauseMouseMoved #45
+
 ### Changes merged from dragula 3.5.2:
 - Fixed a bug where `<select>` inputs couldn't be focused
 - Fixed a bug when determining the mouse button being pressed

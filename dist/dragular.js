@@ -340,7 +340,6 @@ dragularModule.factory('dragularService', ['$rootScope', function dragula($rootS
         }
 
         var grabbed = shared.grabbed; // call to end() unsets shared.grabbed
-
         eventualMovements(true); // remove mousemove listener
         movements();
         end();
