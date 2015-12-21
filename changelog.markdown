@@ -1,3 +1,16 @@
+### Changes merged from dragula 3.5.4
+- Switched from `.parentElement` to `.parentNode` avoiding bugs when hovering over `<svg>` elements
+- Fixed a bug where mobile devices wouldn't be able to drag elements
+- Fixed a bug where `<select>` inputs couldn't be focused
+- Fixed a bug when determining the mouse button being pressed
+- Fixed a bug when determining the element behind the mouse cursor when `ignoreInputTextSelection` was enabled
+- Added a feature where users are able to select text ranges with their mouse in inputs within a dragula container
+- Fixed a bug where text in inputs inside containers assigned to `dragula` couldn't be selected
+- Events for `cancel`, `remove`, and `shadow` now all provide a `source` parameter in the third position
+- Fixed a bug where `out` would be emitted with an `undefined` container
+- Fixed a fringe bug [(#207)](https://github.com/bevacqua/dragula/pull/207) where the click handler wouldn't work
+- Fixed a bug where `drop` events would sometimes not receive the current sibling
+
 # 3.2.0 Ladybugs
 - Fix for applyAsync typo and multiple executions of startBecauseMouseMoved #45
 
