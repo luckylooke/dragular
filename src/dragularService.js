@@ -272,7 +272,8 @@ dragularModule.factory('dragularService', ['$rootScope', function dragula($rootS
           release({});
           return; // when text is selected on an input and then dragged, mouseup doesn't fire. this is our only hope
         }
-        if (e.clientX === shared.moveX && e.clientY === shared.moveY) {
+        // truthy check fixes #239, equality fixes #207
+        if (e.clientX && e.clientX === shared.moveX && e.clientY && e.clientY === shared.moveY) {
           return;
         }
         if (o.ignoreInputTextSelection) {
@@ -292,7 +293,7 @@ dragularModule.factory('dragularService', ['$rootScope', function dragula($rootS
 
         // automaticly detect direction of elements if not set in options
         if (!o.direction) {
-          var parent = shared.sourceItem.parentElement,
+          var parent = shared.sourceItem.parentNode,
             parentHeight = parent.offsetHeight,
             parentWidth = parent.offsetWidth,
             childHeight = shared.sourceItem.clientHeight,
@@ -332,19 +333,19 @@ dragularModule.factory('dragularService', ['$rootScope', function dragula($rootS
 
         var handle = item;
 
-        while (item.parentElement &&
-          !isContainer(item.parentElement)) {
+        while (item.parentNode &&
+          !isContainer(item.parentNode)) {
           // break loop if user tries to drag item which is considered invalid handle
           if (o.invalid(item, handle)) {
             return;
           }
-          item = item.parentElement; // drag target should be immediate child of container
+          item = item.parentNode; // drag target should be immediate child of container
           if (!item) {
             return;
           }
         }
 
-        var source = item.parentElement;
+        var source = item.parentNode;
         if (!source ||
           o.invalid(item, handle) ||
           !o.moves(item, source, handle, nextEl(item))) {
@@ -400,7 +401,7 @@ dragularModule.factory('dragularService', ['$rootScope', function dragula($rootS
         if (!drake.dragging || !shared.item) {
           return;
         }
-        drop(shared.item, shared.item.parentElement);
+        drop(shared.item, shared.item.parentNode);
       }
 
       function ungrab() {
@@ -445,7 +446,7 @@ dragularModule.factory('dragularService', ['$rootScope', function dragula($rootS
 
       function drop(item, target) {
         if (shared.copy && o.copySortSource && target === shared.source) {
-          item.parentElement.removeChild(shared.sourceItem);
+          item.parentNode.removeChild(shared.sourceItem);
         }
 
         var dropIndex = domIndexOf(item, target);
@@ -482,8 +483,8 @@ dragularModule.factory('dragularService', ['$rootScope', function dragula($rootS
               shared.targetModel.splice(dropIndex, 0, shared.dropElmModel);
             }
 
-            if (item.parentElement) {
-              item.parentElement.removeChild(item);
+            if (item.parentNode) {
+              item.parentNode.removeChild(item);
             }
 
             emitDropEvent();
@@ -499,7 +500,7 @@ dragularModule.factory('dragularService', ['$rootScope', function dragula($rootS
         if (!drake.dragging) {
           return;
         }
-        var parent = shared.item.parentElement;
+        var parent = shared.item.parentNode;
 
         if (parent) {
           parent.removeChild(shared.item);
@@ -525,7 +526,7 @@ dragularModule.factory('dragularService', ['$rootScope', function dragula($rootS
           return;
         }
         var reverts = arguments.length > 0 ? revert : o.revertOnSpill,
-          parent = shared.item.parentElement;
+          parent = shared.item.parentNode;
 
         var initial = isInitialPlacement(parent);
         if (!initial && !shared.copy && reverts) {
@@ -581,7 +582,7 @@ dragularModule.factory('dragularService', ['$rootScope', function dragula($rootS
         var target = elementBehindCursor;
 
         while (target && !accepted()) {
-          target = target.parentElement;
+          target = target.parentNode;
         }
         return target;
 
@@ -684,8 +685,8 @@ dragularModule.factory('dragularService', ['$rootScope', function dragula($rootS
 
         // do not copy in same container
         if (dropTarget === shared.source && shared.copy && !o.copySortSource) {
-          if (shared.item.parentElement) {
-            shared.item.parentElement.removeChild(shared.item);
+          if (shared.item.parentNode) {
+            shared.item.parentNode.removeChild(shared.item);
           }
           return;
         }
@@ -701,9 +702,9 @@ dragularModule.factory('dragularService', ['$rootScope', function dragula($rootS
           dropTarget = shared.source;
         } else {
           // the case that mirror is not over valid target and removing is on or copy is on
-          if (shared.copy && shared.item.parentElement !== null) {
+          if (shared.copy && shared.item.parentNode !== null) {
             // remove item or copy of item
-            shared.item.parentElement.removeChild(shared.item);
+            shared.item.parentNode.removeChild(shared.item);
           }
           return;
         }
@@ -791,15 +792,15 @@ dragularModule.factory('dragularService', ['$rootScope', function dragula($rootS
           rmClass(body, o.classes.unselectable);
           regEvent(documentElement, 'off', 'mousemove', drag);
           regEvent(shared.mirror, 'off', 'wheel', scrollContainer);
-          shared.mirror.parentElement.removeChild(shared.mirror);
+          shared.mirror.parentNode.removeChild(shared.mirror);
           shared.mirror = null;
         }
       }
 
       function getImmediateChild(dropTarget, target) {
         var immediate = target;
-        while (immediate !== dropTarget && immediate.parentElement !== dropTarget) {
-          immediate = immediate.parentElement;
+        while (immediate !== dropTarget && immediate.parentNode !== dropTarget) {
+          immediate = immediate.parentNode;
         }
         if (immediate === documentElement) {
           return null;
@@ -1011,6 +1012,7 @@ dragularModule.factory('dragularService', ['$rootScope', function dragula($rootS
   }
 
   function whichMouseButton (e) {
+    if (e.touches !== void 0) { return e.touches.length; }
     if (e.buttons !== undefined) { return e.buttons; }
     if (e.which !== undefined) { return e.which; }
     var button = e.button;
