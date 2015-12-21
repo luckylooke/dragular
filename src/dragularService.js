@@ -448,19 +448,20 @@ dragularModule.factory('dragularService', ['$rootScope', function dragula($rootS
           item.parentElement.removeChild(shared.sourceItem);
         }
 
+        var dropIndex = domIndexOf(item, target);
+
         function emitDropEvent() {
           if (o.scope) {
             if (isInitialPlacement(target)) {
               o.scope.$emit('dragularcancel', item, shared.source, shared.sourceModel, shared.initialIndex);
             } else {
-              o.scope.$emit('dragulardrop', item, target, shared.source, shared.sourceModel, shared.initialIndex, shared.targetModel);
+              o.scope.$emit('dragulardrop', item, target, shared.source, shared.sourceModel, shared.initialIndex, shared.targetModel, dropIndex);
             }
           }
         }
 
         if (shared.sourceModel && !isInitialPlacement(target)) {
-          var dropElm = item,
-            dropIndex = domIndexOf(dropElm, target);
+          var dropElm = item;
           $rootScope.$applyAsync(function applyDrop() {
             if (target === shared.source) {
               shared.sourceModel.splice(dropIndex, 0, shared.sourceModel.splice(shared.initialIndex, 1)[0]);
