@@ -1,4 +1,5 @@
-### Changes merged from dragula 3.5.4
+### Changes merged from dragula 3.6.0
+- Introduced support for `contentEditable` DOM attribute
 - Switched from `.parentElement` to `.parentNode` avoiding bugs when hovering over `<svg>` elements
 - Fixed a bug where mobile devices wouldn't be able to drag elements
 
