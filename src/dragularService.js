@@ -149,8 +149,9 @@ dragularModule.factory('dragularService', ['$rootScope', function dragula($rootS
       });
 
       isContainer = function isContainer(el) {
-        if(!el)
+        if(!el){
           return false;
+        }
         var i = o.nameSpace.length;
         while (i--) {
           if (shared.containers[o.nameSpace[i]].indexOf(el) !== -1) {
@@ -794,8 +795,9 @@ dragularModule.factory('dragularService', ['$rootScope', function dragula($rootS
           rmClass(body, o.classes.unselectable);
           regEvent(docElm, 'off', 'mousemove', drag);
           regEvent(shared.mirror, 'off', 'wheel', scrollContainer);
-          if(getParent(shared.mirror))
+          if(getParent(shared.mirror)){
             shared.mirror.parentNode.removeChild(shared.mirror);
+          }
           shared.mirror = null;
         }
       }

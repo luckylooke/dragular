@@ -1,3 +1,7 @@
+# 3.3.0 Xmas fever
+- some code refactors
+- introducing codeclimate
+
 ### Changes merged from dragula 3.6.0
 - Introduced support for `contentEditable` DOM attribute
 - Switched from `.parentElement` to `.parentNode` avoiding bugs when hovering over `<svg>` elements

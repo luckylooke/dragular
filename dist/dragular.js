@@ -45,7 +45,7 @@ dragularModule.directive('dragular', ['dragularService', function(dragularServic
 
 
 /**
- * Dragular 3.2.0 by Luckylooke https://github.com/luckylooke/dragular
+ * Dragular 3.3.0 by Luckylooke https://github.com/luckylooke/dragular
  * Angular version of dragula https://github.com/bevacqua/dragula
  */
 module.exports = angular.module('dragularModule', []);
@@ -204,8 +204,9 @@ dragularModule.factory('dragularService', ['$rootScope', function dragula($rootS
       });
 
       isContainer = function isContainer(el) {
-        if(!el)
+        if(!el){
           return false;
+        }
         var i = o.nameSpace.length;
         while (i--) {
           if (shared.containers[o.nameSpace[i]].indexOf(el) !== -1) {
@@ -849,8 +850,9 @@ dragularModule.factory('dragularService', ['$rootScope', function dragula($rootS
           rmClass(body, o.classes.unselectable);
           regEvent(docElm, 'off', 'mousemove', drag);
           regEvent(shared.mirror, 'off', 'wheel', scrollContainer);
-          if(getParent(shared.mirror))
+          if(getParent(shared.mirror)){
             shared.mirror.parentNode.removeChild(shared.mirror);
+          }
           shared.mirror = null;
         }
       }
