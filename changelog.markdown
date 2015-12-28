@@ -1,6 +1,13 @@
+# 3.3.1 Dwarf
+- fix touches
+
 # 3.3.0 Xmas fever
 - some code refactors
 - introducing codeclimate
+- Sending target index on dragulardrop event
+- Fix css property typo
+- Fix for applyAsync typo and multiple executions of startBecauseMouseMoved
+- Touchstart and Touchend Support
 
 ### Changes merged from dragula 3.6.0
 - Introduced support for `contentEditable` DOM attribute

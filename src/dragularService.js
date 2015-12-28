@@ -1003,7 +1003,7 @@ dragularModule.factory('dragularService', ['$rootScope', function dragula($rootS
     }
 
     // Adding support for touch events, as they are not functional in the original
-    if (host.type.indexOf('touch') < 0) {
+    if (!host.type || host.type.indexOf('touch') < 0) {
       return host[coord];
     } else {
       if (host.type.indexOf('end') > -1) {
