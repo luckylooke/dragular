@@ -8,11 +8,7 @@
  */
  var dragularModule = require('./dragularModule');
 
-/**
-* @ngInject
-*/
-
-dragularModule.directive('dragular', ['dragularService', function(dragularService) {
+dragularModule.directive('dragular', ["dragularService", function(dragularService) {
   return {
     restrict: 'A',
     link: function($scope, iElm, iAttrs) {
