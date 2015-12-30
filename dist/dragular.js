@@ -63,13 +63,9 @@ module.exports = angular.module('dragularModule', []);
 
 var dragularModule = require('./dragularModule');
 
-/**
- * @ngInject
- */
+dragularModule.factory('dragularService', ["$rootScope", function dragula($rootScope) {
 
-dragularModule.factory('dragularService', ['$rootScope', function dragula($rootScope) {
-
-  var shared = { // function returned as service
+  var shared = {
       classesCache: {}, // classes lookup cache
       containersCtx: {}, // containers model
       containers: {}, // containers managed by the drake
@@ -102,6 +98,7 @@ dragularModule.factory('dragularService', ['$rootScope', function dragula($rootS
       lastElementBehindCursor: null, // last element behind cursor
       grabbed: null // holds mousedown context until first mousemove
     },
+    // function returned as service
     serviceFn = function(initialContainers, options) {
 
       if (arguments.length === 1 && !Array.isArray(initialContainers) && !angular.isElement(initialContainers) && !initialContainers[0] && typeof initialContainers !== 'string') {
@@ -494,7 +491,7 @@ dragularModule.factory('dragularService', ['$rootScope', function dragula($rootS
         shared.target = null;
 
         if (shared.lastElementBehindCursor) {
-          fireEvent(shared.lastElementBehindCursor, shared.dragOverEvents['dragularrelease'], elementBehindCursor);
+          fireEvent(shared.lastElementBehindCursor, shared.dragOverEvents.dragularrelease, elementBehindCursor);
         }
 
         if (o.scope) {
@@ -660,7 +657,7 @@ dragularModule.factory('dragularService', ['$rootScope', function dragula($rootS
                 break;
               }
               if (!shared.targetCtx) {
-                shared.targetCtx = shared.containersCtx['dragularCommon'][shared.containers['dragularCommon'].indexOf(target)];
+                shared.targetCtx = shared.containersCtx.dragularCommon[shared.containersdragularCommon.indexOf(target)];
               }
             }
 
@@ -728,9 +725,9 @@ dragularModule.factory('dragularService', ['$rootScope', function dragula($rootS
           changed = dropTarget !== shared.lastDropTarget;
 
         if (elementBehindCursor !== shared.lastElementBehindCursor) {
-          fireEvent(elementBehindCursor, shared.dragOverEvents['dragularenter'], !!dropTarget);
+          fireEvent(elementBehindCursor, shared.dragOverEvents.dragularenter, !!dropTarget);
           if (shared.lastElementBehindCursor) {
-            fireEvent(shared.lastElementBehindCursor, shared.dragOverEvents['dragularleave'], elementBehindCursor);
+            fireEvent(shared.lastElementBehindCursor, shared.dragOverEvents.dragularleave, elementBehindCursor);
           }
           shared.lastElementBehindCursor = elementBehindCursor;
         }
