@@ -109,11 +109,27 @@ dragularModule.factory('dragularService', ["$rootScope", function dragula($rootS
           unselectable: 'gu-unselectable',
           transit: 'gu-transit'
         },
+        defaultEventNames = {
+          // drag-over DOM events
+          dragularenter: 'dragularenter',
+          dragularleave: 'dragularleave',
+          dragularrelease: 'dragularrelease',
+          // $scope events
+          dragularcloned: 'dragularcloned',
+          dragulardrag: 'dragulardrag',
+          dragularcancel: 'dragularcancel',
+          dragulardrop: 'dragulardrop',
+          dragularremove: 'dragularremove',
+          dragulardragend: 'dragulardragend',
+          dragularshadow: 'dragularshadow',
+          dragularover: 'dragularover',
+          dragularout: 'dragularout'
+        },
         o = { // options with defaults
-          // TODO: Make dragOverEventNames dictionary object as defaultClasses
-          dragOverEventNames: ['dragularenter', 'dragularleave', 'dragularrelease'],
           // classes used by dragular
           classes: defaultClasses,
+          // event names used by dragular
+          eventNames: defaultEventNames,
           // initial containers provided via options object (are provided via parameter by default)
           containers: false,
           // can drag start?
@@ -143,7 +159,9 @@ dragularModule.factory('dragularService', ["$rootScope", function dragula($rootS
           // if isContainer function is provided, you can provide also respective model
           isContainerModel: getEmptyObject,
           // element for appending mirror
-          mirrorContainer: doc.body
+          mirrorContainer: doc.body,
+          // text selection in inputs wont be considered as drag
+          ignoreInputTextSelection: false
         };
 
       processServiceArguments(); // both arguments (containers and options) are optional, this function handle this
@@ -183,7 +201,12 @@ dragularModule.factory('dragularService', ["$rootScope", function dragula($rootS
 
       function extendDefaultOptions(){
         angular.extend(o, options);
-        o.classes = angular.extend({}, defaultClasses, o.classes);
+        if(options.classes){
+          o.classes = angular.extend({}, defaultClasses, options.classes);
+        }
+        if(options.eventNames){
+          o.eventNames = angular.extend({}, defaultEventNames, options.eventNames);
+        }
       }
 
       function processOptionsObject(){
@@ -199,6 +222,7 @@ dragularModule.factory('dragularService', ["$rootScope", function dragula($rootS
         // sanitize initialContainers
         initialContainers = makeArray(initialContainers);
 
+        // sanitize o.containersModel
         if (Array.isArray(o.containersModel)) {
           //                  |-------- is 2D array? -----------|
           o.containersModel = Array.isArray(o.containersModel[0]) ? o.containersModel : [o.containersModel];
@@ -240,13 +264,16 @@ dragularModule.factory('dragularService', ["$rootScope", function dragula($rootS
         });
 
         if(!remove){
-          angular.forEach(o.dragOverEventNames, function prepareDragOverEvents(dragOverEventName) {
-            if (doc.createEvent) {
-              shared.dragOverEvents[dragOverEventName] = doc.createEvent('HTMLEvents');
-              shared.dragOverEvents[dragOverEventName].initEvent(dragOverEventName, true, true);
-            } else {
-              shared.dragOverEvents[dragOverEventName] = doc.createEventObject();
-              shared.dragOverEvents[dragOverEventName].eventType = dragOverEventName;
+          angular.forEach(['dragularenter', 'dragularleave', 'dragularrelease'], function prepareDragOverEvents(name) {
+            var eventName = o.eventNames[name];
+            if(!shared.dragOverEvents[eventName]){
+              if (doc.createEvent) {
+                shared.dragOverEvents[eventName] = doc.createEvent('HTMLEvents');
+                shared.dragOverEvents[eventName].initEvent(eventName, true, true);
+              } else {
+                shared.dragOverEvents[eventName] = doc.createEventObject();
+                shared.dragOverEvents[eventName].eventType = eventName;
+              }
             }
           });
         }
@@ -457,7 +484,7 @@ dragularModule.factory('dragularService', ["$rootScope", function dragula($rootS
           shared.item = context.item.cloneNode(true);
           shared.copy = true;
           if (o.scope) {
-            o.scope.$emit('dragularcloned', shared.item, context.item);
+            o.scope.$emit(o.eventNames.dragularcloned, shared.item, context.item);
           }
         } else {
           shared.copy = false;
@@ -470,7 +497,7 @@ dragularModule.factory('dragularService', ["$rootScope", function dragula($rootS
 
         drake.dragging = true;
         if (o.scope) {
-          o.scope.$emit('dragulardrag', shared.sourceItem, shared.source);
+          o.scope.$emit(o.eventNames.dragulardrag, shared.sourceItem, shared.source);
         }
 
         return true;
@@ -523,7 +550,7 @@ dragularModule.factory('dragularService', ["$rootScope", function dragula($rootS
         }
 
         if (o.scope) {
-          o.scope.$emit('dragularrelease', shared.item, shared.source);
+          o.scope.$emit(o.eventNames.dragularrelease, shared.item, shared.source);
         }
       }
 
@@ -571,9 +598,9 @@ dragularModule.factory('dragularService', ["$rootScope", function dragula($rootS
         function emitDropEvent() {
           if (o.scope) {
             if (isInitialPlacement(target)) {
-              o.scope.$emit('dragularcancel', item, shared.source, shared.sourceModel, shared.initialIndex);
+              o.scope.$emit(o.eventNames.dragularcancel, item, shared.source, shared.sourceModel, shared.initialIndex);
             } else {
-              o.scope.$emit('dragulardrop', item, target, shared.source, shared.sourceModel, shared.initialIndex, shared.targetModel, dropIndex);
+              o.scope.$emit(o.eventNames.dragulardrop, item, target, shared.source, shared.sourceModel, shared.initialIndex, shared.targetModel, dropIndex);
             }
           }
         }
@@ -597,7 +624,7 @@ dragularModule.factory('dragularService', ["$rootScope", function dragula($rootS
         }
 
         if (o.scope) {
-          o.scope.$emit(shared.copy ? 'dragularcancel' : 'dragularremove', shared.item, parent, shared.sourceModel, shared.initialIndex);
+          o.scope.$emit(shared.copy ? o.eventNames.dragularcancel : o.eventNames.dragularremove, shared.item, parent, shared.sourceModel, shared.initialIndex);
         }
         if (!shared.sourceModel) {
           cleanup();
@@ -619,7 +646,7 @@ dragularModule.factory('dragularService', ["$rootScope", function dragula($rootS
           drop(shared.item, parent);
         } else if (o.scope) {
           if (initial || reverts) {
-            o.scope.$emit('dragularcancel', shared.item, shared.source);
+            o.scope.$emit(o.eventNames.dragularcancel, shared.item, shared.source);
           }
         }
 
@@ -644,9 +671,9 @@ dragularModule.factory('dragularService', ["$rootScope", function dragula($rootS
 
         if (o.scope) {
           if(shared.lastDropTarget){
-           o.scope.$emit('dragularout', shared.item, shared.lastDropTarget, shared.source);
+           o.scope.$emit(o.eventNames.dragularout, shared.item, shared.lastDropTarget, shared.source);
           }
-          o.scope.$emit('dragulardragend', shared.item);
+          o.scope.$emit(o.eventNames.dragulardragend, shared.item);
         }
 
         shared.source = shared.item = shared.sourceItem = shared.initialSibling = shared.currentSibling = shared.sourceModel = null;
@@ -685,7 +712,7 @@ dragularModule.factory('dragularService', ["$rootScope", function dragula($rootS
                 break;
               }
               if (!shared.targetCtx) {
-                shared.targetCtx = shared.containersCtx.dragularCommon[shared.containersdragularCommon.indexOf(target)];
+                shared.targetCtx = shared.containersCtx.dragularCommon[shared.containers.dragularCommon.indexOf(target)];
               }
             }
 
@@ -801,13 +828,13 @@ dragularModule.factory('dragularService', ["$rootScope", function dragula($rootS
           dropTarget.insertBefore(shared.item, reference); // if reference is null item is inserted at the end
 
           if (o.scope) {
-            o.scope.$emit('dragularshadow', shared.item, dropTarget);
+            o.scope.$emit(o.eventNames.dragularshadow, shared.item, dropTarget);
           }
         }
 
         function moved(type) {
           if (o.scope) {
-            o.scope.$emit('dragular' + type, shared.item, shared.lastDropTarget, shared.source);
+            o.scope.$emit(o.eventNames['dragular' + type], shared.item, shared.lastDropTarget, shared.source);
           }
           if (o.removeOnSpill === true) {
             type === 'over' ? spillOver() : spillOut();
@@ -866,7 +893,7 @@ dragularModule.factory('dragularService', ["$rootScope", function dragula($rootS
         addClass(body, o.classes.unselectable);
         regEvent(shared.mirror, 'on', 'wheel', scrollContainer);
         if (o.scope) {
-          o.scope.$emit('dragularcloned', shared.mirror, shared.sourceItem);
+          o.scope.$emit(o.eventNames.dragularcloned, shared.mirror, shared.sourceItem);
         }
       }
 
@@ -894,9 +921,8 @@ dragularModule.factory('dragularService', ["$rootScope", function dragula($rootS
       }
 
       function getReference(dropTarget, target, x, y) {
-        var horizontal = o.direction === 'horizontal',
-          reference = target !== dropTarget ? inside() : outside();
-        return reference;
+        var horizontal = o.direction === 'horizontal';
+        return target !== dropTarget ? inside() : outside();
 
         function outside() { // slower, but able to figure out any position
           var len = dropTarget.children.length,
@@ -1086,13 +1112,12 @@ dragularModule.factory('dragularService', ["$rootScope", function dragula($rootS
     if (!host.type || host.type.indexOf('touch') < 0) {
       return host[coord];
     } else {
-      if (host.type.indexOf('end') > -1) {
-        // Nothing should happen for touchend
-        return;
-      } else {
+      if (host.type.indexOf('end') === -1) {
         // No clientX or clientY in a touch event
         return host.originalEvent.touches[0][coord.replace('client', 'page')];
       }
+      // Nothing should happen for touchend
+      return false;
     }
   }
 
