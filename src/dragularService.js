@@ -35,7 +35,7 @@ var dragularModule = require('./dragularModule'),
       currentSibling: null, // reference sibling now
       initialIndex: null, // reference model index when grabbed
       currentIndex: null, // reference model index now
-      isContainerModel: null, // if o.isContainer is used, model can be provided as well, here it is kept
+      tempModel: null, // if o.isContainer is used, model can be provided as well, it is temporary saved here during drags
       dragOverEvents: {}, // drag over events fired on element behind cursor
       lastElementBehindCursor: null, // last element behind cursor
       grabbed: null // holds mousedown context until first mousemove
@@ -46,7 +46,7 @@ dragularModule.factory('dragularService', function dragularServiceFunction($root
   var doc = document,
       body = doc.body,
       docElm = doc.documentElement;
-      
+
   // clean common/shared objects
   service.cleanEnviroment = function cleanEnviroment() {
     shared.classesCache = {};
@@ -58,7 +58,7 @@ dragularModule.factory('dragularService', function dragularServiceFunction($root
   service.shared = shared;
 
   return service;
-    
+
   // service definition
   function service(arg0, arg1) {
     var initialContainers = arg0 || [],
@@ -240,7 +240,7 @@ dragularModule.factory('dragularService', function dragularServiceFunction($root
         });
       }
     }
-    
+
     // Event handlers functions (end of initial functions): -----------------------------------------------------------------------------------------------------------------
 
     function grab(e) {
@@ -248,7 +248,7 @@ dragularModule.factory('dragularService', function dragularServiceFunction($root
       if (whichMouseButton(e) !== 1 || e.metaKey || e.ctrlKey) {
         return; // we only care about honest-to-god left clicks and touch events
       }
-      
+
       // set itial values
       shared.moveX = e.clientX;
       shared.moveY = e.clientY;
@@ -301,7 +301,7 @@ dragularModule.factory('dragularService', function dragularServiceFunction($root
         o.scope.$emit(o.eventNames.dragularrelease, shared.item, shared.source);
       }
     }
-    
+
     // Main logic functions (end of event handler functions): -----------------------------------------------------------------------------------------------------------------
 
     function isContainer(el) {
@@ -315,10 +315,10 @@ dragularModule.factory('dragularService', function dragularServiceFunction($root
         }
       }
       if (o.isContainer(el)) {
-        shared.isContainerModel = o.isContainerModel(el);
+        shared.tempModel = o.isContainerModel(el);
         return true;
       } else {
-        shared.isContainerModel = null;
+        shared.tempModel = null;
       }
       return false;
     }
@@ -510,10 +510,10 @@ dragularModule.factory('dragularService', function dragularServiceFunction($root
           } else {
             shared.dropElmModel = shared.copy ? angular.copy(shared.sourceModel[shared.initialIndex]) : shared.sourceModel[shared.initialIndex];
 
-            if (!shared.isContainerModel) {
+            if (!shared.tempModel) {
               shared.targetModel = shared.targetCtx.m;
             } else {
-              shared.targetModel = shared.isContainerModel;
+              shared.targetModel = shared.tempModel;
             }
 
             target.removeChild(dropElm); // element must be removed for ngRepeat to apply correctly
@@ -618,7 +618,7 @@ dragularModule.factory('dragularService', function dragularServiceFunction($root
       }
 
       shared.source = shared.item = shared.sourceItem = shared.initialSibling = shared.currentSibling = shared.sourceModel = null;
-      shared.initialIndex = shared.currentIndex = shared.lastDropTarget = shared.isContainerModel = shared.targetModel = null;
+      shared.initialIndex = shared.currentIndex = shared.lastDropTarget = shared.tempModel = shared.targetModel = null;
       shared.dropElmModel = shared.targetCtx = shared.copy = shared.moveX = shared.moveY = null;
     }
 
@@ -760,7 +760,7 @@ dragularModule.factory('dragularService', function dragularServiceFunction($root
         }
         return;
       }
-      
+
       if (reference === null ||
         reference !== shared.item &&
         reference !== nextEl(shared.item) &&
@@ -926,7 +926,7 @@ dragularModule.factory('dragularService', function dragularServiceFunction($root
   function always() {
     return true;
   }
-  
+
   // make array from array-like objects or from single element (based on bevacqua/atoa)
   function makeArray(all, startIndex) {
     if (Array.isArray(all)) {
