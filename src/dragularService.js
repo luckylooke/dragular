@@ -42,6 +42,11 @@ var dragularModule = require('./dragularModule'),
     };
 
 dragularModule.factory('dragularService', function dragularServiceFunction($rootScope) {
+  // abbreviations
+  var doc = document,
+      body = doc.body,
+      docElm = doc.documentElement;
+      
   // clean common/shared objects
   service.cleanEnviroment = function cleanEnviroment() {
     shared.classesCache = {};
@@ -58,10 +63,6 @@ dragularModule.factory('dragularService', function dragularServiceFunction($root
   function service(arg0, arg1) {
     var initialContainers = arg0 || [],
       options = arg1 || {},
-      // abbreviations
-      doc = document,
-      body = doc.body,
-      docElm = doc.documentElement,
       // defaults
       defaultClasses = {
         mirror: 'gu-mirror',
@@ -103,7 +104,7 @@ dragularModule.factory('dragularService', function dragularServiceFunction($root
         // dragged item will be copy of source? flag or function
         copy: false,
         // target (in)validity function
-        invalid: invalidTarget,
+        invalid: never,
         // item returns to original place
         revertOnSpill: false,
         // item will be removed if not placed into valid target
@@ -243,14 +244,14 @@ dragularModule.factory('dragularService', function dragularServiceFunction($root
     // Event handlers functions (end of initial functions): -----------------------------------------------------------------------------------------------------------------
 
     function grab(e) {
-      e = e || window.event;
-      shared.moveX = e.clientX;
-      shared.moveY = e.clientY;
-
       // filter some odd situations
       if (whichMouseButton(e) !== 1 || e.metaKey || e.ctrlKey) {
         return; // we only care about honest-to-god left clicks and touch events
       }
+      
+      // set itial values
+      shared.moveX = e.clientX;
+      shared.moveY = e.clientY;
 
       var context = canStart(e.target);
       if (!context || !context.item) {
@@ -273,7 +274,6 @@ dragularModule.factory('dragularService', function dragularServiceFunction($root
       if (!drake.dragging) {
         return;
       }
-      e = e || window.event;
 
       shared.clientX = getCoord('clientX', e);
       shared.clientY = getCoord('clientY', e);
@@ -322,10 +322,7 @@ dragularModule.factory('dragularService', function dragularServiceFunction($root
       }
       return false;
     }
-    
-    // Helper functions (end of main logic functions): -----------------------------------------------------------------------------------------------------------------
 
-    // add or remove containers - deprecated
     function removeContainers(all) {
       $rootScope.$applyAsync(function applyDestroyed() {
         var changes = Array.isArray(all) ? all : makeArray(all);
@@ -358,12 +355,6 @@ dragularModule.factory('dragularService', function dragularServiceFunction($root
       release({});
     }
 
-    function preventGrabbed(e) {
-      if (shared.grabbed) {
-        e.preventDefault();
-      }
-    }
-
     function startBecauseMouseMoved(e) {
       if (!shared.grabbed || drake.dragging) {
         return;
@@ -372,7 +363,7 @@ dragularModule.factory('dragularService', function dragularServiceFunction($root
         release({});
         return; // when text is selected on an input and then dragged, mouseup doesn't fire. this is our only hope
       }
-      // truthy check fixes #239, equality fixes #207
+      // truthy check fixes dragula-#239, equality fixes dragula-#207
       if (e.clientX && e.clientX === shared.moveX && e.clientY && e.clientY === shared.moveY) {
         return;
       }
@@ -385,8 +376,8 @@ dragularModule.factory('dragularService', function dragularServiceFunction($root
         }
       }
 
-      var grabbed = shared.grabbed; // call to end() unsets shared.grabbed
-      eventualMovements(true); // remove mousemove listener
+      var grabbed = shared.grabbed; // calling end() unsets shared.grabbed
+      eventualMovements('remove'); // remove mousemove listener
       movements();
       end();
       start(grabbed);
@@ -425,14 +416,13 @@ dragularModule.factory('dragularService', function dragularServiceFunction($root
       drag(e);
     }
 
-
     function canStart(item) {
       if (drake.dragging && shared.mirror) {
+        console.log('usecase?');
         return; // already dragging
       }
 
       var handle = item;
-
       while (getParent(item) && !isContainer(getParent(item))) {
         // break loop if user tries to drag item which is considered invalid handle
         if (o.invalid(item, handle)) {
@@ -490,10 +480,6 @@ dragularModule.factory('dragularService', function dragularServiceFunction($root
       }
 
       return true;
-    }
-
-    function invalidTarget() {
-      return false;
     }
 
     function end() {
@@ -637,13 +623,13 @@ dragularModule.factory('dragularService', function dragularServiceFunction($root
     }
 
     // is item currently placed in original container and original position?
-    function isInitialPlacement(target, s) {
+    function isInitialPlacement(target, s) { // watch performance - running each move several times!
       var sibling = s || (shared.mirror ? shared.currentSibling : nextEl(shared.item));
       return target === shared.source && sibling === shared.initialSibling;
     }
 
     // find valid drop container
-    function findDropTarget(elementBehindCursor, clientX, clientY) {
+    function findDropTarget(elementBehindCursor, clientX, clientY) {  // watch performance - running each move!
       var target = elementBehindCursor;
 
       while (target && !accepted()) {
@@ -683,11 +669,10 @@ dragularModule.factory('dragularService', function dragularServiceFunction($root
       }
     }
 
-    function drag(e) {
+    function drag(e) { // watch performance - running each move!
       if (!shared.mirror) {
         return;
       }
-      e = e || window.event;
 
       // update coordinates
       shared.clientX = getCoord('clientX', e);
@@ -743,9 +728,11 @@ dragularModule.factory('dragularService', function dragularServiceFunction($root
       }
 
       if (changed) {
-        out();
+        if (shared.lastDropTarget) {
+          moved('out');
+        }
         shared.lastDropTarget = dropTarget;
-        over();
+        moved('over');
       }
 
       // do not copy in same container
@@ -773,6 +760,7 @@ dragularModule.factory('dragularService', function dragularServiceFunction($root
         }
         return;
       }
+      
       if (reference === null ||
         reference !== shared.item &&
         reference !== nextEl(shared.item) &&
@@ -793,18 +781,6 @@ dragularModule.factory('dragularService', function dragularServiceFunction($root
         }
         if (o.removeOnSpill === true) {
           type === 'over' ? spillOver() : spillOut();
-        }
-      }
-
-      function over() {
-        if (changed) {
-          moved('over');
-        }
-      }
-
-      function out() {
-        if (shared.lastDropTarget) {
-          moved('out');
         }
       }
     }
@@ -864,7 +840,7 @@ dragularModule.factory('dragularService', function dragularServiceFunction($root
       }
     }
 
-    function getImmediateChild(dropTarget, target) {
+    function getImmediateChild(dropTarget, target) { // watch performance - running each move several times!
       var immediate = target;
       while (immediate !== dropTarget && getParent(immediate) !== dropTarget) {
         immediate = getParent(immediate);
@@ -875,7 +851,7 @@ dragularModule.factory('dragularService', function dragularServiceFunction($root
       return immediate;
     }
 
-    function getReference(dropTarget, target, x, y) {
+    function getReference(dropTarget, target, x, y) { // watch performance - running each move several times!
       var horizontal = o.direction === 'horizontal';
       return target !== dropTarget ? inside() : outside();
 
@@ -912,29 +888,7 @@ dragularModule.factory('dragularService', function dragularServiceFunction($root
       return typeof o.copy === 'boolean' ? o.copy : o.copy(item, container);
     }
 
-    function getScroll(scrollProp, offsetProp) {
-      if (typeof window[offsetProp] !== 'undefined') {
-        return window[offsetProp];
-      }
-      if (docElm.clientHeight) {
-        return docElm[scrollProp];
-      }
-      return body[scrollProp];
-    }
-
-    function getOffset(el) {
-      var rect = el.getBoundingClientRect(),
-        scrollTop = getScroll('scrollTop', 'pageYOffset'),
-        scrollLeft = getScroll('scrollLeft', 'pageXOffset');
-      return {
-        left: rect.left + scrollLeft,
-        right: rect.right + scrollLeft,
-        top: rect.top + scrollTop,
-        bottom: rect.bottom + scrollTop
-      };
-    }
-
-    function getElementBehindPoint(point, x, y) {
+    function getElementBehindPoint(point, x, y) { // watch performance - running each move!
       var p = point || {},
         state = p.className,
         el;
@@ -993,6 +947,34 @@ dragularModule.factory('dragularService', function dragularServiceFunction($root
     if (button !== undefined) { // see https://github.com/jquery/jquery/blob/99e8ff1baa7ae341e94bb89c3e84570c7c3ad9ea/src/event.js#L573-L575
       return button & 1 ? 1 : button & 2 ? 3 : (button & 4 ? 2 : 0);
     }
+  }
+
+  function preventGrabbed(e) {
+    if (shared.grabbed) {
+      e.preventDefault();
+    }
+  }
+
+  function getScroll(scrollProp, offsetProp) {
+    if (typeof window[offsetProp] !== 'undefined') {
+      return window[offsetProp];
+    }
+    if (docElm.clientHeight) {
+      return docElm[scrollProp];
+    }
+    return body[scrollProp];
+  }
+
+  function getOffset(el) { // watch performance - running each move!
+    var rect = el.getBoundingClientRect(),
+      scrollTop = getScroll('scrollTop', 'pageYOffset'),
+      scrollLeft = getScroll('scrollLeft', 'pageXOffset');
+    return {
+      left: rect.left + scrollLeft,
+      right: rect.right + scrollLeft,
+      top: rect.top + scrollTop,
+      bottom: rect.bottom + scrollTop
+    };
   }
 
   function getRectWidth(rect) {
@@ -1063,7 +1045,7 @@ dragularModule.factory('dragularService', function dragularServiceFunction($root
     return e;
   }
 
-  function getCoord(coord, e) {
+  function getCoord(coord, e) { // watch performance - running each move several times!
     var host = getEventHost(e);
     var missMap = {
       pageX: 'clientX', // IE8
@@ -1086,7 +1068,7 @@ dragularModule.factory('dragularService', function dragularServiceFunction($root
     }
   }
 
-  function getParent (el) {
+  function getParent (el) { // watch performance - running each move!
     return el.parentNode === document ? null : el.parentNode;
   }
 
@@ -1105,7 +1087,7 @@ dragularModule.factory('dragularService', function dragularServiceFunction($root
     return Array.prototype.indexOf.call(angular.element(parent).children(), child);
   }
 
-  function fireEvent(target, e, extra) {
+  function fireEvent(target, e, extra) { // watch performance - running each move!
     if (!target) {
       return;
     }
