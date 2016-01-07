@@ -7,7 +7,7 @@ var examplesAppModule = require('../examplesApp');
 */
 
 examplesAppModule
-  .controller('NgRepeatFilteredWithModel', ['$scope', '$element', 'dragularService', function TodoCtrl($scope, $element, dragularService) {
+  .controller('NgRepeatFilteredWithModel', ['$scope', '$element', 'dragularService', '$filter', function TodoCtrl($scope, $element, dragularService, $filter) {
     $scope.items1 = [{
       content: 'Move me, but you can only drop me in one of these containers.'
     }, {
@@ -42,6 +42,11 @@ examplesAppModule
     $scope.filter2query = 'Apple';
     $scope.filteredModel1 = [];
     $scope.filteredModel2 = [];
+    $scope.getFilteredModel = function (filteredModel, items, filterQuery) {
+      filteredModel.length = 0;
+      Array.prototype.push.apply(filteredModel, $filter('filter')(items, filterQuery));
+      return filteredModel;
+    };
     var containers = $element.children().eq(1).children();
     dragularService.cleanEnviroment();
     dragularService([containers[0],containers[1]],{

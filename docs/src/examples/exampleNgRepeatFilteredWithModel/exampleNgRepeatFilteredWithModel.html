@@ -12,10 +12,10 @@
     </div>
     <div class='tableRow'>
       <div class='containerVertical'>
-        <div ng-repeat="item in (filteredModel1 = (items1 | filter:filter1query ))">{{item.content}}</div>
+        <div ng-repeat="item in getFilteredModel(filteredModel1, items1, filter1query)">{{item.content}}</div>
       </div>
       <div class='containerVertical'>
-        <div ng-repeat="item in (filteredModel2 = (items2 | filter:filter2query ))">{{item.content}}</div>
+        <div ng-repeat="item in getFilteredModel(filteredModel2, items2, filter2query)">{{item.content}}</div>
       </div>
     </div>
     <div class="tableRow">

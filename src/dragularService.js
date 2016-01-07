@@ -17,6 +17,7 @@ var dragularModule = require('./dragularModule'),
       copy: null, // isCopy flag
       sourceItem: null, // item originaly dragged if copy is enabled
       sourceModel: null, // source container model
+      sourceFilteredModel: null, // source container filtered model if relevant
       target: null, // droppable container under drag item
       targetCtx: null, // target container context
       targetModel: null, // target container model
@@ -93,14 +94,20 @@ dragularModule.factory('dragularService', function dragularServiceFunction($root
         eventNames: defaultEventNames,
         // initial containers provided via options object (are provided via parameter by default)
         containers: false,
+        // if provided, model will be synced with DOM
+        containersModel: false,
+        // if provided, dragular will handle filtered model cases
+        containersFilteredModel: false,
+        // potential target can be forced to be container by custom logic
+        isContainer: never,
+        // if isContainer function is provided, you can provide also respective model
+        isContainerModel: getEmptyObject,
         // can drag start?
         moves: always,
         // can target accept dragged item? (target context used)
         accepts: always,
         // can be dragged item accepted by target? (source context used)
         canBeAccepted: always,
-        // potential target can be forced to be container by custom logic
-        isContainer: never,
         // dragged item will be copy of source? flag or function
         copy: false,
         // target (in)validity function
@@ -115,10 +122,6 @@ dragularModule.factory('dragularService', function dragularServiceFunction($root
         lockY: false,
         // lock movement inside this element boundaries
         boundingBox: false,
-        // if provided, model will be synced with DOM
-        containersModel: false,
-        // if isContainer function is provided, you can provide also respective model
-        isContainerModel: getEmptyObject,
         // element for appending mirror
         mirrorContainer: doc.body,
         // text selection in inputs wont be considered as drag
@@ -191,6 +194,14 @@ dragularModule.factory('dragularService', function dragularServiceFunction($root
       } else {
         o.containersModel = [];
       }
+console.log('o.containersFilteredModel',o.containersFilteredModel);
+      // sanitize o.containersFilteredModel
+      if (Array.isArray(o.containersFilteredModel)) {
+        //                  |-------- is 2D array? -----------|
+        o.containersFilteredModel = Array.isArray(o.containersFilteredModel[0]) ? o.containersFilteredModel : [o.containersFilteredModel];
+      } else {
+        o.containersFilteredModel = [];
+      }
 
       // feed containers groups and optionaly do same for models
       if (!o.nameSpace) {
@@ -210,7 +221,8 @@ dragularModule.factory('dragularService', function dragularServiceFunction($root
           shared.containers[nameSpace][i + shLen] = initialContainers[i];
           shared.containersCtx[nameSpace][i + shLen] = {
             o: o,
-            m: o.containersModel[i] // can be undefined
+            m: o.containersModel[i], // can be undefined
+            fm: o.containersFilteredModel[i] // can be undefined
           };
         }
       });
@@ -472,6 +484,9 @@ dragularModule.factory('dragularService', function dragularServiceFunction($root
       // prepare models operations
       var containerIndex = initialContainers.indexOf(context.source);
       shared.sourceModel = o.containersModel[containerIndex];
+
+      console.log('o.containersFilteredModel',o.containersFilteredModel);
+      shared.sourceFilteredModel = o.containersFilteredModel[containerIndex];
       shared.initialIndex = domIndexOf(context.item, context.source);
 
       drake.dragging = true;
@@ -500,10 +515,21 @@ dragularModule.factory('dragularService', function dragularServiceFunction($root
         item.parentNode.removeChild(shared.sourceItem);
       }
 
-      var dropIndex = domIndexOf(item, target);
-
       if (shared.sourceModel && !isInitialPlacement(target)) {
-        var dropElm = item;
+
+        var dropIndex = domIndexOf(item, target);
+        if(shared.targetCtx.fm){ // target has filtered model
+          // convert index from index-in-filteredModel to index-in-model
+          dropIndex = shared.targetCtx.m.indexOf(shared.targetCtx.fm[dropIndex]);
+        }
+        if(shared.sourceFilteredModel){ // target has filtered model
+          // convert index from index-in-filteredModel to index-in-model
+          shared.initialIndex = shared.sourceModel.indexOf(shared.sourceFilteredModel[shared.initialIndex]);
+        }
+        console.log('shared.targetCtx.fm',shared.targetCtx.fm);
+        console.log('shared.sourceFilteredModel',shared.sourceFilteredModel);
+        console.log('shared.sourceModel[shared.initialIndex]',shared.sourceModel[shared.initialIndex]);
+        console.log('shared.targetCtx.m[dropIndex]',shared.targetCtx.m[dropIndex]);
         $rootScope.$applyAsync(function applyDrop() {
           if (target === shared.source) {
             shared.sourceModel.splice(dropIndex, 0, shared.sourceModel.splice(shared.initialIndex, 1)[0]);
@@ -516,7 +542,7 @@ dragularModule.factory('dragularService', function dragularServiceFunction($root
               shared.targetModel = shared.tempModel;
             }
 
-            target.removeChild(dropElm); // element must be removed for ngRepeat to apply correctly
+            target.removeChild(item); // element must be removed for ngRepeat to apply correctly
 
             if (!shared.copy) {
               shared.sourceModel.splice(shared.initialIndex, 1);
@@ -933,7 +959,7 @@ dragularModule.factory('dragularService', function dragularServiceFunction($root
       return all;
     }
     if (all.length) { // is array-like
-      return Array.prototype.slice.call(all, startIndex);
+      return Array.prototype.slice.call(all, startIndex); // convert to vanilla js array
     } else { // is one element
       return [all];
     }
