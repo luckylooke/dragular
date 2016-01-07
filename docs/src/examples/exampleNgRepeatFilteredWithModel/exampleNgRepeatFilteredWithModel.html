@@ -1,0 +1,61 @@
+<div class='parent'>
+  <h2>Filtered ngRepeat - with model</h2>
+  <label for='hy'>Move stuff between these two containers. Note how the stuff gets inserted near the mouse pointer? Great stuff.</label>
+  <div class='wrapper' ng-controller="NgRepeatFilteredWithModel">
+    <div class="tableRow">
+      <div class='containerVertical'>
+        <input ng-model="filter1query" style="margin:10px 10px">
+      </div>
+      <div class='containerVertical'>
+        <input ng-model="filter2query" style="margin:10px 10px">
+      </div>
+    </div>
+    <div class='tableRow'>
+      <div class='containerVertical'>
+        <div ng-repeat="item in (filteredModel1 = (items1 | filter:filter1query ))">{{item.content}}</div>
+      </div>
+      <div class='containerVertical'>
+        <div ng-repeat="item in (filteredModel2 = (items2 | filter:filter2query ))">{{item.content}}</div>
+      </div>
+    </div>
+    <div class="tableRow">
+      <div class='containerVertical'>
+        <pre>Items1:
+          <br/>{{items1 | json}}</pre>
+      </div>
+      <div class='containerVertical'>
+        <pre>Items2:
+          <br/>{{items2 | json}}</pre>
+      </div>
+    </div>
+  </div>
+  <pre>
+        <code>
+// JS
+
+        </code>
+        <code>
+&lt;!-- HTML --&gt;
+&lt;div class='wrapper' ng-controller=&quot;NgRepeatFilteredWithModel&quot;&gt;
+    &lt;div class='tableRow'&gt;
+        &lt;div class='containerVertical'&gt;
+            &lt;div ng-repeat=&quot;item in items1&quot;&gt;{{item.content}}&lt;/div&gt;
+        &lt;/div&gt;
+        &lt;div class='containerVertical'&gt;
+            &lt;div ng-repeat=&quot;item in items2&quot;&gt;{{item.content}}&lt;/div&gt;
+        &lt;/div&gt;
+    &lt;/div&gt;
+    &lt;div class=&quot;tableRow&quot;&gt;
+        &lt;div class=&quot;container&quot;&gt;
+            &lt;div&gt;Items1:
+                &lt;br/&gt;{{items1 | json}}&lt;/div&gt;
+        &lt;/div&gt;
+        &lt;div class=&quot;container&quot;&gt;
+            &lt;div&gt;Items2:
+                &lt;br/&gt;{{items2 | json}}&lt;/div&gt;
+        &lt;/div&gt;
+    &lt;/div&gt;
+&lt;/div&gt;
+        </code>
+      </pre>
+</div>
