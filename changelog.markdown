@@ -1,3 +1,8 @@
+# X.X.X XXXXXX
+- the 'shared' object is truly shared between service instaces as it was originaly intended
+- code hardly refactored for better readability
+- event names can be now customized for each drake
+
 # 3.3.1 Dwarf
 - fix touches
 

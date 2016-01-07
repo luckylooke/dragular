@@ -6,14 +6,11 @@
  * Angular version of dragula https://github.com/bevacqua/dragula
  */
 
-var dragularModule = require('./dragularModule');
-
-dragularModule.factory('dragularService', function dragularServiceFunction($rootScope) {
-
-  var shared = {
+var dragularModule = require('./dragularModule'),
+  shared = { // sahred object between all service instances
       classesCache: {}, // classes lookup cache
       containersCtx: {}, // containers model
-      containers: {}, // containers managed by the drake
+      containers: {}, // containers
       mirror: null, // mirror image
       source: null, // source container
       item: null, // item being dragged
@@ -42,10 +39,9 @@ dragularModule.factory('dragularService', function dragularServiceFunction($root
       dragOverEvents: {}, // drag over events fired on element behind cursor
       lastElementBehindCursor: null, // last element behind cursor
       grabbed: null // holds mousedown context until first mousemove
-    },
-  // function returned by dragulaService
-    service = serviceFn;
+    };
 
+dragularModule.factory('dragularService', function dragularServiceFunction($rootScope) {
   // clean common/shared objects
   service.cleanEnviroment = function cleanEnviroment() {
     shared.classesCache = {};
@@ -59,7 +55,7 @@ dragularModule.factory('dragularService', function dragularServiceFunction($root
   return service;
     
   // service definition
-  function serviceFn(arg0, arg1) {
+  function service(arg0, arg1) {
     var initialContainers = arg0 || [],
       options = arg1 || {},
       // abbreviations
