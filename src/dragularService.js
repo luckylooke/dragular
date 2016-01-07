@@ -8,7 +8,7 @@
 
 var dragularModule = require('./dragularModule');
 
-dragularModule.factory('dragularService', function dragula($rootScope) {
+dragularModule.factory('dragularService', function dragularServiceFunction($rootScope) {
 
   var shared = {
       classesCache: {}, // classes lookup cache
@@ -43,913 +43,911 @@ dragularModule.factory('dragularService', function dragula($rootScope) {
       lastElementBehindCursor: null, // last element behind cursor
       grabbed: null // holds mousedown context until first mousemove
     },
-  // function returned as service
-    serviceFn = function(arg0, arg1) {
-      var initialContainers = arg0 || [],
-        options = arg1 || {},
-        // abbreviations
-        doc = document,
-        body = doc.body,
-        docElm = doc.documentElement,
-        // defaults
-        defaultClasses = {
-          mirror: 'gu-mirror',
-          hide: 'gu-hide',
-          unselectable: 'gu-unselectable',
-          transit: 'gu-transit'
-        },
-        defaultEventNames = {
-          // drag-over DOM events
-          dragularenter: 'dragularenter',
-          dragularleave: 'dragularleave',
-          dragularrelease: 'dragularrelease',
-          // $scope events
-          dragularcloned: 'dragularcloned',
-          dragulardrag: 'dragulardrag',
-          dragularcancel: 'dragularcancel',
-          dragulardrop: 'dragulardrop',
-          dragularremove: 'dragularremove',
-          dragulardragend: 'dragulardragend',
-          dragularshadow: 'dragularshadow',
-          dragularover: 'dragularover',
-          dragularout: 'dragularout'
-        },
-        o = { // options with defaults
-          // classes used by dragular
-          classes: defaultClasses,
-          // event names used by dragular
-          eventNames: defaultEventNames,
-          // initial containers provided via options object (are provided via parameter by default)
-          containers: false,
-          // can drag start?
-          moves: always,
-          // can target accept dragged item? (target context used)
-          accepts: always,
-          // can be dragged item accepted by target? (source context used)
-          canBeAccepted: always,
-          // potential target can be forced to be container by custom logic
-          isContainer: never,
-          // dragged item will be copy of source? flag or function
-          copy: false,
-          // target (in)validity function
-          invalid: invalidTarget,
-          // item returns to original place
-          revertOnSpill: false,
-          // item will be removed if not placed into valid target
-          removeOnSpill: false,
-          // lock movement into x-axis
-          lockX: false,
-          // lock movement into y-axis
-          lockY: false,
-          // lock movement inside this element boundaries
-          boundingBox: false,
-          // if provided, model will be synced with DOM
-          containersModel: false,
-          // if isContainer function is provided, you can provide also respective model
-          isContainerModel: getEmptyObject,
-          // element for appending mirror
-          mirrorContainer: doc.body,
-          // text selection in inputs wont be considered as drag
-          ignoreInputTextSelection: false
-        };
-
-      processServiceArguments(); // both arguments (containers and options) are optional, this function handle this
-      extendDefaultOptions();
-      processOptionsObject();
-      registerEvents();
-
-      var drake = {
-        containers: shared.containers,
-        containersCtx: shared.containersCtx,
-        isContainer: isContainer,
-        start: manualStart,
-        end: end,
-        cancel: cancel,
-        remove: remove,
-        destroy: destroy,
-        dragging: false
-      };
-
-      return drake;
-
-      // Function definitions: ==============================================================================================================
-
-      function processServiceArguments(){
-        if (arguments.length === 1 && // if there is only one argument we need to distinguish if it is options object or container(s) reference
-            !Array.isArray(arg0) && // array of containers elements
-            !angular.isElement(arg0) && // one container element
-            !arg0[0] && // array-like object with containers elements
-            typeof arg0 !== 'string') { // selector
-          // then arg0 is options object
-          options = arg0 || {};
-          initialContainers = []; // containers are not provided on init
-        } else if (typeof arg0 === 'string') {
-          initialContainers = document.querySelectorAll(arg0);
-        }
-      }
-
-      function extendDefaultOptions(){
-        angular.extend(o, options);
-        if(options.classes){
-          o.classes = angular.extend({}, defaultClasses, options.classes);
-        }
-        if(options.eventNames){
-          o.eventNames = angular.extend({}, defaultEventNames, options.eventNames);
-        }
-      }
-
-      function processOptionsObject(){
-        // bounding box must be pure DOM element, not jQuery wrapper or something else..
-        if (!isElement(o.boundingBox)) {
-          o.boundingBox = false;
-        }
-
-        // initial containers provided via options are higher priority then by parameter
-        if(o.containers){
-          initialContainers = o.containers;
-        }
-        // sanitize initialContainers
-        initialContainers = makeArray(initialContainers);
-
-        // sanitize o.containersModel
-        if (Array.isArray(o.containersModel)) {
-          //                  |-------- is 2D array? -----------|
-          o.containersModel = Array.isArray(o.containersModel[0]) ? o.containersModel : [o.containersModel];
-        } else {
-          o.containersModel = [];
-        }
-
-        // feed containers groups and optionaly shadow it by models
-        if (!o.nameSpace) {
-          o.nameSpace = ['dragularCommon'];
-        }
-        if (!Array.isArray(o.nameSpace)) {
-          o.nameSpace = [o.nameSpace];
-        }
-        o.nameSpace.forEach(function eachNameSpace(nameSpace) {
-          if (!shared.containers[nameSpace]) {
-            shared.containers[nameSpace] = [];
-            shared.containersCtx[nameSpace] = [];
-          }
-          var len = initialContainers.length,
-            shLen = shared.containers[nameSpace].length;
-          for (var i = 0; i < len; i++) {
-            shared.containers[nameSpace][i + shLen] = initialContainers[i];
-            shared.containersCtx[nameSpace][i + shLen] = {
-              o: o,
-              m: o.containersModel[i] // can be undefined
-            };
-          }
-        });
-      }
-
-      function registerEvents(remove) {
-        var op = remove ? 'off' : 'on';
-        regEvent(docElm, op, 'mouseup', release);
-        // regEvent(docElm, op, 'mousemove', startBecauseMouseMoved);
-
-        initialContainers.forEach(function addMouseDown(container) {
-          regEvent(container, 'on', 'mousedown', grab);
-        });
-
-        if(!remove){
-          angular.forEach(['dragularenter', 'dragularleave', 'dragularrelease'], function prepareDragOverEvents(name) {
-            var eventName = o.eventNames[name];
-            if(!shared.dragOverEvents[eventName]){
-              if (doc.createEvent) {
-                shared.dragOverEvents[eventName] = doc.createEvent('HTMLEvents');
-                shared.dragOverEvents[eventName].initEvent(eventName, true, true);
-              } else {
-                shared.dragOverEvents[eventName] = doc.createEventObject();
-                shared.dragOverEvents[eventName].eventType = eventName;
-              }
-            }
-          });
-        }
-      }
-
-      function isContainer(el) {
-        if(!el){
-          return false;
-        }
-        var i = o.nameSpace.length;
-        while (i--) {
-          if (shared.containers[o.nameSpace[i]].indexOf(el) !== -1) {
-            return true;
-          }
-        }
-        if (o.isContainer(el)) {
-          shared.isContainerModel = o.isContainerModel(el);
-          return true;
-        } else {
-          shared.isContainerModel = null;
-        }
-        return false;
-      }
-
-      // make array from array-like objects or from single element (based on bevacqua/atoa)
-      function makeArray(all, startIndex) {
-        if (Array.isArray(all)) {
-          return all;
-        }
-        if (all.length) { // is array-like
-          return Array.prototype.slice.call(all, startIndex);
-        } else { // is one element
-          return [all];
-        }
-      }
-
-      // add or remove containers - deprecated
-      function removeContainers(all) {
-        $rootScope.$applyAsync(function applyDestroyed() {
-          var changes = Array.isArray(all) ? all : makeArray(all);
-          changes.forEach(function forEachContainer(container) {
-            angular.forEach(o.nameSpace, function forEachNs(nameSpace) {
-              var index;
-              index = shared.containers[nameSpace].indexOf(container);
-              shared.containers[nameSpace].splice(index, 1);
-              shared.containersCtx[nameSpace].splice(index, 1);
-            });
-          });
-        });
-      }
-
-      function eventualMovements(remove) {
-        var op = remove ? 'off' : 'on';
-        regEvent(docElm, op, 'mousemove', startBecauseMouseMoved);
-      }
-
-      function movements(remove) {
-        var op = remove ? 'off' : 'on';
-        regEvent(docElm, op, 'selectstart', preventGrabbed); // IE8
-        regEvent(docElm, op, 'click', preventGrabbed);
-        regEvent(docElm, op, 'touchmove', preventGrabbed); // fixes touch devices scrolling while drag
-      }
-
-      function destroy() {
-        registerEvents(true);
-        removeContainers(initialContainers);
-        release({});
-      }
-
-      function preventGrabbed(e) {
-        if (shared.grabbed) {
-          e.preventDefault();
-        }
-      }
-
-      function grab(e) {
-        e = e || window.event;
-        shared.moveX = e.clientX;
-        shared.moveY = e.clientY;
-
-        // filter some odd situations
-        if (whichMouseButton(e) !== 1 || e.metaKey || e.ctrlKey) {
-          return; // we only care about honest-to-god left clicks and touch events
-        }
-
-        var context = canStart(e.target);
-        if (!context || !context.item) {
-          return;
-        }
-
-        shared.grabbed = context;
-        eventualMovements();
-        if (e.type === 'mousedown') {
-          if (isInput(context.item)) { // see also: https://github.com/bevacqua/dragula/issues/208
-            context.item.focus(); // fixes https://github.com/bevacqua/dragula/issues/176
-          } else {
-            e.preventDefault(); // fixes https://github.com/bevacqua/dragula/issues/155
-          }
-        }
-      }
-
-      function startBecauseMouseMoved(e) {
-        if (!shared.grabbed || drake.dragging) {
-          return;
-        }
-        if (whichMouseButton(e) === 0) {
-          release({});
-          return; // when text is selected on an input and then dragged, mouseup doesn't fire. this is our only hope
-        }
-        // truthy check fixes #239, equality fixes #207
-        if (e.clientX && e.clientX === shared.moveX && e.clientY && e.clientY === shared.moveY) {
-          return;
-        }
-        if (o.ignoreInputTextSelection) {
-          var clientX = getCoord('clientX', e),
-            clientY = getCoord('clientY', e),
-            elementBehindCursor = doc.elementFromPoint(clientX, clientY);
-          if (isInput(elementBehindCursor)) {
-            return;
-          }
-        }
-
-        var grabbed = shared.grabbed; // call to end() unsets shared.grabbed
-        eventualMovements(true); // remove mousemove listener
-        movements();
-        end();
-        start(grabbed);
-
-        // automaticly detect direction of elements if not set in options
-        if (!o.direction && getParent(shared.sourceItem)) {
-          var parent = shared.sourceItem.parentNode,
-            parentHeight = parent.offsetHeight,
-            parentWidth = parent.offsetWidth,
-            childHeight = shared.sourceItem.clientHeight,
-            childWidth = shared.sourceItem.clientWidth;
-          o.direction = parentHeight / childHeight < parentWidth / childWidth ? 'horizontal' : 'vertical';
-        }
-
-        // get initial coordinates, used to render shared.mirror for first time
-        var offset = getOffset(shared.sourceItem);
-        shared.offsetX = getCoord('pageX', e) - offset.left;
-        shared.offsetY = getCoord('pageY', e) - offset.top;
-        shared.clientX = getCoord('clientX', e);
-        shared.clientY = getCoord('clientY', e);
-
-        // limiting area of shared.mirror movement, get initial coordinates
-        if (o.boundingBox) {
-          shared.offsetXr = getCoord('pageX', e) - offset.right;
-          shared.offsetYb = getCoord('pageY', e) - offset.bottom;
-        }
-
-        e.preventDefault();
-
-        addClass(shared.item, o.classes.transit);
-        renderMirrorImage();
-        // initial position
-        shared.mirror.style.left = shared.clientX - shared.offsetX + 'px';
-        shared.mirror.style.top = shared.clientY - shared.offsetY + 'px';
-
-        drag(e);
-      }
-
-
-      function canStart(item) {
-        if (drake.dragging && shared.mirror) {
-          return; // already dragging
-        }
-
-        var handle = item;
-
-        while (getParent(item) && !isContainer(getParent(item))) {
-          // break loop if user tries to drag item which is considered invalid handle
-          if (o.invalid(item, handle)) {
-            return;
-          }
-          item = getParent(item); // drag target should be immediate child of container
-          if (!item) {
-            return;
-          }
-        }
-
-        var source = getParent(item);
-        if (!source ||
-          o.invalid(item, handle) ||
-          !o.moves(item, source, handle, nextEl(item))) {
-          return;
-        }
-
-        return {
-          item: item,
-          source: source
-        };
-      }
-
-      function manualStart(item) {
-        var context = canStart(item);
-        if (context) {
-          start(context);
-        }
-      }
-
-      function start(context) {
-        shared.sourceItem = shared.item = context.item;
-        shared.source = context.source;
-        shared.initialSibling = shared.currentSibling = nextEl(context.item);
-
-        if (isCopy(context.item, context.source)) {
-          shared.item = context.item.cloneNode(true);
-          shared.copy = true;
-          if (o.scope) {
-            o.scope.$emit(o.eventNames.dragularcloned, shared.item, context.item);
-          }
-        } else {
-          shared.copy = false;
-        }
-
-        // prepare models operations
-        var containerIndex = initialContainers.indexOf(context.source);
-        shared.sourceModel = o.containersModel[containerIndex];
-        shared.initialIndex = domIndexOf(context.item, context.source);
-
-        drake.dragging = true;
-        if (o.scope) {
-          o.scope.$emit(o.eventNames.dragulardrag, shared.sourceItem, shared.source);
-        }
-
-        return true;
-      }
-
-      function invalidTarget() {
-        return false;
-      }
-
-      function end() {
-        if (!drake.dragging || !shared.item) {
-          return;
-        }
-        drop(shared.item, getParent(shared.item));
-      }
-
-      function ungrab() {
-        shared.grabbed = false;
-        eventualMovements('remove');
-        movements('remove');
-      }
-
-      function release(e) {
-        ungrab();
-        if (!drake.dragging) {
-          return;
-        }
-        e = e || window.event;
-
-        shared.clientX = getCoord('clientX', e);
-        shared.clientY = getCoord('clientY', e);
-
-        var elementBehindCursor = getElementBehindPoint(shared.mirror, shared.clientX, shared.clientY),
-          dropTarget = findDropTarget(elementBehindCursor, shared.clientX, shared.clientY);
-
-        if (dropTarget && ((shared.copy && o.copySortSource) || (!shared.copy || dropTarget !== shared.source))) {
-          // found valid target and (is not copy case or target is not initial container)
-          drop(shared.item, dropTarget);
-        } else if (o.removeOnSpill) {
-          remove();
-        } else {
-          cancel();
-        }
-
-        // after release there is no container hovered
-        shared.target = null;
-
-        if (shared.lastElementBehindCursor) {
-          fireEvent(shared.lastElementBehindCursor, shared.dragOverEvents.dragularrelease, elementBehindCursor);
-        }
-
-        if (o.scope) {
-          o.scope.$emit(o.eventNames.dragularrelease, shared.item, shared.source);
-        }
-      }
-
-      function drop(item, target) {
-        if (shared.copy && o.copySortSource && target === shared.source && getParent(item)) {
-          item.parentNode.removeChild(shared.sourceItem);
-        }
-
-        var dropIndex = domIndexOf(item, target);
-
-        if (shared.sourceModel && !isInitialPlacement(target)) {
-          var dropElm = item;
-          $rootScope.$applyAsync(function applyDrop() {
-            if (target === shared.source) {
-              shared.sourceModel.splice(dropIndex, 0, shared.sourceModel.splice(shared.initialIndex, 1)[0]);
-            } else {
-              shared.dropElmModel = shared.copy ? angular.copy(shared.sourceModel[shared.initialIndex]) : shared.sourceModel[shared.initialIndex];
-
-              if (!shared.isContainerModel) {
-                shared.targetModel = shared.targetCtx.m;
-              } else {
-                shared.targetModel = shared.isContainerModel;
-              }
-
-              target.removeChild(dropElm); // element must be removed for ngRepeat to apply correctly
-
-              if (!shared.copy) {
-                shared.sourceModel.splice(shared.initialIndex, 1);
-              }
-              shared.targetModel.splice(dropIndex, 0, shared.dropElmModel);
-            }
-
-            if (getParent(item)) {
-              item.parentNode.removeChild(item);
-            }
-
-            emitDropEvent();
-            cleanup();
-          });
-        } else {
-          emitDropEvent();
-          cleanup();
-        }
-
-        function emitDropEvent() {
-          if (o.scope) {
-            if (isInitialPlacement(target)) {
-              o.scope.$emit(o.eventNames.dragularcancel, item, shared.source, shared.sourceModel, shared.initialIndex);
-            } else {
-              o.scope.$emit(o.eventNames.dragulardrop, item, target, shared.source, shared.sourceModel, shared.initialIndex, shared.targetModel, dropIndex);
-            }
-          }
-        }
-      }
-
-      function remove() {
-        if (!drake.dragging) {
-          return;
-        }
-        var parent = getParent(shared.item);
-
-        if (parent) {
-          parent.removeChild(shared.item);
-        }
-
-        if (shared.sourceModel) {
-          $rootScope.$applyAsync(function removeModel() {
-            shared.sourceModel.splice(shared.initialIndex, 1);
-            cleanup();
-          });
-        }
-
-        if (o.scope) {
-          o.scope.$emit(shared.copy ? o.eventNames.dragularcancel : o.eventNames.dragularremove, shared.item, parent, shared.sourceModel, shared.initialIndex);
-        }
-        if (!shared.sourceModel) {
-          cleanup();
-        }
-      }
-
-      function cancel(revert) {
-        if (!drake.dragging) {
-          return;
-        }
-        var reverts = arguments.length > 0 ? revert : o.revertOnSpill,
-          parent = getParent(shared.item);
-
-        var initial = isInitialPlacement(parent);
-        if (!initial && !shared.copy && reverts) {
-          shared.source.insertBefore(shared.item, shared.initialSibling);
-        }
-        if (shared.sourceModel && !shared.copy && !reverts) {
-          drop(shared.item, parent);
-        } else if (o.scope) {
-          if (initial || reverts) {
-            o.scope.$emit(o.eventNames.dragularcancel, shared.item, shared.source);
-          }
-        }
-
-        if (!shared.sourceModel || shared.copy || reverts || initial) {
-          cleanup();
-        }
-      }
-
-      function cleanup() {
-        ungrab();
-        removeMirrorImage();
-
-        if (shared.item) {
-          rmClass(shared.item, o.classes.transit);
-        }
-
-        drake.dragging = false;
-
-        if (o.removeOnSpill === true) {
-          spillOut();
-        }
-
-        if (o.scope) {
-          if(shared.lastDropTarget){
-           o.scope.$emit(o.eventNames.dragularout, shared.item, shared.lastDropTarget, shared.source);
-          }
-          o.scope.$emit(o.eventNames.dragulardragend, shared.item);
-        }
-
-        shared.source = shared.item = shared.sourceItem = shared.initialSibling = shared.currentSibling = shared.sourceModel = null;
-        shared.initialIndex = shared.currentIndex = shared.lastDropTarget = shared.isContainerModel = shared.targetModel = null;
-        shared.dropElmModel = shared.targetCtx = shared.copy = shared.moveX = shared.moveY = null;
-      }
-
-      // is item currently placed in original container and original position?
-      function isInitialPlacement(target, s) {
-        var sibling = s || (shared.mirror ? shared.currentSibling : nextEl(shared.item));
-        return target === shared.source && sibling === shared.initialSibling;
-      }
-
-      // find valid drop container
-      function findDropTarget(elementBehindCursor, clientX, clientY) {
-        var target = elementBehindCursor;
-
-        while (target && !accepted()) {
-          target = getParent(target);
-        }
-        return target;
-
-        function accepted() {
-          var accepts = false;
-
-          if (isContainer(target)) { // is droppable?
-
-            var immediate = getImmediateChild(target, elementBehindCursor),
-              reference = getReference(target, immediate, clientX, clientY),
-              initial = isInitialPlacement(target, reference),
-              i = o.nameSpace.length;
-
-            while (i--) {
-              if (shared.containers[o.nameSpace[i]].indexOf(target) !== -1) {
-                shared.targetCtx = shared.containersCtx[o.nameSpace[i]][shared.containers[o.nameSpace[i]].indexOf(target)];
-                break;
-              }
-              if (!shared.targetCtx) {
-                shared.targetCtx = shared.containersCtx.dragularCommon[shared.containers.dragularCommon.indexOf(target)];
-              }
-            }
-
-            accepts = initial ||
-              (shared.targetCtx.o.accepts(shared.item, target, shared.source, reference, shared.sourceModel, shared.initialIndex) &&
-                o.canBeAccepted(shared.item, target, shared.source, reference, shared.sourceModel, shared.initialIndex));
-
-            if (shared.target !== target) { // used for scroll issue
-              shared.target = target;
-            }
-          }
-          return accepts;
-        }
-      }
-
-      function drag(e) {
-        if (!shared.mirror) {
-          return;
-        }
-        e = e || window.event;
-
-        // update coordinates
-        shared.clientX = getCoord('clientX', e);
-        shared.clientY = getCoord('clientY', e);
-
-        // count mirror coordiates
-        var x = shared.clientX - shared.offsetX,
-          y = shared.clientY - shared.offsetY,
-          pageX,
-          pageY,
-          offsetBox;
-
-        // fill extra properties if boundingBox is used
-        if (o.boundingBox) {
-          pageX = getCoord('pageX', e);
-          pageY = getCoord('pageY', e);
-          offsetBox = getOffset(o.boundingBox);
-        }
-
-        if (!o.lockY) {
-          if (!o.boundingBox || (pageX > offsetBox.left + shared.offsetX && pageX < offsetBox.right + shared.offsetXr)) {
-            shared.mirror.style.left = x + 'px';
-          } else if (o.boundingBox) { // check again in case user scrolled the view
-            if (pageX < offsetBox.left + shared.offsetX) {
-              shared.mirror.style.left = shared.clientX - (pageX - offsetBox.left) + 'px';
-            } else {
-              shared.mirror.style.left = shared.clientX - shared.mirrorWidth - (pageX - offsetBox.right) + 'px';
-            }
-          }
-        }
-        if (!o.lockX) {
-          if (!o.boundingBox || (pageY > offsetBox.top + shared.offsetY && pageY < offsetBox.bottom + shared.offsetYb)) {
-            shared.mirror.style.top = y + 'px';
-          } else if (o.boundingBox) { // check again in case user scrolled the view
-            if (pageY < offsetBox.top + shared.offsetY) {
-              shared.mirror.style.top = shared.clientY - (pageY - offsetBox.top) + 'px';
-            } else {
-              shared.mirror.style.top = shared.clientY - shared.mirrorHeight - (pageY - offsetBox.bottom) + 'px';
-            }
-          }
-        }
-
-        var elementBehindCursor = getElementBehindPoint(shared.mirror, shared.clientX, shared.clientY),
-          dropTarget = findDropTarget(elementBehindCursor, shared.clientX, shared.clientY),
-          changed = dropTarget !== shared.lastDropTarget;
-
-        if (elementBehindCursor !== shared.lastElementBehindCursor) {
-          fireEvent(elementBehindCursor, shared.dragOverEvents.dragularenter, !!dropTarget);
-          if (shared.lastElementBehindCursor) {
-            fireEvent(shared.lastElementBehindCursor, shared.dragOverEvents.dragularleave, elementBehindCursor);
-          }
-          shared.lastElementBehindCursor = elementBehindCursor;
-        }
-
-        if (changed) {
-          out();
-          shared.lastDropTarget = dropTarget;
-          over();
-        }
-
-        // do not copy in same container
-        if (dropTarget === shared.source && shared.copy && !o.copySortSource) {
-          if (getParent(shared.item)) {
-            shared.item.parentNode.removeChild(shared.item);
-          }
-          return;
-        }
-
-        var reference,
-          immediate = getImmediateChild(dropTarget, elementBehindCursor);
-
-        if (immediate !== null) {
-          reference = getReference(dropTarget, immediate, shared.clientX, shared.clientY);
-        } else if (o.revertOnSpill === true && !shared.copy) {
-          // the case that mirror is not over valid target and reverting is on and copy is off
-          reference = shared.initialSibling;
-          dropTarget = shared.source;
-        } else {
-          // the case that mirror is not over valid target and removing is on or copy is on
-          if (shared.copy && getParent(shared.item)) {
-            // remove item or copy of item
-            shared.item.parentNode.removeChild(shared.item);
-          }
-          return;
-        }
-        if (reference === null ||
-          reference !== shared.item &&
-          reference !== nextEl(shared.item) &&
-          reference !== shared.currentSibling) {
-          // moving item/copy to new container from previous one
-          shared.currentSibling = reference;
-
-          dropTarget.insertBefore(shared.item, reference); // if reference is null item is inserted at the end
-
-          if (o.scope) {
-            o.scope.$emit(o.eventNames.dragularshadow, shared.item, dropTarget);
-          }
-        }
-
-        function moved(type) {
-          if (o.scope) {
-            o.scope.$emit(o.eventNames['dragular' + type], shared.item, shared.lastDropTarget, shared.source);
-          }
-          if (o.removeOnSpill === true) {
-            type === 'over' ? spillOver() : spillOut();
-          }
-        }
-
-        function over() {
-          if (changed) {
-            moved('over');
-          }
-        }
-
-        function out() {
-          if (shared.lastDropTarget) {
-            moved('out');
-          }
-        }
-      }
-
-      function spillOver() {
-        rmClass(shared.item, o.classes.hide);
-      }
-
-      function spillOut() {
-        if (drake.dragging) {
-          addClass(shared.item, o.classes.hide);
-        }
-      }
-
-      function scrollContainer(e) {
-        if (shared.target) {
-          var before = shared.target.scrollTop;
-          shared.target.scrollTop += e.deltaY;
-          // block scroll of the document when container can be scrolled
-          if (before !== shared.target.scrollTop) {
-            e.stopPropagation();
-            e.preventDefault();
-          }
-        }
-      }
-
-      function renderMirrorImage() {
-        if (shared.mirror) {
-          return;
-        }
-        var rect = shared.sourceItem.getBoundingClientRect();
-        shared.mirror = shared.sourceItem.cloneNode(true);
-        shared.mirrorWidth = rect.width;
-        shared.mirrorHeight = rect.height;
-        shared.mirror.style.width = getRectWidth(rect) + 'px';
-        shared.mirror.style.height = getRectHeight(rect) + 'px';
-        rmClass(shared.mirror, o.classes.transit);
-        addClass(shared.mirror, o.classes.mirror);
-        o.mirrorContainer.appendChild(shared.mirror);
-        regEvent(docElm, 'on', 'mousemove', drag);
-        addClass(body, o.classes.unselectable);
-        regEvent(shared.mirror, 'on', 'wheel', scrollContainer);
-        if (o.scope) {
-          o.scope.$emit(o.eventNames.dragularcloned, shared.mirror, shared.sourceItem);
-        }
-      }
-
-      function removeMirrorImage() {
-        if (shared.mirror) {
-          rmClass(body, o.classes.unselectable);
-          regEvent(docElm, 'off', 'mousemove', drag);
-          regEvent(shared.mirror, 'off', 'wheel', scrollContainer);
-          if(getParent(shared.mirror)){
-            shared.mirror.parentNode.removeChild(shared.mirror);
-          }
-          shared.mirror = null;
-        }
-      }
-
-      function getImmediateChild(dropTarget, target) {
-        var immediate = target;
-        while (immediate !== dropTarget && getParent(immediate) !== dropTarget) {
-          immediate = getParent(immediate);
-        }
-        if (immediate === docElm) {
-          return null;
-        }
-        return immediate;
-      }
-
-      function getReference(dropTarget, target, x, y) {
-        var horizontal = o.direction === 'horizontal';
-        return target !== dropTarget ? inside() : outside();
-
-        function outside() { // slower, but able to figure out any position
-          var len = dropTarget.children.length,
-            i, el, rect;
-          for (i = 0; i < len; i++) {
-            el = dropTarget.children[i];
-            rect = el.getBoundingClientRect();
-            if (horizontal && rect.left > x) {
-              return el;
-            }
-            if (!horizontal && rect.top > y) {
-              return el;
-            }
-          }
-          return null;
-        }
-
-        function inside() { // faster, but only available if dropped inside a child element
-          var rect = target.getBoundingClientRect();
-          if (horizontal) {
-            return resolve(x > rect.left + getRectWidth(rect) / 2);
-          }
-          return resolve(y > rect.top + getRectHeight(rect) / 2);
-        }
-
-        function resolve(after) {
-          return after ? nextEl(target) : target;
-        }
-      }
-
-      function isCopy(item, container) {
-        return typeof o.copy === 'boolean' ? o.copy : o.copy(item, container);
-      }
-
-      function getScroll(scrollProp, offsetProp) {
-        if (typeof window[offsetProp] !== 'undefined') {
-          return window[offsetProp];
-        }
-        if (docElm.clientHeight) {
-          return docElm[scrollProp];
-        }
-        return body[scrollProp];
-      }
-
-      function getOffset(el) {
-        var rect = el.getBoundingClientRect(),
-          scrollTop = getScroll('scrollTop', 'pageYOffset'),
-          scrollLeft = getScroll('scrollLeft', 'pageXOffset');
-        return {
-          left: rect.left + scrollLeft,
-          right: rect.right + scrollLeft,
-          top: rect.top + scrollTop,
-          bottom: rect.bottom + scrollTop
-        };
-      }
-
-      function getElementBehindPoint(point, x, y) {
-        var p = point || {},
-          state = p.className,
-          el;
-        p.className += ' ' + o.classes.hide;
-        el = doc.elementFromPoint(x, y);
-        p.className = state;
-        return el;
-      }
-    }; // end of serviceFn
+  // function returned by dragulaService
+    service = serviceFn;
 
   // clean common/shared objects
-  serviceFn.cleanEnviroment = function cleanEnviroment() {
+  service.cleanEnviroment = function cleanEnviroment() {
     shared.classesCache = {};
     shared.containersCtx = {};
     shared.containers = {};
     shared.mirror = undefined;
   };
 
-  serviceFn.shared = shared;
+  service.shared = shared;
 
-  return serviceFn;
+  return service;
+    
+  // service definition
+  function serviceFn(arg0, arg1) {
+    var initialContainers = arg0 || [],
+      options = arg1 || {},
+      // abbreviations
+      doc = document,
+      body = doc.body,
+      docElm = doc.documentElement,
+      // defaults
+      defaultClasses = {
+        mirror: 'gu-mirror',
+        hide: 'gu-hide',
+        unselectable: 'gu-unselectable',
+        transit: 'gu-transit'
+      },
+      defaultEventNames = {
+        // drag-over DOM events
+        dragularenter: 'dragularenter',
+        dragularleave: 'dragularleave',
+        dragularrelease: 'dragularrelease',
+        // $scope events
+        dragularcloned: 'dragularcloned',
+        dragulardrag: 'dragulardrag',
+        dragularcancel: 'dragularcancel',
+        dragulardrop: 'dragulardrop',
+        dragularremove: 'dragularremove',
+        dragulardragend: 'dragulardragend',
+        dragularshadow: 'dragularshadow',
+        dragularover: 'dragularover',
+        dragularout: 'dragularout'
+      },
+      o = { // options with defaults
+        // classes used by dragular
+        classes: defaultClasses,
+        // event names used by dragular
+        eventNames: defaultEventNames,
+        // initial containers provided via options object (are provided via parameter by default)
+        containers: false,
+        // can drag start?
+        moves: always,
+        // can target accept dragged item? (target context used)
+        accepts: always,
+        // can be dragged item accepted by target? (source context used)
+        canBeAccepted: always,
+        // potential target can be forced to be container by custom logic
+        isContainer: never,
+        // dragged item will be copy of source? flag or function
+        copy: false,
+        // target (in)validity function
+        invalid: invalidTarget,
+        // item returns to original place
+        revertOnSpill: false,
+        // item will be removed if not placed into valid target
+        removeOnSpill: false,
+        // lock movement into x-axis
+        lockX: false,
+        // lock movement into y-axis
+        lockY: false,
+        // lock movement inside this element boundaries
+        boundingBox: false,
+        // if provided, model will be synced with DOM
+        containersModel: false,
+        // if isContainer function is provided, you can provide also respective model
+        isContainerModel: getEmptyObject,
+        // element for appending mirror
+        mirrorContainer: doc.body,
+        // text selection in inputs wont be considered as drag
+        ignoreInputTextSelection: false
+      };
+
+    processServiceArguments(); // both arguments (containers and options) are optional, this function handle this
+    extendDefaultOptions();
+    processOptionsObject();
+    registerEvents();
+
+    var drake = {
+      containers: shared.containers,
+      containersCtx: shared.containersCtx,
+      isContainer: isContainer,
+      start: manualStart,
+      end: end,
+      cancel: cancel,
+      remove: remove,
+      destroy: destroy,
+      dragging: false
+    };
+
+    return drake;
+
+    // Function definitions: ==============================================================================================================
+    // Initial functions: -----------------------------------------------------------------------------------------------------------------
+
+    function processServiceArguments(){
+      if (arguments.length === 1 && // if there is only one argument we need to distinguish if it is options object or container(s) reference
+          !Array.isArray(arg0) && // array of containers elements
+          !angular.isElement(arg0) && // one container element
+          !arg0[0] && // array-like object with containers elements
+          typeof arg0 !== 'string') { // selector
+        // then arg0 is options object
+        options = arg0 || {};
+        initialContainers = []; // containers are not provided on init
+      } else if (typeof arg0 === 'string') {
+        initialContainers = document.querySelectorAll(arg0);
+      }
+    }
+
+    function extendDefaultOptions(){
+      angular.extend(o, options);
+      if(options.classes){
+        o.classes = angular.extend({}, defaultClasses, options.classes);
+      }
+      if(options.eventNames){
+        o.eventNames = angular.extend({}, defaultEventNames, options.eventNames);
+      }
+    }
+
+    function processOptionsObject(){
+      // bounding box must be pure DOM element, not jQuery wrapper or something else..
+      if (!isElement(o.boundingBox)) {
+        o.boundingBox = false;
+      }
+
+      // initial containers provided via options are higher priority then by parameter
+      if(o.containers){
+        initialContainers = o.containers;
+      }
+      // sanitize initialContainers
+      initialContainers = makeArray(initialContainers);
+
+      // sanitize o.containersModel
+      if (Array.isArray(o.containersModel)) {
+        //                  |-------- is 2D array? -----------|
+        o.containersModel = Array.isArray(o.containersModel[0]) ? o.containersModel : [o.containersModel];
+      } else {
+        o.containersModel = [];
+      }
+
+      // feed containers groups and optionaly do same for models
+      if (!o.nameSpace) {
+        o.nameSpace = ['dragularCommon'];
+      }
+      if (!Array.isArray(o.nameSpace)) {
+        o.nameSpace = [o.nameSpace];
+      }
+      o.nameSpace.forEach(function eachNameSpace(nameSpace) {
+        if (!shared.containers[nameSpace]) {
+          shared.containers[nameSpace] = [];
+          shared.containersCtx[nameSpace] = [];
+        }
+        var len = initialContainers.length,
+          shLen = shared.containers[nameSpace].length;
+        for (var i = 0; i < len; i++) {
+          shared.containers[nameSpace][i + shLen] = initialContainers[i];
+          shared.containersCtx[nameSpace][i + shLen] = {
+            o: o,
+            m: o.containersModel[i] // can be undefined
+          };
+        }
+      });
+    }
+
+    function registerEvents(remove) {
+      var op = remove ? 'off' : 'on';
+      regEvent(docElm, op, 'mouseup', release);
+      // regEvent(docElm, op, 'mousemove', startBecauseMouseMoved);
+
+      initialContainers.forEach(function addMouseDown(container) {
+        regEvent(container, 'on', 'mousedown', grab);
+      });
+
+      if(!remove){ // create dragular DOM events
+        angular.forEach(['dragularenter', 'dragularleave', 'dragularrelease'], function prepareDragOverEvents(name) {
+          var eventName = o.eventNames[name];
+          if(!shared.dragOverEvents[eventName]){
+            if (doc.createEvent) {
+              shared.dragOverEvents[eventName] = doc.createEvent('HTMLEvents');
+              shared.dragOverEvents[eventName].initEvent(eventName, true, true);
+            } else {
+              shared.dragOverEvents[eventName] = doc.createEventObject();
+              shared.dragOverEvents[eventName].eventType = eventName;
+            }
+          }
+        });
+      }
+    }
+    
+    // Event handlers functions (end of initial functions): -----------------------------------------------------------------------------------------------------------------
+
+    function grab(e) {
+      e = e || window.event;
+      shared.moveX = e.clientX;
+      shared.moveY = e.clientY;
+
+      // filter some odd situations
+      if (whichMouseButton(e) !== 1 || e.metaKey || e.ctrlKey) {
+        return; // we only care about honest-to-god left clicks and touch events
+      }
+
+      var context = canStart(e.target);
+      if (!context || !context.item) {
+        return;
+      }
+
+      shared.grabbed = context;
+      eventualMovements();
+      if (e.type === 'mousedown') {
+        if (isInput(context.item)) { // see also: https://github.com/bevacqua/dragula/issues/208
+          context.item.focus(); // fixes https://github.com/bevacqua/dragula/issues/176
+        } else {
+          e.preventDefault(); // fixes https://github.com/bevacqua/dragula/issues/155
+        }
+      }
+    }
+
+    function release(e) {
+      ungrab();
+      if (!drake.dragging) {
+        return;
+      }
+      e = e || window.event;
+
+      shared.clientX = getCoord('clientX', e);
+      shared.clientY = getCoord('clientY', e);
+
+      var elementBehindCursor = getElementBehindPoint(shared.mirror, shared.clientX, shared.clientY),
+        dropTarget = findDropTarget(elementBehindCursor, shared.clientX, shared.clientY);
+
+      if (dropTarget && ((shared.copy && o.copySortSource) || (!shared.copy || dropTarget !== shared.source))) {
+        // found valid target and (is not copy case or target is not initial container)
+        drop(shared.item, dropTarget);
+      } else if (o.removeOnSpill) {
+        remove();
+      } else {
+        cancel();
+      }
+
+      // after release there is no container hovered
+      shared.target = null;
+
+      if (shared.lastElementBehindCursor) {
+        fireEvent(shared.lastElementBehindCursor, shared.dragOverEvents.dragularrelease, elementBehindCursor);
+      }
+
+      if (o.scope) {
+        o.scope.$emit(o.eventNames.dragularrelease, shared.item, shared.source);
+      }
+    }
+    
+    // Main logic functions (end of event handler functions): -----------------------------------------------------------------------------------------------------------------
+
+    function isContainer(el) {
+      if(!el){
+        return false;
+      }
+      var i = o.nameSpace.length;
+      while (i--) {
+        if (shared.containers[o.nameSpace[i]].indexOf(el) !== -1) {
+          return true;
+        }
+      }
+      if (o.isContainer(el)) {
+        shared.isContainerModel = o.isContainerModel(el);
+        return true;
+      } else {
+        shared.isContainerModel = null;
+      }
+      return false;
+    }
+    
+    // Helper functions (end of main logic functions): -----------------------------------------------------------------------------------------------------------------
+
+    // add or remove containers - deprecated
+    function removeContainers(all) {
+      $rootScope.$applyAsync(function applyDestroyed() {
+        var changes = Array.isArray(all) ? all : makeArray(all);
+        changes.forEach(function forEachContainer(container) {
+          angular.forEach(o.nameSpace, function forEachNs(nameSpace) {
+            var index;
+            index = shared.containers[nameSpace].indexOf(container);
+            shared.containers[nameSpace].splice(index, 1);
+            shared.containersCtx[nameSpace].splice(index, 1);
+          });
+        });
+      });
+    }
+
+    function eventualMovements(remove) {
+      var op = remove ? 'off' : 'on';
+      regEvent(docElm, op, 'mousemove', startBecauseMouseMoved);
+    }
+
+    function movements(remove) {
+      var op = remove ? 'off' : 'on';
+      regEvent(docElm, op, 'selectstart', preventGrabbed); // IE8
+      regEvent(docElm, op, 'click', preventGrabbed);
+      regEvent(docElm, op, 'touchmove', preventGrabbed); // fixes touch devices scrolling while drag
+    }
+
+    function destroy() {
+      registerEvents(true);
+      removeContainers(initialContainers);
+      release({});
+    }
+
+    function preventGrabbed(e) {
+      if (shared.grabbed) {
+        e.preventDefault();
+      }
+    }
+
+    function startBecauseMouseMoved(e) {
+      if (!shared.grabbed || drake.dragging) {
+        return;
+      }
+      if (whichMouseButton(e) === 0) {
+        release({});
+        return; // when text is selected on an input and then dragged, mouseup doesn't fire. this is our only hope
+      }
+      // truthy check fixes #239, equality fixes #207
+      if (e.clientX && e.clientX === shared.moveX && e.clientY && e.clientY === shared.moveY) {
+        return;
+      }
+      if (o.ignoreInputTextSelection) {
+        var clientX = getCoord('clientX', e),
+          clientY = getCoord('clientY', e),
+          elementBehindCursor = doc.elementFromPoint(clientX, clientY);
+        if (isInput(elementBehindCursor)) {
+          return;
+        }
+      }
+
+      var grabbed = shared.grabbed; // call to end() unsets shared.grabbed
+      eventualMovements(true); // remove mousemove listener
+      movements();
+      end();
+      start(grabbed);
+
+      // automaticly detect direction of elements if not set in options
+      if (!o.direction && getParent(shared.sourceItem)) {
+        var parent = shared.sourceItem.parentNode,
+          parentHeight = parent.offsetHeight,
+          parentWidth = parent.offsetWidth,
+          childHeight = shared.sourceItem.clientHeight,
+          childWidth = shared.sourceItem.clientWidth;
+        o.direction = parentHeight / childHeight < parentWidth / childWidth ? 'horizontal' : 'vertical';
+      }
+
+      // get initial coordinates, used to render shared.mirror for first time
+      var offset = getOffset(shared.sourceItem);
+      shared.offsetX = getCoord('pageX', e) - offset.left;
+      shared.offsetY = getCoord('pageY', e) - offset.top;
+      shared.clientX = getCoord('clientX', e);
+      shared.clientY = getCoord('clientY', e);
+
+      // limiting area of shared.mirror movement, get initial coordinates
+      if (o.boundingBox) {
+        shared.offsetXr = getCoord('pageX', e) - offset.right;
+        shared.offsetYb = getCoord('pageY', e) - offset.bottom;
+      }
+
+      e.preventDefault();
+
+      addClass(shared.item, o.classes.transit);
+      renderMirrorImage();
+      // initial position
+      shared.mirror.style.left = shared.clientX - shared.offsetX + 'px';
+      shared.mirror.style.top = shared.clientY - shared.offsetY + 'px';
+
+      drag(e);
+    }
+
+
+    function canStart(item) {
+      if (drake.dragging && shared.mirror) {
+        return; // already dragging
+      }
+
+      var handle = item;
+
+      while (getParent(item) && !isContainer(getParent(item))) {
+        // break loop if user tries to drag item which is considered invalid handle
+        if (o.invalid(item, handle)) {
+          return;
+        }
+        item = getParent(item); // drag target should be immediate child of container
+        if (!item) {
+          return;
+        }
+      }
+
+      var source = getParent(item);
+      if (!source ||
+        o.invalid(item, handle) ||
+        !o.moves(item, source, handle, nextEl(item))) {
+        return;
+      }
+
+      return {
+        item: item,
+        source: source
+      };
+    }
+
+    function manualStart(item) {
+      var context = canStart(item);
+      if (context) {
+        start(context);
+      }
+    }
+
+    function start(context) {
+      shared.sourceItem = shared.item = context.item;
+      shared.source = context.source;
+      shared.initialSibling = shared.currentSibling = nextEl(context.item);
+
+      if (isCopy(context.item, context.source)) {
+        shared.item = context.item.cloneNode(true);
+        shared.copy = true;
+        if (o.scope) {
+          o.scope.$emit(o.eventNames.dragularcloned, shared.item, context.item);
+        }
+      } else {
+        shared.copy = false;
+      }
+
+      // prepare models operations
+      var containerIndex = initialContainers.indexOf(context.source);
+      shared.sourceModel = o.containersModel[containerIndex];
+      shared.initialIndex = domIndexOf(context.item, context.source);
+
+      drake.dragging = true;
+      if (o.scope) {
+        o.scope.$emit(o.eventNames.dragulardrag, shared.sourceItem, shared.source);
+      }
+
+      return true;
+    }
+
+    function invalidTarget() {
+      return false;
+    }
+
+    function end() {
+      if (!drake.dragging || !shared.item) {
+        return;
+      }
+      drop(shared.item, getParent(shared.item));
+    }
+
+    function ungrab() {
+      shared.grabbed = false;
+      eventualMovements('remove');
+      movements('remove');
+    }
+
+    function drop(item, target) {
+      if (shared.copy && o.copySortSource && target === shared.source && getParent(item)) {
+        item.parentNode.removeChild(shared.sourceItem);
+      }
+
+      var dropIndex = domIndexOf(item, target);
+
+      if (shared.sourceModel && !isInitialPlacement(target)) {
+        var dropElm = item;
+        $rootScope.$applyAsync(function applyDrop() {
+          if (target === shared.source) {
+            shared.sourceModel.splice(dropIndex, 0, shared.sourceModel.splice(shared.initialIndex, 1)[0]);
+          } else {
+            shared.dropElmModel = shared.copy ? angular.copy(shared.sourceModel[shared.initialIndex]) : shared.sourceModel[shared.initialIndex];
+
+            if (!shared.isContainerModel) {
+              shared.targetModel = shared.targetCtx.m;
+            } else {
+              shared.targetModel = shared.isContainerModel;
+            }
+
+            target.removeChild(dropElm); // element must be removed for ngRepeat to apply correctly
+
+            if (!shared.copy) {
+              shared.sourceModel.splice(shared.initialIndex, 1);
+            }
+            shared.targetModel.splice(dropIndex, 0, shared.dropElmModel);
+          }
+
+          if (getParent(item)) {
+            item.parentNode.removeChild(item);
+          }
+
+          emitDropEvent();
+          cleanup();
+        });
+      } else {
+        emitDropEvent();
+        cleanup();
+      }
+
+      function emitDropEvent() {
+        if (o.scope) {
+          if (isInitialPlacement(target)) {
+            o.scope.$emit(o.eventNames.dragularcancel, item, shared.source, shared.sourceModel, shared.initialIndex);
+          } else {
+            o.scope.$emit(o.eventNames.dragulardrop, item, target, shared.source, shared.sourceModel, shared.initialIndex, shared.targetModel, dropIndex);
+          }
+        }
+      }
+    }
+
+    function remove() {
+      if (!drake.dragging) {
+        return;
+      }
+      var parent = getParent(shared.item);
+
+      if (parent) {
+        parent.removeChild(shared.item);
+      }
+
+      if (shared.sourceModel) {
+        $rootScope.$applyAsync(function removeModel() {
+          shared.sourceModel.splice(shared.initialIndex, 1);
+          cleanup();
+        });
+      }
+
+      if (o.scope) {
+        o.scope.$emit(shared.copy ? o.eventNames.dragularcancel : o.eventNames.dragularremove, shared.item, parent, shared.sourceModel, shared.initialIndex);
+      }
+      if (!shared.sourceModel) {
+        cleanup();
+      }
+    }
+
+    function cancel(revert) {
+      if (!drake.dragging) {
+        return;
+      }
+      var reverts = arguments.length > 0 ? revert : o.revertOnSpill,
+        parent = getParent(shared.item);
+
+      var initial = isInitialPlacement(parent);
+      if (!initial && !shared.copy && reverts) {
+        shared.source.insertBefore(shared.item, shared.initialSibling);
+      }
+      if (shared.sourceModel && !shared.copy && !reverts) {
+        drop(shared.item, parent);
+      } else if (o.scope) {
+        if (initial || reverts) {
+          o.scope.$emit(o.eventNames.dragularcancel, shared.item, shared.source);
+        }
+      }
+
+      if (!shared.sourceModel || shared.copy || reverts || initial) {
+        cleanup();
+      }
+    }
+
+    function cleanup() {
+      ungrab();
+      removeMirrorImage();
+
+      if (shared.item) {
+        rmClass(shared.item, o.classes.transit);
+      }
+
+      drake.dragging = false;
+
+      if (o.removeOnSpill === true) {
+        spillOut();
+      }
+
+      if (o.scope) {
+        if(shared.lastDropTarget){
+         o.scope.$emit(o.eventNames.dragularout, shared.item, shared.lastDropTarget, shared.source);
+        }
+        o.scope.$emit(o.eventNames.dragulardragend, shared.item);
+      }
+
+      shared.source = shared.item = shared.sourceItem = shared.initialSibling = shared.currentSibling = shared.sourceModel = null;
+      shared.initialIndex = shared.currentIndex = shared.lastDropTarget = shared.isContainerModel = shared.targetModel = null;
+      shared.dropElmModel = shared.targetCtx = shared.copy = shared.moveX = shared.moveY = null;
+    }
+
+    // is item currently placed in original container and original position?
+    function isInitialPlacement(target, s) {
+      var sibling = s || (shared.mirror ? shared.currentSibling : nextEl(shared.item));
+      return target === shared.source && sibling === shared.initialSibling;
+    }
+
+    // find valid drop container
+    function findDropTarget(elementBehindCursor, clientX, clientY) {
+      var target = elementBehindCursor;
+
+      while (target && !accepted()) {
+        target = getParent(target);
+      }
+      return target;
+
+      function accepted() {
+        var accepts = false;
+
+        if (isContainer(target)) { // is droppable?
+
+          var immediate = getImmediateChild(target, elementBehindCursor),
+            reference = getReference(target, immediate, clientX, clientY),
+            initial = isInitialPlacement(target, reference),
+            i = o.nameSpace.length;
+
+          while (i--) {
+            if (shared.containers[o.nameSpace[i]].indexOf(target) !== -1) {
+              shared.targetCtx = shared.containersCtx[o.nameSpace[i]][shared.containers[o.nameSpace[i]].indexOf(target)];
+              break;
+            }
+            if (!shared.targetCtx) {
+              shared.targetCtx = shared.containersCtx.dragularCommon[shared.containers.dragularCommon.indexOf(target)];
+            }
+          }
+
+          accepts = initial ||
+            (shared.targetCtx.o.accepts(shared.item, target, shared.source, reference, shared.sourceModel, shared.initialIndex) &&
+              o.canBeAccepted(shared.item, target, shared.source, reference, shared.sourceModel, shared.initialIndex));
+
+          if (shared.target !== target) { // used for scroll issue
+            shared.target = target;
+          }
+        }
+        return accepts;
+      }
+    }
+
+    function drag(e) {
+      if (!shared.mirror) {
+        return;
+      }
+      e = e || window.event;
+
+      // update coordinates
+      shared.clientX = getCoord('clientX', e);
+      shared.clientY = getCoord('clientY', e);
+
+      // count mirror coordiates
+      var x = shared.clientX - shared.offsetX,
+        y = shared.clientY - shared.offsetY,
+        pageX,
+        pageY,
+        offsetBox;
+
+      // fill extra properties if boundingBox is used
+      if (o.boundingBox) {
+        pageX = getCoord('pageX', e);
+        pageY = getCoord('pageY', e);
+        offsetBox = getOffset(o.boundingBox);
+      }
+
+      if (!o.lockY) {
+        if (!o.boundingBox || (pageX > offsetBox.left + shared.offsetX && pageX < offsetBox.right + shared.offsetXr)) {
+          shared.mirror.style.left = x + 'px';
+        } else if (o.boundingBox) { // check again in case user scrolled the view
+          if (pageX < offsetBox.left + shared.offsetX) {
+            shared.mirror.style.left = shared.clientX - (pageX - offsetBox.left) + 'px';
+          } else {
+            shared.mirror.style.left = shared.clientX - shared.mirrorWidth - (pageX - offsetBox.right) + 'px';
+          }
+        }
+      }
+      if (!o.lockX) {
+        if (!o.boundingBox || (pageY > offsetBox.top + shared.offsetY && pageY < offsetBox.bottom + shared.offsetYb)) {
+          shared.mirror.style.top = y + 'px';
+        } else if (o.boundingBox) { // check again in case user scrolled the view
+          if (pageY < offsetBox.top + shared.offsetY) {
+            shared.mirror.style.top = shared.clientY - (pageY - offsetBox.top) + 'px';
+          } else {
+            shared.mirror.style.top = shared.clientY - shared.mirrorHeight - (pageY - offsetBox.bottom) + 'px';
+          }
+        }
+      }
+
+      var elementBehindCursor = getElementBehindPoint(shared.mirror, shared.clientX, shared.clientY),
+        dropTarget = findDropTarget(elementBehindCursor, shared.clientX, shared.clientY),
+        changed = dropTarget !== shared.lastDropTarget;
+
+      if (elementBehindCursor !== shared.lastElementBehindCursor) {
+        fireEvent(elementBehindCursor, shared.dragOverEvents.dragularenter, !!dropTarget);
+        if (shared.lastElementBehindCursor) {
+          fireEvent(shared.lastElementBehindCursor, shared.dragOverEvents.dragularleave, elementBehindCursor);
+        }
+        shared.lastElementBehindCursor = elementBehindCursor;
+      }
+
+      if (changed) {
+        out();
+        shared.lastDropTarget = dropTarget;
+        over();
+      }
+
+      // do not copy in same container
+      if (dropTarget === shared.source && shared.copy && !o.copySortSource) {
+        if (getParent(shared.item)) {
+          shared.item.parentNode.removeChild(shared.item);
+        }
+        return;
+      }
+
+      var reference,
+        immediate = getImmediateChild(dropTarget, elementBehindCursor);
+
+      if (immediate !== null) {
+        reference = getReference(dropTarget, immediate, shared.clientX, shared.clientY);
+      } else if (o.revertOnSpill === true && !shared.copy) {
+        // the case that mirror is not over valid target and reverting is on and copy is off
+        reference = shared.initialSibling;
+        dropTarget = shared.source;
+      } else {
+        // the case that mirror is not over valid target and removing is on or copy is on
+        if (shared.copy && getParent(shared.item)) {
+          // remove item or copy of item
+          shared.item.parentNode.removeChild(shared.item);
+        }
+        return;
+      }
+      if (reference === null ||
+        reference !== shared.item &&
+        reference !== nextEl(shared.item) &&
+        reference !== shared.currentSibling) {
+        // moving item/copy to new container from previous one
+        shared.currentSibling = reference;
+
+        dropTarget.insertBefore(shared.item, reference); // if reference is null item is inserted at the end
+
+        if (o.scope) {
+          o.scope.$emit(o.eventNames.dragularshadow, shared.item, dropTarget);
+        }
+      }
+
+      function moved(type) {
+        if (o.scope) {
+          o.scope.$emit(o.eventNames['dragular' + type], shared.item, shared.lastDropTarget, shared.source);
+        }
+        if (o.removeOnSpill === true) {
+          type === 'over' ? spillOver() : spillOut();
+        }
+      }
+
+      function over() {
+        if (changed) {
+          moved('over');
+        }
+      }
+
+      function out() {
+        if (shared.lastDropTarget) {
+          moved('out');
+        }
+      }
+    }
+
+    function spillOver() {
+      rmClass(shared.item, o.classes.hide);
+    }
+
+    function spillOut() {
+      if (drake.dragging) {
+        addClass(shared.item, o.classes.hide);
+      }
+    }
+
+    function scrollContainer(e) {
+      if (shared.target) {
+        var before = shared.target.scrollTop;
+        shared.target.scrollTop += e.deltaY;
+        // block scroll of the document when container can be scrolled
+        if (before !== shared.target.scrollTop) {
+          e.stopPropagation();
+          e.preventDefault();
+        }
+      }
+    }
+
+    function renderMirrorImage() {
+      if (shared.mirror) {
+        return;
+      }
+      var rect = shared.sourceItem.getBoundingClientRect();
+      shared.mirror = shared.sourceItem.cloneNode(true);
+      shared.mirrorWidth = rect.width;
+      shared.mirrorHeight = rect.height;
+      shared.mirror.style.width = getRectWidth(rect) + 'px';
+      shared.mirror.style.height = getRectHeight(rect) + 'px';
+      rmClass(shared.mirror, o.classes.transit);
+      addClass(shared.mirror, o.classes.mirror);
+      o.mirrorContainer.appendChild(shared.mirror);
+      regEvent(docElm, 'on', 'mousemove', drag);
+      addClass(body, o.classes.unselectable);
+      regEvent(shared.mirror, 'on', 'wheel', scrollContainer);
+      if (o.scope) {
+        o.scope.$emit(o.eventNames.dragularcloned, shared.mirror, shared.sourceItem);
+      }
+    }
+
+    function removeMirrorImage() {
+      if (shared.mirror) {
+        rmClass(body, o.classes.unselectable);
+        regEvent(docElm, 'off', 'mousemove', drag);
+        regEvent(shared.mirror, 'off', 'wheel', scrollContainer);
+        if(getParent(shared.mirror)){
+          shared.mirror.parentNode.removeChild(shared.mirror);
+        }
+        shared.mirror = null;
+      }
+    }
+
+    function getImmediateChild(dropTarget, target) {
+      var immediate = target;
+      while (immediate !== dropTarget && getParent(immediate) !== dropTarget) {
+        immediate = getParent(immediate);
+      }
+      if (immediate === docElm) {
+        return null;
+      }
+      return immediate;
+    }
+
+    function getReference(dropTarget, target, x, y) {
+      var horizontal = o.direction === 'horizontal';
+      return target !== dropTarget ? inside() : outside();
+
+      function outside() { // slower, but able to figure out any position
+        var len = dropTarget.children.length,
+          i, el, rect;
+        for (i = 0; i < len; i++) {
+          el = dropTarget.children[i];
+          rect = el.getBoundingClientRect();
+          if (horizontal && rect.left > x) {
+            return el;
+          }
+          if (!horizontal && rect.top > y) {
+            return el;
+          }
+        }
+        return null;
+      }
+
+      function inside() { // faster, but only available if dropped inside a child element
+        var rect = target.getBoundingClientRect();
+        if (horizontal) {
+          return resolve(x > rect.left + getRectWidth(rect) / 2);
+        }
+        return resolve(y > rect.top + getRectHeight(rect) / 2);
+      }
+
+      function resolve(after) {
+        return after ? nextEl(target) : target;
+      }
+    }
+
+    function isCopy(item, container) {
+      return typeof o.copy === 'boolean' ? o.copy : o.copy(item, container);
+    }
+
+    function getScroll(scrollProp, offsetProp) {
+      if (typeof window[offsetProp] !== 'undefined') {
+        return window[offsetProp];
+      }
+      if (docElm.clientHeight) {
+        return docElm[scrollProp];
+      }
+      return body[scrollProp];
+    }
+
+    function getOffset(el) {
+      var rect = el.getBoundingClientRect(),
+        scrollTop = getScroll('scrollTop', 'pageYOffset'),
+        scrollLeft = getScroll('scrollLeft', 'pageXOffset');
+      return {
+        left: rect.left + scrollLeft,
+        right: rect.right + scrollLeft,
+        top: rect.top + scrollTop,
+        bottom: rect.bottom + scrollTop
+      };
+    }
+
+    function getElementBehindPoint(point, x, y) {
+      var p = point || {},
+        state = p.className,
+        el;
+      p.className += ' ' + o.classes.hide;
+      el = doc.elementFromPoint(x, y);
+      p.className = state;
+      return el;
+    }
+  } // end of service
 
   /****************************************************************************************************************************/
   /****************************************************************************************************************************/
@@ -977,6 +975,28 @@ dragularModule.factory('dragularService', function dragula($rootScope) {
 
   function always() {
     return true;
+  }
+  
+  // make array from array-like objects or from single element (based on bevacqua/atoa)
+  function makeArray(all, startIndex) {
+    if (Array.isArray(all)) {
+      return all;
+    }
+    if (all.length) { // is array-like
+      return Array.prototype.slice.call(all, startIndex);
+    } else { // is one element
+      return [all];
+    }
+  }
+
+  function whichMouseButton (e) {
+    if (e.touches !== void 0) { return e.touches.length; }
+    if (e.buttons !== undefined) { return e.buttons; }
+    if (e.which !== undefined) { return e.which; }
+    var button = e.button;
+    if (button !== undefined) { // see https://github.com/jquery/jquery/blob/99e8ff1baa7ae341e94bb89c3e84570c7c3ad9ea/src/event.js#L573-L575
+      return button & 1 ? 1 : button & 2 ? 3 : (button & 4 ? 2 : 0);
+    }
   }
 
   function getRectWidth(rect) {
@@ -1067,16 +1087,6 @@ dragularModule.factory('dragularService', function dragula($rootScope) {
       }
       // Nothing should happen for touchend
       return false;
-    }
-  }
-
-  function whichMouseButton (e) {
-    if (e.touches !== void 0) { return e.touches.length; }
-    if (e.buttons !== undefined) { return e.buttons; }
-    if (e.which !== undefined) { return e.which; }
-    var button = e.button;
-    if (button !== undefined) { // see https://github.com/jquery/jquery/blob/99e8ff1baa7ae341e94bb89c3e84570c7c3ad9ea/src/event.js#L573-L575
-      return button & 1 ? 1 : button & 2 ? 3 : (button & 4 ? 2 : 0);
     }
   }
 
