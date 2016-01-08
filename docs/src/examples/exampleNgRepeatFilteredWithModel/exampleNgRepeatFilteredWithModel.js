@@ -39,12 +39,30 @@ examplesAppModule
       content: 'Apple 14'
     }];
     $scope.filter1query = 'Orange';
-    $scope.filter2query = 'Apple';
+    $scope.filter2query = 'Orange';
     $scope.filteredModel1 = [];
     $scope.filteredModel2 = [];
     $scope.getFilteredModel = function (filteredModel, items, filterQuery) {
       filteredModel.length = 0;
-      Array.prototype.push.apply(filteredModel, $filter('filter')(items, filterQuery));
+      /*
+      * Following one-liner is same like:
+      *   var filteredModelTemp = $filter('filter')(items, filterQuery);
+      *   angular.forEach(filteredModelTemp, function(item){
+      *     filteredModel.push(item);
+      *   });
+      * Or like:
+      *   var filteredModelTemp = $filter('filter')(items, filterQuery);
+      *   for(var i; i < filteredModelTemp.length; i++){
+      *     filteredModel.push(filteredModelTemp[i]);
+      *   }
+      *
+      * You cannot just assign filtered array to filteredModel like this:
+      *   filteredModel = $filter('filter')(items, filterQuery);
+      * Because you would replace the array object you provide to dragular with new one.
+      * So dragular will continue to use the one it was provided on init.
+      * Hopefully I make it clear. :)
+       */
+      [].push.apply(filteredModel, $filter('filter')(items, filterQuery));
       return filteredModel;
     };
     var containers = $element.children().eq(1).children();

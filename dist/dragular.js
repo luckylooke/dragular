@@ -68,6 +68,7 @@ var dragularModule = require('./dragularModule'),
       copy: null, // isCopy flag
       sourceItem: null, // item originaly dragged if copy is enabled
       sourceModel: null, // source container model
+      sourceFilteredModel: null, // source container filtered model if relevant
       target: null, // droppable container under drag item
       targetCtx: null, // target container context
       targetModel: null, // target container model
@@ -86,7 +87,7 @@ var dragularModule = require('./dragularModule'),
       currentSibling: null, // reference sibling now
       initialIndex: null, // reference model index when grabbed
       currentIndex: null, // reference model index now
-      isContainerModel: null, // if o.isContainer is used, model can be provided as well, here it is kept
+      tempModel: null, // if o.isContainer is used, model can be provided as well, it is temporary saved here during drags
       dragOverEvents: {}, // drag over events fired on element behind cursor
       lastElementBehindCursor: null, // last element behind cursor
       grabbed: null // holds mousedown context until first mousemove
@@ -97,7 +98,7 @@ dragularModule.factory('dragularService', ["$rootScope", function dragularServic
   var doc = document,
       body = doc.body,
       docElm = doc.documentElement;
-      
+
   // clean common/shared objects
   service.cleanEnviroment = function cleanEnviroment() {
     shared.classesCache = {};
@@ -109,7 +110,7 @@ dragularModule.factory('dragularService', ["$rootScope", function dragularServic
   service.shared = shared;
 
   return service;
-    
+
   // service definition
   function service(arg0, arg1) {
     var initialContainers = arg0 || [],
@@ -144,14 +145,20 @@ dragularModule.factory('dragularService', ["$rootScope", function dragularServic
         eventNames: defaultEventNames,
         // initial containers provided via options object (are provided via parameter by default)
         containers: false,
+        // if provided, model will be synced with DOM
+        containersModel: false,
+        // if provided, dragular will handle filtered model cases
+        containersFilteredModel: false,
+        // potential target can be forced to be container by custom logic
+        isContainer: never,
+        // if isContainer function is provided, you can provide also respective model
+        isContainerModel: getEmptyObject,
         // can drag start?
         moves: always,
         // can target accept dragged item? (target context used)
         accepts: always,
         // can be dragged item accepted by target? (source context used)
         canBeAccepted: always,
-        // potential target can be forced to be container by custom logic
-        isContainer: never,
         // dragged item will be copy of source? flag or function
         copy: false,
         // target (in)validity function
@@ -166,10 +173,6 @@ dragularModule.factory('dragularService', ["$rootScope", function dragularServic
         lockY: false,
         // lock movement inside this element boundaries
         boundingBox: false,
-        // if provided, model will be synced with DOM
-        containersModel: false,
-        // if isContainer function is provided, you can provide also respective model
-        isContainerModel: getEmptyObject,
         // element for appending mirror
         mirrorContainer: doc.body,
         // text selection in inputs wont be considered as drag
@@ -242,6 +245,14 @@ dragularModule.factory('dragularService', ["$rootScope", function dragularServic
       } else {
         o.containersModel = [];
       }
+console.log('o.containersFilteredModel',o.containersFilteredModel);
+      // sanitize o.containersFilteredModel
+      if (Array.isArray(o.containersFilteredModel)) {
+        //                  |-------- is 2D array? -----------|
+        o.containersFilteredModel = Array.isArray(o.containersFilteredModel[0]) ? o.containersFilteredModel : [o.containersFilteredModel];
+      } else {
+        o.containersFilteredModel = [];
+      }
 
       // feed containers groups and optionaly do same for models
       if (!o.nameSpace) {
@@ -261,7 +272,8 @@ dragularModule.factory('dragularService', ["$rootScope", function dragularServic
           shared.containers[nameSpace][i + shLen] = initialContainers[i];
           shared.containersCtx[nameSpace][i + shLen] = {
             o: o,
-            m: o.containersModel[i] // can be undefined
+            m: o.containersModel[i], // can be undefined
+            fm: o.containersFilteredModel[i] // can be undefined
           };
         }
       });
@@ -291,7 +303,7 @@ dragularModule.factory('dragularService', ["$rootScope", function dragularServic
         });
       }
     }
-    
+
     // Event handlers functions (end of initial functions): -----------------------------------------------------------------------------------------------------------------
 
     function grab(e) {
@@ -299,7 +311,7 @@ dragularModule.factory('dragularService', ["$rootScope", function dragularServic
       if (whichMouseButton(e) !== 1 || e.metaKey || e.ctrlKey) {
         return; // we only care about honest-to-god left clicks and touch events
       }
-      
+
       // set itial values
       shared.moveX = e.clientX;
       shared.moveY = e.clientY;
@@ -352,7 +364,7 @@ dragularModule.factory('dragularService', ["$rootScope", function dragularServic
         o.scope.$emit(o.eventNames.dragularrelease, shared.item, shared.source);
       }
     }
-    
+
     // Main logic functions (end of event handler functions): -----------------------------------------------------------------------------------------------------------------
 
     function isContainer(el) {
@@ -366,10 +378,10 @@ dragularModule.factory('dragularService', ["$rootScope", function dragularServic
         }
       }
       if (o.isContainer(el)) {
-        shared.isContainerModel = o.isContainerModel(el);
+        shared.tempModel = o.isContainerModel(el);
         return true;
       } else {
-        shared.isContainerModel = null;
+        shared.tempModel = null;
       }
       return false;
     }
@@ -523,6 +535,9 @@ dragularModule.factory('dragularService', ["$rootScope", function dragularServic
       // prepare models operations
       var containerIndex = initialContainers.indexOf(context.source);
       shared.sourceModel = o.containersModel[containerIndex];
+
+      console.log('o.containersFilteredModel',o.containersFilteredModel);
+      shared.sourceFilteredModel = o.containersFilteredModel[containerIndex];
       shared.initialIndex = domIndexOf(context.item, context.source);
 
       drake.dragging = true;
@@ -551,23 +566,34 @@ dragularModule.factory('dragularService', ["$rootScope", function dragularServic
         item.parentNode.removeChild(shared.sourceItem);
       }
 
-      var dropIndex = domIndexOf(item, target);
-
       if (shared.sourceModel && !isInitialPlacement(target)) {
-        var dropElm = item;
+
+        var dropIndex = domIndexOf(item, target);
+        if(shared.targetCtx.fm){ // target has filtered model
+          // convert index from index-in-filteredModel to index-in-model
+          dropIndex = shared.targetCtx.m.indexOf(shared.targetCtx.fm[dropIndex]);
+        }
+        if(shared.sourceFilteredModel){ // target has filtered model
+          // convert index from index-in-filteredModel to index-in-model
+          shared.initialIndex = shared.sourceModel.indexOf(shared.sourceFilteredModel[shared.initialIndex]);
+        }
+        console.log('shared.targetCtx.fm',shared.targetCtx.fm);
+        console.log('shared.sourceFilteredModel',shared.sourceFilteredModel);
+        console.log('shared.sourceModel[shared.initialIndex]',shared.sourceModel[shared.initialIndex]);
+        console.log('shared.targetCtx.m[dropIndex]',shared.targetCtx.m[dropIndex]);
         $rootScope.$applyAsync(function applyDrop() {
           if (target === shared.source) {
             shared.sourceModel.splice(dropIndex, 0, shared.sourceModel.splice(shared.initialIndex, 1)[0]);
           } else {
             shared.dropElmModel = shared.copy ? angular.copy(shared.sourceModel[shared.initialIndex]) : shared.sourceModel[shared.initialIndex];
 
-            if (!shared.isContainerModel) {
+            if (!shared.tempModel) {
               shared.targetModel = shared.targetCtx.m;
             } else {
-              shared.targetModel = shared.isContainerModel;
+              shared.targetModel = shared.tempModel;
             }
 
-            target.removeChild(dropElm); // element must be removed for ngRepeat to apply correctly
+            target.removeChild(item); // element must be removed for ngRepeat to apply correctly
 
             if (!shared.copy) {
               shared.sourceModel.splice(shared.initialIndex, 1);
@@ -669,7 +695,7 @@ dragularModule.factory('dragularService', ["$rootScope", function dragularServic
       }
 
       shared.source = shared.item = shared.sourceItem = shared.initialSibling = shared.currentSibling = shared.sourceModel = null;
-      shared.initialIndex = shared.currentIndex = shared.lastDropTarget = shared.isContainerModel = shared.targetModel = null;
+      shared.initialIndex = shared.currentIndex = shared.lastDropTarget = shared.tempModel = shared.targetModel = null;
       shared.dropElmModel = shared.targetCtx = shared.copy = shared.moveX = shared.moveY = null;
     }
 
@@ -811,7 +837,7 @@ dragularModule.factory('dragularService', ["$rootScope", function dragularServic
         }
         return;
       }
-      
+
       if (reference === null ||
         reference !== shared.item &&
         reference !== nextEl(shared.item) &&
@@ -977,14 +1003,14 @@ dragularModule.factory('dragularService', ["$rootScope", function dragularServic
   function always() {
     return true;
   }
-  
+
   // make array from array-like objects or from single element (based on bevacqua/atoa)
   function makeArray(all, startIndex) {
     if (Array.isArray(all)) {
       return all;
     }
     if (all.length) { // is array-like
-      return Array.prototype.slice.call(all, startIndex);
+      return Array.prototype.slice.call(all, startIndex); // convert to vanilla js array
     } else { // is one element
       return [all];
     }
