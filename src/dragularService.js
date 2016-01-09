@@ -194,7 +194,7 @@ dragularModule.factory('dragularService', function dragularServiceFunction($root
       } else {
         o.containersModel = [];
       }
-console.log('o.containersFilteredModel',o.containersFilteredModel);
+
       // sanitize o.containersFilteredModel
       if (Array.isArray(o.containersFilteredModel)) {
         //                  |-------- is 2D array? -----------|
@@ -485,7 +485,6 @@ console.log('o.containersFilteredModel',o.containersFilteredModel);
       var containerIndex = initialContainers.indexOf(context.source);
       shared.sourceModel = o.containersModel[containerIndex];
 
-      console.log('o.containersFilteredModel',o.containersFilteredModel);
       shared.sourceFilteredModel = o.containersFilteredModel[containerIndex];
       shared.initialIndex = domIndexOf(context.item, context.source);
 
@@ -526,10 +525,6 @@ console.log('o.containersFilteredModel',o.containersFilteredModel);
           // convert index from index-in-filteredModel to index-in-model
           shared.initialIndex = shared.sourceModel.indexOf(shared.sourceFilteredModel[shared.initialIndex]);
         }
-        console.log('shared.targetCtx.fm',shared.targetCtx.fm);
-        console.log('shared.sourceFilteredModel',shared.sourceFilteredModel);
-        console.log('shared.sourceModel[shared.initialIndex]',shared.sourceModel[shared.initialIndex]);
-        console.log('shared.targetCtx.m[dropIndex]',shared.targetCtx.m[dropIndex]);
         $rootScope.$applyAsync(function applyDrop() {
           if (target === shared.source) {
             shared.sourceModel.splice(dropIndex, 0, shared.sourceModel.splice(shared.initialIndex, 1)[0]);
