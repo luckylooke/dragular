@@ -177,6 +177,17 @@ dragularModule.factory('dragularService', ["$rootScope", function dragularServic
         mirrorContainer: doc.body,
         // text selection in inputs wont be considered as drag
         ignoreInputTextSelection: false
+      },
+      drake = {
+        containers: shared.containers,
+        containersCtx: shared.containersCtx,
+        isContainer: isContainer,
+        start: manualStart,
+        end: end,
+        cancel: cancel,
+        remove: remove,
+        destroy: destroy,
+        dragging: false
       };
 
     processServiceArguments(); // both arguments (containers and options) are optional, this function handle this
@@ -184,26 +195,10 @@ dragularModule.factory('dragularService', ["$rootScope", function dragularServic
     processOptionsObject();
     registerEvents();
 
-    var drake = {
-      containers: shared.containers,
-      containersCtx: shared.containersCtx,
-      isContainer: isContainer,
-      start: manualStart,
-      end: end,
-      cancel: cancel,
-      remove: remove,
-      destroy: destroy,
-      dragging: false
-    };
-
     return drake;
 
     // Function definitions: ==============================================================================================================
     // Initial functions: -----------------------------------------------------------------------------------------------------------------
-
-    function getContainersModel(options) {
-      return (typeof(options.containersModel) === 'function') ? sanitizeContainersModel(options.containersModel()) : options.containersModel;
-    }
 
     function sanitizeContainersModel(containersModel) {
       if (typeof(containersModel) === 'function') {
@@ -283,7 +278,7 @@ dragularModule.factory('dragularService', ["$rootScope", function dragularServic
           shared.containers[nameSpace][i + shLen] = initialContainers[i];
           shared.containersCtx[nameSpace][i + shLen] = {
             o: o,
-            m: getContainersModel(o)[i], // can be undefined
+            m: getContainersModel()[i], // can be undefined
             fm: o.containersFilteredModel[i] // can be undefined
           };
         }
@@ -395,6 +390,10 @@ dragularModule.factory('dragularService', ["$rootScope", function dragularServic
         shared.tempModel = null;
       }
       return false;
+    }
+
+    function getContainersModel() {
+      return (typeof(o.containersModel) === 'function') ? sanitizeContainersModel(o.containersModel(drake, shared)) : o.containersModel;
     }
 
     function removeContainers(all) {
@@ -545,7 +544,7 @@ dragularModule.factory('dragularService', ["$rootScope", function dragularServic
 
       // prepare models operations
       var containerIndex = initialContainers.indexOf(context.source);
-      shared.sourceModel = getContainersModel(o)[containerIndex];
+      shared.sourceModel = getContainersModel()[containerIndex];
 
       shared.sourceFilteredModel = o.containersFilteredModel[containerIndex];
       shared.initialIndex = domIndexOf(context.item, context.source);

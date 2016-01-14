@@ -1,3 +1,7 @@
+# X.X.X Xxxxx
+
+- options.containersModel can be function returning model
+
 # 3.4.0 StarWars
 - support filtered ng-repeats
 - the 'shared' object is truly shared between service instances as it was originally intended
