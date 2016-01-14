@@ -12,6 +12,16 @@
     "angularjs"
   ],
   "main": "./dist/dragular.js",
+  "jspm": {
+    "format": "global",
+    "shim": {
+      "dist/dragular": {
+        "deps": [
+          "./dragular.css!"
+        ]
+      }
+    }
+  },
   "repository": {
     "type": "git",
     "url": "http://github.com/luckylooke/dragular.git"
