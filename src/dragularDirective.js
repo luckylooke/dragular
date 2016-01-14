@@ -28,6 +28,10 @@ dragularModule.directive('dragular', function(dragularService) {
         options.containersModel = $scope.$eval(options.containersModel);
       }
 
+      if(iAttrs.dragularNameSpace){
+        options.nameSpace = iAttrs.dragularNameSpace.split(' ');
+      }
+
       dragularService(iElm[0], options);
     }
   };

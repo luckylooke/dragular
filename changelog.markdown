@@ -1,6 +1,7 @@
 # X.X.X Xxxxx
 
 - options.containersModel can be function returning model
+- new directive attribute dragular-name-space for better readability of views
 
 # 3.4.0 StarWars
 - support filtered ng-repeats
