@@ -41,7 +41,7 @@ dragularModule.directive('dragular', ["dragularService", function(dragularServic
 
 
 /**
- * Dragular 3.3.1 by Luckylooke https://github.com/luckylooke/dragular
+ * Dragular 3.4.0 by Luckylooke https://github.com/luckylooke/dragular
  * Angular version of dragula https://github.com/bevacqua/dragula
  */
 module.exports = angular.module('dragularModule', []);
