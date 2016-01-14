@@ -1,3 +1,6 @@
+/* */
+"format global";
+"deps ./dragular.css!";
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
 /* global angular */
 'use strict';
@@ -41,7 +44,7 @@ dragularModule.directive('dragular', ["dragularService", function(dragularServic
 
 
 /**
- * Dragular 3.3.1 by Luckylooke https://github.com/luckylooke/dragular
+ * Dragular 3.4.0 by Luckylooke https://github.com/luckylooke/dragular
  * Angular version of dragula https://github.com/bevacqua/dragula
  */
 module.exports = angular.module('dragularModule', []);
@@ -201,6 +204,22 @@ dragularModule.factory('dragularService', ["$rootScope", function dragularServic
     // Function definitions: ==============================================================================================================
     // Initial functions: -----------------------------------------------------------------------------------------------------------------
 
+    function getContainersModel(options) {
+      return (typeof(options.containersModel) === 'function') ? sanitizeContainersModel(options.containersModel()) : options.containersModel;
+    }
+
+    function sanitizeContainersModel(containersModel) {
+      if (typeof(containersModel) === 'function') {
+        return containersModel;
+      }
+      if (Array.isArray(containersModel)) {
+        //                  |-------- is 2D array? -----------|
+        return Array.isArray(containersModel[0]) ? containersModel : [containersModel];
+      } else {
+        return [];
+      }
+    }
+
     function processServiceArguments(){
       if (arguments.length === 1 && // if there is only one argument we need to distinguish if it is options object or container(s) reference
           !Array.isArray(arg0) && // array of containers elements
@@ -239,12 +258,7 @@ dragularModule.factory('dragularService', ["$rootScope", function dragularServic
       initialContainers = makeArray(initialContainers);
 
       // sanitize o.containersModel
-      if (Array.isArray(o.containersModel)) {
-        //                  |-------- is 2D array? -----------|
-        o.containersModel = Array.isArray(o.containersModel[0]) ? o.containersModel : [o.containersModel];
-      } else {
-        o.containersModel = [];
-      }
+      o.containersModel = sanitizeContainersModel(o.containersModel);
 
       // sanitize o.containersFilteredModel
       if (Array.isArray(o.containersFilteredModel)) {
@@ -272,7 +286,7 @@ dragularModule.factory('dragularService', ["$rootScope", function dragularServic
           shared.containers[nameSpace][i + shLen] = initialContainers[i];
           shared.containersCtx[nameSpace][i + shLen] = {
             o: o,
-            m: o.containersModel[i], // can be undefined
+            m: getContainersModel(o)[i], // can be undefined
             fm: o.containersFilteredModel[i] // can be undefined
           };
         }
@@ -534,7 +548,7 @@ dragularModule.factory('dragularService', ["$rootScope", function dragularServic
 
       // prepare models operations
       var containerIndex = initialContainers.indexOf(context.source);
-      shared.sourceModel = o.containersModel[containerIndex];
+      shared.sourceModel = getContainersModel(o)[containerIndex];
 
       shared.sourceFilteredModel = o.containersFilteredModel[containerIndex];
       shared.initialIndex = domIndexOf(context.item, context.source);
