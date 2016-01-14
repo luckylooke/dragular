@@ -130,6 +130,7 @@ dragularModule.factory('dragularService', function dragularServiceFunction($root
       drake = {
         containers: shared.containers,
         containersCtx: shared.containersCtx,
+        sanitizeContainersModel: sanitizeContainersModel,
         isContainer: isContainer,
         start: manualStart,
         end: end,
