@@ -45,7 +45,7 @@ var config = {
       type: 'dragular',
       entryPoint: './src/dragularModule.js',
       bundleName: 'dragular.js',
-      dest: './dist',
+      dest: './dist'
     },
     docs: {
       type: 'docs',
@@ -191,10 +191,10 @@ gulp.task('lint:docs', function() {
 gulp.task('serve', function () {
 
   browserSync({
-    
+
     port: process.env.PORT || config.browserSync.port, // cloud9 improvement
     server: {
-      baseDir: config.browserSync.server,
+      baseDir: config.browserSync.server
     },
     logConnections: true,
     logFileChanges: true,
@@ -211,7 +211,7 @@ gulp.task('templates:docs', function() {
   return gulp.src(config.docs.templates)
     .pipe(templateCache({
       moduleSystem: 'Browserify',
-      standalone: true,
+      standalone: true
     }))
     .pipe(gulp.dest(config.docs.src));
 });
