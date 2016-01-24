@@ -11,7 +11,7 @@
     "angular",
     "angularjs"
   ],
-  "main": "./dist/dragular.js",
+  "main": "index.js",
   "repository": {
     "type": "git",
     "url": "http://github.com/luckylooke/dragular.git"
