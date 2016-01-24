@@ -1,13 +1,9 @@
-/* global angular */
-'use strict';
-
 /**
  * dragular Service by Luckylooke https://github.com/luckylooke/dragular
  * Angular version of dragula https://github.com/bevacqua/dragula
  */
 
-var dragularModule = require('./dragularModule'),
-  shared = { // sahred object between all service instances
+var shared = { // shared object between all service instances
       classesCache: {}, // classes lookup cache
       containersCtx: {}, // containers model
       containers: {}, // containers
@@ -42,7 +38,7 @@ var dragularModule = require('./dragularModule'),
       grabbed: null // holds mousedown context until first mousemove
     };
 
-dragularModule.factory('dragularService', function dragularServiceFunction($rootScope) {
+angular.module('dragular').factory('dragularService', function dragularServiceFunction($rootScope) {
   // abbreviations
   var doc = document,
       body = doc.body,

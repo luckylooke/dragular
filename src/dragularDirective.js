@@ -1,13 +1,9 @@
-/* global angular */
-'use strict';
-
 /**
  * dragular Directive by Luckylooke https://github.com/luckylooke/dragular
  * Angular version of dragula https://github.com/bevacqua/dragula
  */
- var dragularModule = require('./dragularModule');
 
-dragularModule.directive('dragular', function(dragularService) {
+angular.module('dragular').directive('dragular', function(dragularService) {
   return {
     restrict: 'A',
     link: function($scope, iElm, iAttrs) {

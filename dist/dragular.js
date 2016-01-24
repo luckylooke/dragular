@@ -1,64 +1,23 @@
-(function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
-/* global angular */
-'use strict';
-
-/**
- * dragular Directive by Luckylooke https://github.com/luckylooke/dragular
- * Angular version of dragula https://github.com/bevacqua/dragula
- */
- var dragularModule = require('./dragularModule');
-
-dragularModule.directive('dragular', ["dragularService", function(dragularService) {
-  return {
-    restrict: 'A',
-    link: function($scope, iElm, iAttrs) {
-
-      var options = $scope.$eval(iAttrs.dragular) || tryJson(iAttrs.dragular) || {};
-
-      function tryJson(json) {
-        try { // I dont like try catch solutions but I havent find sattisfying way of chcecking json validity.
-          return JSON.parse(json);
-        } catch (e) {
-          return undefined;
-        }
-      }
-
-      if(iAttrs.dragularModel){
-        options = angular.extend({containersModel: $scope.$eval(iAttrs.dragularModel)}, options);
-      }else if(options && options.containersModel && typeof options.containersModel === 'string'){
-        options.containersModel = $scope.$eval(options.containersModel);
-      }
-
-      dragularService(iElm[0], options);
-    }
-  };
-}]);
-
-},{"./dragularModule":2}],2:[function(require,module,exports){
-/* global angular */
-'use strict';
-
+(function () {
+  'use strict';
 
 
 /**
- * Dragular 3.3.1 by Luckylooke https://github.com/luckylooke/dragular
+ * Dragular 3.4.0 by Luckylooke https://github.com/luckylooke/dragular
  * Angular version of dragula https://github.com/bevacqua/dragula
  */
-module.exports = angular.module('dragularModule', []);
+angular.module('dragularModule', [
+  'dragularService',
+  'dragularDirective'
+]);
 
-({"dragularDirective":require("./dragularDirective.js"),"dragularService":require("./dragularService.js")});
-
-},{"./dragularDirective.js":1,"./dragularService.js":3}],3:[function(require,module,exports){
-/* global angular */
-'use strict';
 
 /**
  * dragular Service by Luckylooke https://github.com/luckylooke/dragular
  * Angular version of dragula https://github.com/bevacqua/dragula
  */
 
-var dragularModule = require('./dragularModule'),
-  shared = { // sahred object between all service instances
+var shared = { // shared object between all service instances
       classesCache: {}, // classes lookup cache
       containersCtx: {}, // containers model
       containers: {}, // containers
@@ -93,7 +52,7 @@ var dragularModule = require('./dragularModule'),
       grabbed: null // holds mousedown context until first mousemove
     };
 
-dragularModule.factory('dragularService', ["$rootScope", function dragularServiceFunction($rootScope) {
+angular.module('dragular').factory('dragularService', function dragularServiceFunction($rootScope) {
   // abbreviations
   var doc = document,
       body = doc.body,
@@ -1171,6 +1130,41 @@ dragularModule.factory('dragularService', ["$rootScope", function dragularServic
     }
   }
 
-}]);
+});
 
-},{"./dragularModule":2}]},{},[2]);
+
+/**
+ * dragular Directive by Luckylooke https://github.com/luckylooke/dragular
+ * Angular version of dragula https://github.com/bevacqua/dragula
+ */
+
+angular.module('dragular').directive('dragular', function(dragularService) {
+  return {
+    restrict: 'A',
+    link: function($scope, iElm, iAttrs) {
+
+      var options = $scope.$eval(iAttrs.dragular) || tryJson(iAttrs.dragular) || {};
+
+      function tryJson(json) {
+        try { // I dont like try catch solutions but I havent find sattisfying way of chcecking json validity.
+          return JSON.parse(json);
+        } catch (e) {
+          return undefined;
+        }
+      }
+
+      if(iAttrs.dragularModel){
+        options = angular.extend({containersModel: $scope.$eval(iAttrs.dragularModel)}, options);
+      }else if(options && options.containersModel && typeof options.containersModel === 'string'){
+        options.containersModel = $scope.$eval(options.containersModel);
+      }
+
+      dragularService(iElm[0], options);
+    }
+  };
+});
+
+
+}());
+
+//# sourceMappingURL=dragular.js.map
