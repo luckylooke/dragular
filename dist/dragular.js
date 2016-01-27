@@ -115,6 +115,7 @@ dragularModule.factory('dragularService', ["$rootScope", function dragularServic
   function service(arg0, arg1) {
     var initialContainers = arg0 || [],
       options = arg1 || {},
+      o, // shorthand for options
       // defaults
       defaultClasses = {
         mirror: 'gu-mirror',
@@ -138,7 +139,9 @@ dragularModule.factory('dragularService', ["$rootScope", function dragularServic
         dragularover: 'dragularover',
         dragularout: 'dragularout'
       },
-      o = { // options with defaults
+      defaultOptions = { // options with defaults
+        // copy options object when provided
+        copyOptions: false,
         // classes used by dragular
         classes: defaultClasses,
         // event names used by dragular
@@ -180,7 +183,7 @@ dragularModule.factory('dragularService', ["$rootScope", function dragularServic
       };
 
     processServiceArguments(); // both arguments (containers and options) are optional, this function handle this
-    extendDefaultOptions();
+    extendOptions();
     processOptionsObject();
     registerEvents();
 
@@ -213,15 +216,16 @@ dragularModule.factory('dragularService', ["$rootScope", function dragularServic
       } else if (typeof arg0 === 'string') {
         initialContainers = document.querySelectorAll(arg0);
       }
+      o = options.copyOptions ? angular.copy(options) : options;
     }
 
-    function extendDefaultOptions(){
-      angular.extend(o, options);
-      if(options.classes){
-        o.classes = angular.extend({}, defaultClasses, options.classes);
+    function extendOptions(){
+      angular.extend(o, defaultOptions);
+      if(o.classes){
+        o.classes = angular.extend({}, defaultClasses, o.classes);
       }
-      if(options.eventNames){
-        o.eventNames = angular.extend({}, defaultEventNames, options.eventNames);
+      if(o.eventNames){
+        o.eventNames = angular.extend({}, defaultEventNames, o.eventNames);
       }
     }
 
