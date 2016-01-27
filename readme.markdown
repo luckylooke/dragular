@@ -163,7 +163,7 @@ For better readability of views.
 
 ## Options
 
-The options are detailed below.
+The options are detailed below. All boolean options can be also function returning boolean except lockX and lockY!
 
 ### `options.containers`
 
