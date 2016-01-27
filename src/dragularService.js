@@ -14,7 +14,7 @@ var dragularModule = require('./dragularModule'),
       mirror: null, // mirror image
       source: null, // source container
       item: null, // item being dragged
-      copy: null, // isCopy flag
+      copy: null, // copy flag
       sourceItem: null, // item originaly dragged if copy is enabled
       sourceModel: null, // source container model
       sourceFilteredModel: null, // source container filtered model if relevant
@@ -65,6 +65,7 @@ dragularModule.factory('dragularService', function dragularServiceFunction($root
     var initialContainers = arg0 || [],
       options = arg1 || {},
       o, // shorthand for options
+      g = getBool, // shorthand for getBool
       // defaults
       defaultClasses = {
         mirror: 'gu-mirror',
@@ -113,6 +114,8 @@ dragularModule.factory('dragularService', function dragularServiceFunction($root
         canBeAccepted: always,
         // dragged item will be copy of source? flag or function
         copy: false,
+        // enable sorting in source when copying item
+        copySortSource: false,
         // target (in)validity function
         invalid: never,
         // item returns to original place
@@ -128,7 +131,7 @@ dragularModule.factory('dragularService', function dragularServiceFunction($root
         // element for appending mirror
         mirrorContainer: doc.body,
         // text selection in inputs wont be considered as drag
-        ignoreInputTextSelection: false
+        ignoreInputTextSelection: true
       },
       drake = {
         containers: shared.containers,
@@ -304,10 +307,10 @@ dragularModule.factory('dragularService', function dragularServiceFunction($root
       var elementBehindCursor = getElementBehindPoint(shared.mirror, shared.clientX, shared.clientY),
         dropTarget = findDropTarget(elementBehindCursor, shared.clientX, shared.clientY);
 
-      if (dropTarget && ((shared.copy && o.copySortSource) || (!shared.copy || dropTarget !== shared.source))) {
+      if (dropTarget && ((shared.copy && g(o.copySortSource)) || (!shared.copy || dropTarget !== shared.source))) {
         // found valid target and (is not copy case or target is not initial container)
         drop(shared.item, dropTarget);
-      } else if (o.removeOnSpill) {
+      } else if (g(o.removeOnSpill)) {
         remove();
       } else {
         cancel();
@@ -394,7 +397,7 @@ dragularModule.factory('dragularService', function dragularServiceFunction($root
       if (e.clientX && e.clientX === shared.moveX && e.clientY && e.clientY === shared.moveY) {
         return;
       }
-      if (o.ignoreInputTextSelection) {
+      if (g(o.ignoreInputTextSelection)) {
         var clientX = getCoord('clientX', e),
           clientY = getCoord('clientY', e),
           elementBehindCursor = doc.elementFromPoint(clientX, clientY);
@@ -486,7 +489,7 @@ dragularModule.factory('dragularService', function dragularServiceFunction($root
       shared.source = context.source;
       shared.initialSibling = shared.currentSibling = nextEl(context.item);
 
-      if (isCopy(context.item, context.source)) {
+      if (g(o.copy, [context.item, context.source])) {
         shared.item = context.item.cloneNode(true);
         shared.copy = true;
         if (o.scope) {
@@ -525,7 +528,7 @@ dragularModule.factory('dragularService', function dragularServiceFunction($root
     }
 
     function drop(item, target) {
-      if (shared.copy && o.copySortSource && target === shared.source && getParent(item)) {
+      if (shared.copy && g(o.copySortSource) && target === shared.source && getParent(item)) {
         item.parentNode.removeChild(shared.sourceItem);
       }
 
@@ -612,7 +615,7 @@ dragularModule.factory('dragularService', function dragularServiceFunction($root
       if (!drake.dragging) {
         return;
       }
-      var reverts = arguments.length > 0 ? revert : o.revertOnSpill,
+      var reverts = arguments.length > 0 ? revert : g(o.revertOnSpill),
         parent = getParent(shared.item);
 
       var initial = isInitialPlacement(parent);
@@ -642,7 +645,7 @@ dragularModule.factory('dragularService', function dragularServiceFunction($root
 
       drake.dragging = false;
 
-      if (o.removeOnSpill === true) {
+      if (g(o.removeOnSpill) === true) {
         spillOut();
       }
 
@@ -772,7 +775,7 @@ dragularModule.factory('dragularService', function dragularServiceFunction($root
       }
 
       // do not copy in same container
-      if (dropTarget === shared.source && shared.copy && !o.copySortSource) {
+      if (dropTarget === shared.source && shared.copy && !g(o.copySortSource)) {
         if (getParent(shared.item)) {
           shared.item.parentNode.removeChild(shared.item);
         }
@@ -784,7 +787,7 @@ dragularModule.factory('dragularService', function dragularServiceFunction($root
 
       if (immediate !== null) {
         reference = getReference(dropTarget, immediate, shared.clientX, shared.clientY);
-      } else if (o.revertOnSpill === true && !shared.copy) {
+      } else if (g(o.revertOnSpill) === true && !shared.copy) {
         // the case that mirror is not over valid target and reverting is on and copy is off
         reference = shared.initialSibling;
         dropTarget = shared.source;
@@ -815,7 +818,7 @@ dragularModule.factory('dragularService', function dragularServiceFunction($root
         if (o.scope) {
           o.scope.$emit(o.eventNames['dragular' + type], shared.item, shared.lastDropTarget, shared.source);
         }
-        if (o.removeOnSpill === true) {
+        if (g(o.removeOnSpill) === true) {
           type === 'over' ? spillOver() : spillOut();
         }
       }
@@ -918,10 +921,6 @@ dragularModule.factory('dragularService', function dragularServiceFunction($root
       function resolve(after) {
         return after ? nextEl(target) : target;
       }
-    }
-
-    function isCopy(item, container) {
-      return typeof o.copy === 'boolean' ? o.copy : o.copy(item, container);
     }
 
     function getElementBehindPoint(point, x, y) { // watch performance - running each move!
@@ -1038,10 +1037,10 @@ dragularModule.factory('dragularService', function dragularServiceFunction($root
   }
 
   //Cannot use angular.isElement because we need to check plain dom element, no jQlite wrapped
-  function isElement(o) {
+  function isElement(obj) {
     return (
-      typeof HTMLElement === 'object' ? o instanceof HTMLElement : //DOM2
-      o && typeof o === 'object' && o !== null && o.nodeType === 1 && typeof o.nodeName === 'string'
+      typeof HTMLElement === 'object' ? obj instanceof HTMLElement : //DOM2
+      obj && typeof obj === 'object' && obj !== null && obj.nodeType === 1 && typeof obj.nodeName === 'string'
     );
   }
 
@@ -1132,6 +1131,14 @@ dragularModule.factory('dragularService', function dragularServiceFunction($root
       target.dispatchEvent(e);
     } else {
       target.fireEvent('on' + e.eventType, e);
+    }
+  }
+  
+  function getBool(prop, args, context){
+    if(angular.isFunction(prop)){
+      return !!prop.apply(context || this, args || shared);
+    }else{
+      return !!prop;
     }
   }
 
