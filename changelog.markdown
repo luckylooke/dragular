@@ -1,6 +1,6 @@
 # X.X.X Xxxxx
 
-- **[Braking change!]** options object reference is now live, so can be changed on the fly with instant effect, this feature can be disabled by 'options.copyOptions = true' flag so dragular then make copy of options object
+- **[Braking change!]** options object reference is now live, so can be changed on the fly with instant effect, this feature can be disabled by 'options.copyOptions = true' flag so dragular then make copy of options object. It also means than provided options object will be extended with default value where option property is undefined.
 - **[Braking change!]** flag 'options.ignoreInputTextSelection' default value is 'true'! Meaning that selecting text in input elements is not considered as drag, now by default!
 - all boolean type options can be functions returning boolean
 - options.containersModel can be function returning model

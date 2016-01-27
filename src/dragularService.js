@@ -184,12 +184,15 @@ dragularModule.factory('dragularService', function dragularServiceFunction($root
     }
 
     function extendOptions(){
-      angular.extend(o, defaultOptions);
+      var tmp = angular.extend({}, defaultOptions, o); // tmp for keeping defaults untouched
+      angular.extend(o, tmp); // merge defaults back into options
       if(o.classes){
-        o.classes = angular.extend({}, defaultClasses, o.classes);
+        tmp = angular.extend({}, defaultClasses, o.classes);
+        angular.extend(o.classes, tmp);
       }
       if(o.eventNames){
-        o.eventNames = angular.extend({}, defaultEventNames, o.eventNames);
+        tmp = angular.extend({}, defaultEventNames, o.eventNames);
+        angular.extend(o.eventNames, tmp);
       }
     }
 
