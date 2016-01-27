@@ -950,9 +950,23 @@ dragularModule.factory('dragularService', function dragularServiceFunction($root
         mousedown: 'touchstart',
         mousemove: 'touchmove'
       },
+      pointers = {
+        mouseup: 'pointerup',
+        mousedown: 'pointerdown',
+        mousemove: 'pointermove'
+      },
+      microsoft = {
+        mouseup: 'MSPointerUp',
+        mousedown: 'MSPointerDown',
+        mousemove: 'MSPointerMove'
+      },
       $el = angular.element(el);
 
-    if (touch[type]) {
+    if (global.navigator.pointerEnabled) {
+      $el[op](pointers[type], fn);
+    } else if (global.navigator.msPointerEnabled) {
+      $el[op](microsoft[type], fn);
+    } else if (touch[type]) {
       $el[op](touch[type], fn);
     }
     $el[op](type, fn);

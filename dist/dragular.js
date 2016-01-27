@@ -65,6 +65,7 @@ module.exports = angular.module('dragularModule', []);
 ({"dragularDirective":require("./dragularDirective.js"),"dragularService":require("./dragularService.js")});
 
 },{"./dragularDirective.js":1,"./dragularService.js":3}],3:[function(require,module,exports){
+(function (global){
 /* global angular */
 'use strict';
 
@@ -1017,9 +1018,23 @@ dragularModule.factory('dragularService', ["$rootScope", function dragularServic
         mousedown: 'touchstart',
         mousemove: 'touchmove'
       },
+      pointers = {
+        mouseup: 'pointerup',
+        mousedown: 'pointerdown',
+        mousemove: 'pointermove'
+      },
+      microsoft = {
+        mouseup: 'MSPointerUp',
+        mousedown: 'MSPointerDown',
+        mousemove: 'MSPointerMove'
+      },
       $el = angular.element(el);
 
-    if (touch[type]) {
+    if (global.navigator.pointerEnabled) {
+      $el[op](pointers[type], fn);
+    } else if (global.navigator.msPointerEnabled) {
+      $el[op](microsoft[type], fn);
+    } else if (touch[type]) {
       $el[op](touch[type], fn);
     }
     $el[op](type, fn);
@@ -1215,4 +1230,5 @@ dragularModule.factory('dragularService', ["$rootScope", function dragularServic
 
 }]);
 
+}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
 },{"./dragularModule":2}]},{},[2]);
