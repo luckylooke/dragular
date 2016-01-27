@@ -1,3 +1,9 @@
+# X.X.X Xxxxx
+
+- options.containersModel can be function returning model
+- new directive attribute dragular-name-space for better readability of views
+- new options flag `options.dynamicModelAttribute`, if true dragular will react on model changes
+
 # 3.4.0 StarWars
 - support filtered ng-repeats
 - the 'shared' object is truly shared between service instances as it was originally intended

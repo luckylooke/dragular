@@ -1,5 +1,4 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
-/* global angular */
 'use strict';
 
 /**
@@ -13,7 +12,8 @@ dragularModule.directive('dragular', ["dragularService", function(dragularServic
     restrict: 'A',
     link: function($scope, iElm, iAttrs) {
 
-      var options = $scope.$eval(iAttrs.dragular) || tryJson(iAttrs.dragular) || {};
+      var drake,
+        options = $scope.$eval(iAttrs.dragular) || tryJson(iAttrs.dragular) || {};
 
       function tryJson(json) {
         try { // I dont like try catch solutions but I havent find sattisfying way of chcecking json validity.
@@ -23,13 +23,29 @@ dragularModule.directive('dragular', ["dragularService", function(dragularServic
         }
       }
 
-      if(iAttrs.dragularModel){
-        options = angular.extend({containersModel: $scope.$eval(iAttrs.dragularModel)}, options);
-      }else if(options && options.containersModel && typeof options.containersModel === 'string'){
+      if(options && options.containersModel && typeof options.containersModel === 'string'){
         options.containersModel = $scope.$eval(options.containersModel);
       }
 
-      dragularService(iElm[0], options);
+      if(options && options.dynamicModelAttribute){
+        // watch for model changes
+        $scope.$watch(function () {
+          return $scope.$eval(iAttrs.dragularModel);
+        }, function (newVal) {
+          if(newVal){
+            drake.containersModel = drake.sanitizeContainersModel($scope.$eval(newVal));
+          }
+        });
+      }else if(iAttrs.dragularModel){
+        // bind once and keep reference
+        options.containersModel = $scope.$eval(iAttrs.dragularModel);
+      }
+
+      if(iAttrs.dragularNameSpace){
+        options.nameSpace = iAttrs.dragularNameSpace.split(' ');
+      }
+
+      drake = dragularService(iElm[0], options);
     }
   };
 }]);
@@ -180,6 +196,18 @@ dragularModule.factory('dragularService', ["$rootScope", function dragularServic
         mirrorContainer: doc.body,
         // text selection in inputs wont be considered as drag
         ignoreInputTextSelection: false
+      },
+      drake = {
+        containers: shared.containers,
+        containersCtx: shared.containersCtx,
+        sanitizeContainersModel: sanitizeContainersModel,
+        isContainer: isContainer,
+        start: manualStart,
+        end: end,
+        cancel: cancel,
+        remove: remove,
+        destroy: destroy,
+        dragging: false
       };
 
     processServiceArguments(); // both arguments (containers and options) are optional, this function handle this
@@ -187,22 +215,22 @@ dragularModule.factory('dragularService', ["$rootScope", function dragularServic
     processOptionsObject();
     registerEvents();
 
-    var drake = {
-      containers: shared.containers,
-      containersCtx: shared.containersCtx,
-      isContainer: isContainer,
-      start: manualStart,
-      end: end,
-      cancel: cancel,
-      remove: remove,
-      destroy: destroy,
-      dragging: false
-    };
-
     return drake;
 
     // Function definitions: ==============================================================================================================
     // Initial functions: -----------------------------------------------------------------------------------------------------------------
+
+    function sanitizeContainersModel(containersModel) {
+      if (typeof(containersModel) === 'function') {
+        return containersModel;
+      }
+      if (Array.isArray(containersModel)) {
+        //                  |-------- is 2D array? -----------|
+        return Array.isArray(containersModel[0]) ? containersModel : [containersModel];
+      } else {
+        return [];
+      }
+    }
 
     function processServiceArguments(){
       if (arguments.length === 1 && // if there is only one argument we need to distinguish if it is options object or container(s) reference
@@ -243,12 +271,7 @@ dragularModule.factory('dragularService', ["$rootScope", function dragularServic
       initialContainers = makeArray(initialContainers);
 
       // sanitize o.containersModel
-      if (Array.isArray(o.containersModel)) {
-        //                  |-------- is 2D array? -----------|
-        o.containersModel = Array.isArray(o.containersModel[0]) ? o.containersModel : [o.containersModel];
-      } else {
-        o.containersModel = [];
-      }
+      o.containersModel = sanitizeContainersModel(o.containersModel);
 
       // sanitize o.containersFilteredModel
       if (Array.isArray(o.containersFilteredModel)) {
@@ -276,7 +299,7 @@ dragularModule.factory('dragularService', ["$rootScope", function dragularServic
           shared.containers[nameSpace][i + shLen] = initialContainers[i];
           shared.containersCtx[nameSpace][i + shLen] = {
             o: o,
-            m: o.containersModel[i], // can be undefined
+            m: getContainersModel()[i], // can be undefined
             fm: o.containersFilteredModel[i] // can be undefined
           };
         }
@@ -388,6 +411,10 @@ dragularModule.factory('dragularService', ["$rootScope", function dragularServic
         shared.tempModel = null;
       }
       return false;
+    }
+
+    function getContainersModel() {
+      return (typeof(o.containersModel) === 'function') ? sanitizeContainersModel(o.containersModel(drake, shared)) : o.containersModel;
     }
 
     function removeContainers(all) {
@@ -538,7 +565,7 @@ dragularModule.factory('dragularService', ["$rootScope", function dragularServic
 
       // prepare models operations
       var containerIndex = initialContainers.indexOf(context.source);
-      shared.sourceModel = o.containersModel[containerIndex];
+      shared.sourceModel = getContainersModel()[containerIndex];
 
       shared.sourceFilteredModel = o.containersFilteredModel[containerIndex];
       shared.initialIndex = domIndexOf(context.item, context.source);
