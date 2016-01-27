@@ -89,50 +89,28 @@ dragularModule.factory('dragularService', function dragularServiceFunction($root
         dragularout: 'dragularout'
       },
       defaultOptions = { // options with defaults
-        // copy options object when provided
-        copyOptions: false,
-        // classes used by dragular
-        classes: defaultClasses,
-        // event names used by dragular
-        eventNames: defaultEventNames,
-        // initial containers provided via options object (are provided via parameter by default)
-        containers: false,
-        // if provided, model will be synced with DOM
-        containersModel: false,
-        // if provided, dragular will handle filtered model cases
-        containersFilteredModel: false,
-        // potential target can be forced to be container by custom logic
-        isContainer: never,
-        // if isContainer function is provided, you can provide also respective model
-        isContainerModel: getEmptyObject,
-        // can drag start?
-        moves: always,
-        // can target accept dragged item? (target context used)
-        accepts: always,
-        // can be dragged item accepted by target? (source context used)
-        canBeAccepted: always,
-        // dragged item will be copy of source? flag or function
-        copy: false,
-        // enable sorting in source when copying item
-        copySortSource: false,
-        // dont make copy of model when coping item (#61)
-        dontCopyModel: false,
-        // target (in)validity function
-        invalid: never,
-        // item returns to original place
-        revertOnSpill: false,
-        // item will be removed if not placed into valid target
-        removeOnSpill: false,
-        // lock movement into x-axis
-        lockX: false,
-        // lock movement into y-axis
-        lockY: false,
-        // lock movement inside this element boundaries
-        boundingBox: false,
-        // element for appending mirror
-        mirrorContainer: doc.body,
-        // text selection in inputs wont be considered as drag
-        ignoreInputTextSelection: true
+        copyOptions: false, // copy options object when provided
+        classes: defaultClasses, // classes used by dragular
+        eventNames: defaultEventNames, // event names used by dragular
+        containers: false, // initial containers provided via options object (are provided via parameter by default)
+        containersModel: false, // if provided, model will be synced with DOM
+        containersFilteredModel: false, // if provided, dragular will handle filtered model cases
+        isContainer: never, // potential target can be forced to be container by custom logic
+        isContainerModel: getEmptyObject, // if isContainer function is provided, you can provide also respective model
+        moves: always, // can drag start?
+        accepts: always, // can target accept dragged item? (target context used)
+        canBeAccepted: always, // can be dragged item accepted by target? (source context used)
+        copy: false, // dragged item will be copy of source? flag or function
+        copySortSource: false, // enable sorting in source when copying item
+        dontCopyModel: false, // dont make copy of model when coping item (#61)
+        invalid: never, // target (in)validity function
+        revertOnSpill: false, // item returns to original place
+        removeOnSpill: false, // item will be removed if not placed into valid target
+        lockX: false, // lock movement into x-axis
+        lockY: false, // lock movement into y-axis
+        boundingBox: false, // lock movement inside this element boundaries
+        mirrorContainer: doc.body, // element for appending mirror
+        ignoreInputTextSelection: true // text selection in inputs wont be considered as drag
       },
       drake = {
         containers: shared.containers,
