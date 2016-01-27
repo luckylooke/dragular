@@ -112,7 +112,6 @@ var dragularModule = require('./dragularModule'),
 dragularModule.factory('dragularService', ["$rootScope", function dragularServiceFunction($rootScope) {
   // abbreviations
   var doc = document,
-      body = doc.body,
       docElm = doc.documentElement;
 
   // clean common/shared objects
@@ -932,7 +931,7 @@ dragularModule.factory('dragularService', ["$rootScope", function dragularServic
       addClass(shared.mirror, o.classes.mirror);
       o.mirrorContainer.appendChild(shared.mirror);
       regEvent(docElm, 'on', 'mousemove', drag);
-      addClass(body, o.classes.unselectable);
+      addClass(doc.body, o.classes.unselectable);
       regEvent(shared.mirror, 'on', 'wheel', scrollContainer);
       if (o.scope) {
         o.scope.$emit(o.eventNames.dragularcloned, shared.mirror, shared.sourceItem);
@@ -941,7 +940,7 @@ dragularModule.factory('dragularService', ["$rootScope", function dragularServic
 
     function removeMirrorImage() {
       if (shared.mirror) {
-        rmClass(body, o.classes.unselectable);
+        rmClass(doc.body, o.classes.unselectable);
         regEvent(docElm, 'off', 'mousemove', drag);
         regEvent(shared.mirror, 'off', 'wheel', scrollContainer);
         if(getParent(shared.mirror)){
@@ -1069,7 +1068,7 @@ dragularModule.factory('dragularService', ["$rootScope", function dragularServic
     if (docElm.clientHeight) {
       return docElm[scrollProp];
     }
-    return body[scrollProp];
+    return doc.body[scrollProp];
   }
 
   function getOffset(el) { // watch performance - running each move!
