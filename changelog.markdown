@@ -10,6 +10,7 @@
 - options.containersModel can be function returning model
 - new directive attribute dragular-name-space for better readability of views
 - new options flag `options.dynamicModelAttribute`, if true dragular will react on model changes
+- new options flag `options.dontCopyModel`, dont make copy of model when coping item (#61)
 
 # 3.4.0 StarWars
 - support filtered ng-repeats

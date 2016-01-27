@@ -183,6 +183,8 @@ dragularModule.factory('dragularService', ["$rootScope", function dragularServic
         copy: false,
         // enable sorting in source when copying item
         copySortSource: false,
+        // dont make copy of model when coping item (#61)
+        dontCopyModel: false,
         // target (in)validity function
         invalid: never,
         // item returns to original place
@@ -251,12 +253,15 @@ dragularModule.factory('dragularService', ["$rootScope", function dragularServic
     }
 
     function extendOptions(){
-      angular.extend(o, defaultOptions);
+      var tmp = angular.extend({}, defaultOptions, o); // tmp for keeping defaults untouched
+      angular.extend(o, tmp); // merge defaults back into options
       if(o.classes){
-        o.classes = angular.extend({}, defaultClasses, o.classes);
+        tmp = angular.extend({}, defaultClasses, o.classes);
+        angular.extend(o.classes, tmp);
       }
       if(o.eventNames){
-        o.eventNames = angular.extend({}, defaultEventNames, o.eventNames);
+        tmp = angular.extend({}, defaultEventNames, o.eventNames);
+        angular.extend(o.eventNames, tmp);
       }
     }
 
@@ -614,7 +619,7 @@ dragularModule.factory('dragularService', ["$rootScope", function dragularServic
           if (target === shared.source) {
             shared.sourceModel.splice(dropIndex, 0, shared.sourceModel.splice(shared.initialIndex, 1)[0]);
           } else {
-            shared.dropElmModel = shared.copy ? angular.copy(shared.sourceModel[shared.initialIndex]) : shared.sourceModel[shared.initialIndex];
+            shared.dropElmModel = shared.copy && !o.dontCopyModel ? angular.copy(shared.sourceModel[shared.initialIndex]) : shared.sourceModel[shared.initialIndex];
 
             if (!shared.tempModel) {
               shared.targetModel = shared.targetCtx.m;
