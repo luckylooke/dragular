@@ -1,3 +1,4 @@
+/* global process */
 'use strict';
 var gulp = require('gulp');
 var gutil = require('gulp-util');
@@ -80,11 +81,13 @@ function buildScript() {
     debug: false,
     cache: {},
     packageCache: {},
-    fullPaths: false
+    fullPaths: false,
+    external: 'angular',
+    bundleExternal: !config.isProd,
+    standalone: config.isProd ? 'dragular' : undefined
   }, watchify.args);
 
   var transforms = [
-    'brfs',
     'bulkify',
     ngAnnotate
   ];
@@ -192,7 +195,7 @@ gulp.task('serve', function () {
 
   browserSync({
     
-    port: process.env.PORT || config.browserSync.port, // cloud9 improvement
+    port: (typeof process !== 'undefined' && process.env.PORT) || config.browserSync.port, // cloud9 improvement
     server: {
       baseDir: config.browserSync.server,
     },
