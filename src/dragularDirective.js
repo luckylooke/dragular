@@ -4,9 +4,8 @@
  * dragular Directive by Luckylooke https://github.com/luckylooke/dragular
  * Angular version of dragula https://github.com/bevacqua/dragula
  */
- var dragularModule = require('./dragularModule');
 
-dragularModule.directive('dragular', function(dragularService) {
+var dragular = function (dragularService) {
   return {
     restrict: 'A',
     link: function($scope, iElm, iAttrs) {
@@ -47,4 +46,8 @@ dragularModule.directive('dragular', function(dragularService) {
       drake = dragularService(iElm[0], options);
     }
   };
-});
+};
+
+dragular.$inject = ['dragularService'];
+
+module.exports = dragular;

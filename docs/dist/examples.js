@@ -1,4 +1,18 @@
-(function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
+(function(f){if(typeof exports==="object"&&typeof module!=="undefined"){module.exports=f()}else if(typeof define==="function"&&define.amd){define([],f)}else{var g;if(typeof window!=="undefined"){g=window}else if(typeof global!=="undefined"){g=global}else if(typeof self!=="undefined"){g=self}else{g=this}g.dragular = f()}})(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
+'use strict';
+
+var examplesAppModule = require('../examplesApp');
+
+/**
+* @ngInject
+*/
+
+examplesAppModule
+  .controller('Basic', ['$element', 'dragularService', function TodoCtrl($element, dragularService) {
+    dragularService.cleanEnviroment();
+	dragularService('.containerVertical');
+  }]);
+},{"../examplesApp":26}],2:[function(require,module,exports){
 'use strict';
 
 var examplesAppModule = require('../examplesApp');
@@ -34,7 +48,7 @@ examplesAppModule
     });
   }]);
 
-},{"../examplesApp":26}],2:[function(require,module,exports){
+},{"../examplesApp":26}],3:[function(require,module,exports){
 'use strict';
 
 var examplesAppModule = require('../examplesApp');
@@ -44,11 +58,15 @@ var examplesAppModule = require('../examplesApp');
 */
 
 examplesAppModule
-  .controller('Basic', ['$element', 'dragularService', function TodoCtrl($element, dragularService) {
+  .controller('BoundingBox', ['$element', 'dragularService', function TodoCtrl($element, dragularService) {
+    var boundingBox = $element[0];
     dragularService.cleanEnviroment();
-	dragularService('.containerVertical');
+	dragularService($element.children(), {
+      boundingBox: boundingBox
+    });
   }]);
-},{"../examplesApp":26}],3:[function(require,module,exports){
+
+},{"../examplesApp":26}],4:[function(require,module,exports){
 'use strict';
 
 var examplesAppModule = require('../examplesApp');
@@ -67,7 +85,7 @@ examplesAppModule
     });
   }]);
 
-},{"../examplesApp":26}],4:[function(require,module,exports){
+},{"../examplesApp":26}],5:[function(require,module,exports){
 'use strict';
 
 var examplesAppModule = require('../examplesApp');
@@ -85,7 +103,7 @@ examplesAppModule
       lockY: true
     });
   }]);
-},{"../examplesApp":26}],5:[function(require,module,exports){
+},{"../examplesApp":26}],6:[function(require,module,exports){
 'use strict';
 
 var examplesAppModule = require('../examplesApp');
@@ -95,15 +113,14 @@ var examplesAppModule = require('../examplesApp');
 */
 
 examplesAppModule
-  .controller('BoundingBox', ['$element', 'dragularService', function TodoCtrl($element, dragularService) {
-    var boundingBox = $element[0];
+  .controller('Copy', ['$element', 'dragularService', function TodoCtrl($element, dragularService) {
     dragularService.cleanEnviroment();
 	dragularService($element.children(), {
-      boundingBox: boundingBox
+      copy: true
     });
   }]);
 
-},{"../examplesApp":26}],6:[function(require,module,exports){
+},{"../examplesApp":26}],7:[function(require,module,exports){
 'use strict';
 
 var examplesAppModule = require('../examplesApp');
@@ -136,23 +153,6 @@ examplesAppModule
     dragularService.cleanEnviroment();
     dragularService([containers[0],containers[1]],{
       containersModel: [$scope.items1, $scope.items2],
-      copy: true
-    });
-  }]);
-
-},{"../examplesApp":26}],7:[function(require,module,exports){
-'use strict';
-
-var examplesAppModule = require('../examplesApp');
-
-/**
-* @ngInject
-*/
-
-examplesAppModule
-  .controller('Copy', ['$element', 'dragularService', function TodoCtrl($element, dragularService) {
-    dragularService.cleanEnviroment();
-	dragularService($element.children(), {
       copy: true
     });
   }]);
@@ -244,6 +244,24 @@ var examplesAppModule = require('../examplesApp');
  */
 
 examplesAppModule
+  .controller('Directive', ['$scope', function DirectiveCtrl($scope) {
+    $scope.dragularOptions = {
+      classes: {
+        mirror: 'custom-green-mirror'
+      },
+      nameSpace: 'same' // just connecting left and right container
+    };
+  }]);
+},{"../examplesApp":26}],11:[function(require,module,exports){
+'use strict';
+
+var examplesAppModule = require('../examplesApp');
+
+/**
+ * @ngInject
+ */
+
+examplesAppModule
   .controller('DirectiveModel', ['$scope', function TodoCtrl($scope) {
     $scope.items1 = [{
       content: 'Move me, and make copy on drop.'
@@ -272,24 +290,6 @@ examplesAppModule
     };
   }]);
 
-},{"../examplesApp":26}],11:[function(require,module,exports){
-'use strict';
-
-var examplesAppModule = require('../examplesApp');
-
-/**
- * @ngInject
- */
-
-examplesAppModule
-  .controller('Directive', ['$scope', function DirectiveCtrl($scope) {
-    $scope.dragularOptions = {
-      classes: {
-        mirror: 'custom-green-mirror'
-      },
-      nameSpace: 'same' // just connecting left and right container
-    };
-  }]);
 },{"../examplesApp":26}],12:[function(require,module,exports){
 /* global angular */
 'use strict';
@@ -479,6 +479,66 @@ var examplesAppModule = require('../examplesApp');
 */
 
 examplesAppModule
+  .controller('NestedNgRepeat', ['$timeout', '$scope', '$element', 'dragularService', function NestedNgRepeatCtrl($timeout, $scope, $element, dragularService) {
+    $timeout(function() { // timeount due to ngRepeat to be ready
+      dragularService.cleanEnviroment();
+      dragularService($element, {
+        nameSpace: 'rows',
+        moves: function rowOnly (el, container, handle) {
+          return handle.classList.contains('row-handle');
+        }
+      });
+
+      dragularService($element.children(), {
+        nameSpace: 'cells',
+        moves: function excludeHandle (el, container, handle) {
+          return !handle.classList.contains('row-handle');
+        }
+      });
+    }, 0);
+    $scope.items = [{
+      items: [{
+        content: 'Item a1'
+      }, {
+        content: 'Item a2'
+      }, {
+        content: 'Item a3'
+      }, {
+        content: 'Item a4'
+      }]
+    }, {
+      items: [{
+        content: 'Item b1'
+      }, {
+        content: 'Item b2'
+      }, {
+        content: 'Item b3'
+      }, {
+        content: 'Item b4'
+      }]
+    }, {
+      items: [{
+        content: 'Item c1'
+      }, {
+        content: 'Item c2'
+      }, {
+        content: 'Item c3'
+      }, {
+        content: 'Item c4'
+      }]
+    }];
+  }]);
+
+},{"../examplesApp":26}],18:[function(require,module,exports){
+'use strict';
+
+var examplesAppModule = require('../examplesApp');
+
+/**
+* @ngInject
+*/
+
+examplesAppModule
   .controller('NestedNgRepeatWithModel', ['$timeout', '$scope', '$element', 'dragularService', function NestedNgRepeatWithModelCtrl($timeout, $scope, $element, dragularService) {
     $timeout(function() { // timeount due to nested ngRepeat to be ready
       var container = $element.children().eq(0).children(),
@@ -547,7 +607,7 @@ examplesAppModule
     }];
   }]);
 
-},{"../examplesApp":26}],18:[function(require,module,exports){
+},{"../examplesApp":26}],19:[function(require,module,exports){
 'use strict';
 
 var examplesAppModule = require('../examplesApp');
@@ -557,57 +617,31 @@ var examplesAppModule = require('../examplesApp');
 */
 
 examplesAppModule
-  .controller('NestedNgRepeat', ['$timeout', '$scope', '$element', 'dragularService', function NestedNgRepeatCtrl($timeout, $scope, $element, dragularService) {
-    $timeout(function() { // timeount due to ngRepeat to be ready
-      dragularService.cleanEnviroment();
-      dragularService($element, {
-        nameSpace: 'rows',
-        moves: function rowOnly (el, container, handle) {
-          return handle.classList.contains('row-handle');
-        }
-      });
-
-      dragularService($element.children(), {
-        nameSpace: 'cells',
-        moves: function excludeHandle (el, container, handle) {
-          return !handle.classList.contains('row-handle');
-        }
-      });
-    }, 0);
+  .controller('NgRepeat', ['$scope', '$element', 'dragularService', function TodoCtrl($scope, $element, dragularService) {
+    dragularService.cleanEnviroment();
+    dragularService($element.children());
     $scope.items = [{
-      items: [{
-        content: 'Item a1'
-      }, {
-        content: 'Item a2'
-      }, {
-        content: 'Item a3'
-      }, {
-        content: 'Item a4'
-      }]
+      content: 'Try to add or remove some elements (click on +- buttons), you will see that it is not problem for dragular.'
     }, {
-      items: [{
-        content: 'Item b1'
-      }, {
-        content: 'Item b2'
-      }, {
-        content: 'Item b3'
-      }, {
-        content: 'Item b4'
-      }]
+      content: 'Item 2'
     }, {
-      items: [{
-        content: 'Item c1'
-      }, {
-        content: 'Item c2'
-      }, {
-        content: 'Item c3'
-      }, {
-        content: 'Item c4'
-      }]
+      content: 'Item 3'
+    }, {
+      content: 'Item 4'
     }];
+    $scope.addItem = function addItem() {
+      var index = $scope.items.indexOf(this.item) + 1;
+      $scope.items.splice(index, 0, {
+        content: this.item.content + '-copy'
+      });
+    };
+    $scope.removeItem = function removeItem() {
+      var index = $scope.items.indexOf(this.item);
+      $scope.items.splice(index, 1);
+    };
   }]);
 
-},{"../examplesApp":26}],19:[function(require,module,exports){
+},{"../examplesApp":26}],20:[function(require,module,exports){
 'use strict';
 
 var examplesAppModule = require('../examplesApp');
@@ -683,7 +717,7 @@ examplesAppModule
     });
   }]);
 
-},{"../examplesApp":26}],20:[function(require,module,exports){
+},{"../examplesApp":26}],21:[function(require,module,exports){
 'use strict';
 
 var examplesAppModule = require('../examplesApp');
@@ -717,7 +751,7 @@ examplesAppModule
     };
   }]);
 
-},{"../examplesApp":26}],21:[function(require,module,exports){
+},{"../examplesApp":26}],22:[function(require,module,exports){
 'use strict';
 
 var examplesAppModule = require('../examplesApp');
@@ -727,31 +761,14 @@ var examplesAppModule = require('../examplesApp');
 */
 
 examplesAppModule
-  .controller('NgRepeat', ['$scope', '$element', 'dragularService', function TodoCtrl($scope, $element, dragularService) {
+  .controller('RemoveOnSpill', ['$element', 'dragularService', function TodoCtrl($element, dragularService) {
     dragularService.cleanEnviroment();
-    dragularService($element.children());
-    $scope.items = [{
-      content: 'Try to add or remove some elements (click on +- buttons), you will see that it is not problem for dragular.'
-    }, {
-      content: 'Item 2'
-    }, {
-      content: 'Item 3'
-    }, {
-      content: 'Item 4'
-    }];
-    $scope.addItem = function addItem() {
-      var index = $scope.items.indexOf(this.item) + 1;
-      $scope.items.splice(index, 0, {
-        content: this.item.content + '-copy'
-      });
-    };
-    $scope.removeItem = function removeItem() {
-      var index = $scope.items.indexOf(this.item);
-      $scope.items.splice(index, 1);
-    };
+	dragularService($element.children(), {
+      removeOnSpill: true
+    });
   }]);
 
-},{"../examplesApp":26}],22:[function(require,module,exports){
+},{"../examplesApp":26}],23:[function(require,module,exports){
 'use strict';
 
 var examplesAppModule = require('../examplesApp');
@@ -784,23 +801,6 @@ examplesAppModule
     dragularService.cleanEnviroment();
     dragularService([containers[0], containers[1]], {
       containersModel: [$scope.items1, $scope.items2],
-      removeOnSpill: true
-    });
-  }]);
-
-},{"../examplesApp":26}],23:[function(require,module,exports){
-'use strict';
-
-var examplesAppModule = require('../examplesApp');
-
-/**
-* @ngInject
-*/
-
-examplesAppModule
-  .controller('RemoveOnSpill', ['$element', 'dragularService', function TodoCtrl($element, dragularService) {
-    dragularService.cleanEnviroment();
-	dragularService($element.children(), {
       removeOnSpill: true
     });
   }]);
@@ -1010,9 +1010,9 @@ module.exports = angular.module('examplesApp', ['dragularModule', 'templates', '
 
 }]);
 
-({"exampleBasic":({"exampleBasic":require("./exampleBasic\\exampleBasic.js")}),"exampleBasicWithModel":({"exampleBasicWithModel":require("./exampleBasicWithModel\\exampleBasicWithModel.js")}),"exampleBoundingBox":({"exampleBoundingBox":require("./exampleBoundingBox\\exampleBoundingBox.js")}),"exampleBoundingBoxLockX":({"exampleBoundingBoxLockX":require("./exampleBoundingBoxLockX\\exampleBoundingBoxLockX.js")}),"exampleBoundingBoxLockY":({"exampleBoundingBoxLockY":require("./exampleBoundingBoxLockY\\exampleBoundingBoxLockY.js")}),"exampleCopy":({"exampleCopy":require("./exampleCopy\\exampleCopy.js")}),"exampleCopyWithModel":({"exampleCopyWithModel":require("./exampleCopyWithModel\\exampleCopyWithModel.js")}),"exampleCustomClasses":({"exampleCustomClasses":require("./exampleCustomClasses\\exampleCustomClasses.js")}),"exampleDifferentOptionsWithModel":({"exampleDifferentOptionsWithModel":require("./exampleDifferentOptionsWithModel\\exampleDifferentOptionsWithModel.js")}),"exampleDirective":({"exampleDirective":require("./exampleDirective\\exampleDirective.js")}),"exampleDirectiveWithModel":({"exampleDirectiveWithModel":require("./exampleDirectiveWithModel\\exampleDirectiveWithModel.js")}),"exampleDragOverEvents":({"exampleDragOverEvents":require("./exampleDragOverEvents\\exampleDragOverEvents.js")}),"exampleEvents":({"exampleEvents":require("./exampleEvents\\exampleEvents.js")}),"exampleHandle":({"exampleHandle":require("./exampleHandle\\exampleHandle.js")}),"exampleIsContainerWithModel":({"exampleIsContainerWithModel":require("./exampleIsContainerWithModel\\exampleIsContainerWithModel.js")}),"exampleNameSpaces":({"exampleNameSpaces":require("./exampleNameSpaces\\exampleNameSpaces.js")}),"exampleNestedNgRepeat":({"exampleNestedNgRepeat":require("./exampleNestedNgRepeat\\exampleNestedNgRepeat.js")}),"exampleNestedNgRepeatWithModel":({"exampleNestedNgRepeatWithModel":require("./exampleNestedNgRepeatWithModel\\exampleNestedNgRepeatWithModel.js")}),"exampleNgRepeat":({"exampleNgRepeat":require("./exampleNgRepeat\\exampleNgRepeat.js")}),"exampleNgRepeatFilteredWithModel":({"exampleNgRepeatFilteredWithModel":require("./exampleNgRepeatFilteredWithModel\\exampleNgRepeatFilteredWithModel.js")}),"exampleNgRepeatWithModel":({"exampleNgRepeatWithModel":require("./exampleNgRepeatWithModel\\exampleNgRepeatWithModel.js")}),"exampleRemoveOnSpill":({"exampleRemoveOnSpill":require("./exampleRemoveOnSpill\\exampleRemoveOnSpill.js")}),"exampleRemoveOnSpillWithModel":({"exampleRemoveOnSpillWithModel":require("./exampleRemoveOnSpillWithModel\\exampleRemoveOnSpillWithModel.js")}),"exampleRevertOnSpill":({"exampleRevertOnSpill":require("./exampleRevertOnSpill\\exampleRevertOnSpill.js")}),"exampleScrollingDrag":({"exampleScrollingDrag":require("./exampleScrollingDrag\\exampleScrollingDrag.js")}),"examplesRouter":require("./examplesRouter.js"),"templates":require("./templates.js")});
+({"exampleBasic":({"exampleBasic":require("./exampleBasic/exampleBasic.js")}),"exampleBasicWithModel":({"exampleBasicWithModel":require("./exampleBasicWithModel/exampleBasicWithModel.js")}),"exampleBoundingBox":({"exampleBoundingBox":require("./exampleBoundingBox/exampleBoundingBox.js")}),"exampleBoundingBoxLockX":({"exampleBoundingBoxLockX":require("./exampleBoundingBoxLockX/exampleBoundingBoxLockX.js")}),"exampleBoundingBoxLockY":({"exampleBoundingBoxLockY":require("./exampleBoundingBoxLockY/exampleBoundingBoxLockY.js")}),"exampleCopy":({"exampleCopy":require("./exampleCopy/exampleCopy.js")}),"exampleCopyWithModel":({"exampleCopyWithModel":require("./exampleCopyWithModel/exampleCopyWithModel.js")}),"exampleCustomClasses":({"exampleCustomClasses":require("./exampleCustomClasses/exampleCustomClasses.js")}),"exampleDifferentOptionsWithModel":({"exampleDifferentOptionsWithModel":require("./exampleDifferentOptionsWithModel/exampleDifferentOptionsWithModel.js")}),"exampleDirective":({"exampleDirective":require("./exampleDirective/exampleDirective.js")}),"exampleDirectiveWithModel":({"exampleDirectiveWithModel":require("./exampleDirectiveWithModel/exampleDirectiveWithModel.js")}),"exampleDragOverEvents":({"exampleDragOverEvents":require("./exampleDragOverEvents/exampleDragOverEvents.js")}),"exampleEvents":({"exampleEvents":require("./exampleEvents/exampleEvents.js")}),"exampleHandle":({"exampleHandle":require("./exampleHandle/exampleHandle.js")}),"exampleIsContainerWithModel":({"exampleIsContainerWithModel":require("./exampleIsContainerWithModel/exampleIsContainerWithModel.js")}),"exampleNameSpaces":({"exampleNameSpaces":require("./exampleNameSpaces/exampleNameSpaces.js")}),"exampleNestedNgRepeat":({"exampleNestedNgRepeat":require("./exampleNestedNgRepeat/exampleNestedNgRepeat.js")}),"exampleNestedNgRepeatWithModel":({"exampleNestedNgRepeatWithModel":require("./exampleNestedNgRepeatWithModel/exampleNestedNgRepeatWithModel.js")}),"exampleNgRepeat":({"exampleNgRepeat":require("./exampleNgRepeat/exampleNgRepeat.js")}),"exampleNgRepeatFilteredWithModel":({"exampleNgRepeatFilteredWithModel":require("./exampleNgRepeatFilteredWithModel/exampleNgRepeatFilteredWithModel.js")}),"exampleNgRepeatWithModel":({"exampleNgRepeatWithModel":require("./exampleNgRepeatWithModel/exampleNgRepeatWithModel.js")}),"exampleRemoveOnSpill":({"exampleRemoveOnSpill":require("./exampleRemoveOnSpill/exampleRemoveOnSpill.js")}),"exampleRemoveOnSpillWithModel":({"exampleRemoveOnSpillWithModel":require("./exampleRemoveOnSpillWithModel/exampleRemoveOnSpillWithModel.js")}),"exampleRevertOnSpill":({"exampleRevertOnSpill":require("./exampleRevertOnSpill/exampleRevertOnSpill.js")}),"exampleScrollingDrag":({"exampleScrollingDrag":require("./exampleScrollingDrag/exampleScrollingDrag.js")}),"examplesRouter":require("./examplesRouter.js"),"templates":require("./templates.js")});
 
-},{"../../../src/dragularModule":30,"./exampleBasicWithModel\\exampleBasicWithModel.js":1,"./exampleBasic\\exampleBasic.js":2,"./exampleBoundingBoxLockX\\exampleBoundingBoxLockX.js":3,"./exampleBoundingBoxLockY\\exampleBoundingBoxLockY.js":4,"./exampleBoundingBox\\exampleBoundingBox.js":5,"./exampleCopyWithModel\\exampleCopyWithModel.js":6,"./exampleCopy\\exampleCopy.js":7,"./exampleCustomClasses\\exampleCustomClasses.js":8,"./exampleDifferentOptionsWithModel\\exampleDifferentOptionsWithModel.js":9,"./exampleDirectiveWithModel\\exampleDirectiveWithModel.js":10,"./exampleDirective\\exampleDirective.js":11,"./exampleDragOverEvents\\exampleDragOverEvents.js":12,"./exampleEvents\\exampleEvents.js":13,"./exampleHandle\\exampleHandle.js":14,"./exampleIsContainerWithModel\\exampleIsContainerWithModel.js":15,"./exampleNameSpaces\\exampleNameSpaces.js":16,"./exampleNestedNgRepeatWithModel\\exampleNestedNgRepeatWithModel.js":17,"./exampleNestedNgRepeat\\exampleNestedNgRepeat.js":18,"./exampleNgRepeatFilteredWithModel\\exampleNgRepeatFilteredWithModel.js":19,"./exampleNgRepeatWithModel\\exampleNgRepeatWithModel.js":20,"./exampleNgRepeat\\exampleNgRepeat.js":21,"./exampleRemoveOnSpillWithModel\\exampleRemoveOnSpillWithModel.js":22,"./exampleRemoveOnSpill\\exampleRemoveOnSpill.js":23,"./exampleRevertOnSpill\\exampleRevertOnSpill.js":24,"./exampleScrollingDrag\\exampleScrollingDrag.js":25,"./examplesRouter.js":27,"./templates":28,"./templates.js":28}],27:[function(require,module,exports){
+},{"../../../src/dragularModule":30,"./exampleBasic/exampleBasic.js":1,"./exampleBasicWithModel/exampleBasicWithModel.js":2,"./exampleBoundingBox/exampleBoundingBox.js":3,"./exampleBoundingBoxLockX/exampleBoundingBoxLockX.js":4,"./exampleBoundingBoxLockY/exampleBoundingBoxLockY.js":5,"./exampleCopy/exampleCopy.js":6,"./exampleCopyWithModel/exampleCopyWithModel.js":7,"./exampleCustomClasses/exampleCustomClasses.js":8,"./exampleDifferentOptionsWithModel/exampleDifferentOptionsWithModel.js":9,"./exampleDirective/exampleDirective.js":10,"./exampleDirectiveWithModel/exampleDirectiveWithModel.js":11,"./exampleDragOverEvents/exampleDragOverEvents.js":12,"./exampleEvents/exampleEvents.js":13,"./exampleHandle/exampleHandle.js":14,"./exampleIsContainerWithModel/exampleIsContainerWithModel.js":15,"./exampleNameSpaces/exampleNameSpaces.js":16,"./exampleNestedNgRepeat/exampleNestedNgRepeat.js":17,"./exampleNestedNgRepeatWithModel/exampleNestedNgRepeatWithModel.js":18,"./exampleNgRepeat/exampleNgRepeat.js":19,"./exampleNgRepeatFilteredWithModel/exampleNgRepeatFilteredWithModel.js":20,"./exampleNgRepeatWithModel/exampleNgRepeatWithModel.js":21,"./exampleRemoveOnSpill/exampleRemoveOnSpill.js":22,"./exampleRemoveOnSpillWithModel/exampleRemoveOnSpillWithModel.js":23,"./exampleRevertOnSpill/exampleRevertOnSpill.js":24,"./exampleScrollingDrag/exampleScrollingDrag.js":25,"./examplesRouter.js":27,"./templates":28,"./templates.js":28}],27:[function(require,module,exports){
 'use strict';
 
 var examplesAppModule = require('./examplesApp');
@@ -1101,9 +1101,8 @@ $templateCache.put("partials/autogenerated/contribute.html","<h1 id=\"how-to-con
  * dragular Directive by Luckylooke https://github.com/luckylooke/dragular
  * Angular version of dragula https://github.com/bevacqua/dragula
  */
- var dragularModule = require('./dragularModule');
 
-dragularModule.directive('dragular', ["dragularService", function(dragularService) {
+var dragular = function (dragularService) {
   return {
     restrict: 'A',
     link: function($scope, iElm, iAttrs) {
@@ -1144,23 +1143,30 @@ dragularModule.directive('dragular', ["dragularService", function(dragularServic
       drake = dragularService(iElm[0], options);
     }
   };
-}]);
+};
 
-},{"./dragularModule":30}],30:[function(require,module,exports){
+dragular.$inject = ['dragularService'];
+
+module.exports = dragular;
+
+},{}],30:[function(require,module,exports){
 /* global angular */
 'use strict';
-
-
+var dragularDirective = require('./dragularDirective');
+var dragularService = require('./dragularService');
 
 /**
  * Dragular 4.0.0 by Luckylooke https://github.com/luckylooke/dragular
  * Angular version of dragula https://github.com/bevacqua/dragula
  */
-module.exports = angular.module('dragularModule', []);
+module.exports = 'dragularModule';
 
-({"dragularDirective":require("./dragularDirective.js"),"dragularService":require("./dragularService.js")});
+angular
+  .module('dragularModule', [])
+  .factory('dragularService', dragularService)
+  .directive('dragular', dragularDirective);
 
-},{"./dragularDirective.js":29,"./dragularService.js":31}],31:[function(require,module,exports){
+},{"./dragularDirective":29,"./dragularService":31}],31:[function(require,module,exports){
 (function (global){
 /* global angular */
 'use strict';
@@ -1170,43 +1176,42 @@ module.exports = angular.module('dragularModule', []);
  * Angular version of dragula https://github.com/bevacqua/dragula
  */
 
-var dragularModule = require('./dragularModule'),
-  shared = { // sahred object between all service instances
-      classesCache: {}, // classes lookup cache
-      containersCtx: {}, // containers model
-      containers: {}, // containers
-      mirror: null, // mirror image
-      source: null, // source container
-      item: null, // item being dragged
-      copy: null, // copy flag
-      sourceItem: null, // item originaly dragged if copy is enabled
-      sourceModel: null, // source container model
-      sourceFilteredModel: null, // source container filtered model if relevant
-      target: null, // droppable container under drag item
-      targetCtx: null, // target container context
-      targetModel: null, // target container model
-      lastDropTarget: null, // last container item was over
-      offsetX: null, // reference x
-      offsetY: null, // reference y
-      moveX: null, // reference move x
-      moveY: null, // reference move y
-      offsetXr: null, // reference x right for boundingBox feature
-      offsetYb: null, // reference y bottom for boundingBox feature
-      clientX: null, // cache client x, init at grab, update at drag
-      clientY: null, // cache client y, init at grab, update at drag
-      mirrorWidth: null, // mirror width for boundingBox feature
-      mirrorHeight: null, // mirror height for boundingBox feature
-      initialSibling: null, // reference sibling when grabbed
-      currentSibling: null, // reference sibling now
-      initialIndex: null, // reference model index when grabbed
-      currentIndex: null, // reference model index now
-      tempModel: null, // if o.isContainer is used, model can be provided as well, it is temporary saved here during drags
-      dragOverEvents: {}, // drag over events fired on element behind cursor
-      lastElementBehindCursor: null, // last element behind cursor
-      grabbed: null // holds mousedown context until first mousemove
-    };
+var shared = { // sahred object between all service instances
+  classesCache: {}, // classes lookup cache
+  containersCtx: {}, // containers model
+  containers: {}, // containers
+  mirror: null, // mirror image
+  source: null, // source container
+  item: null, // item being dragged
+  copy: null, // copy flag
+  sourceItem: null, // item originaly dragged if copy is enabled
+  sourceModel: null, // source container model
+  sourceFilteredModel: null, // source container filtered model if relevant
+  target: null, // droppable container under drag item
+  targetCtx: null, // target container context
+  targetModel: null, // target container model
+  lastDropTarget: null, // last container item was over
+  offsetX: null, // reference x
+  offsetY: null, // reference y
+  moveX: null, // reference move x
+  moveY: null, // reference move y
+  offsetXr: null, // reference x right for boundingBox feature
+  offsetYb: null, // reference y bottom for boundingBox feature
+  clientX: null, // cache client x, init at grab, update at drag
+  clientY: null, // cache client y, init at grab, update at drag
+  mirrorWidth: null, // mirror width for boundingBox feature
+  mirrorHeight: null, // mirror height for boundingBox feature
+  initialSibling: null, // reference sibling when grabbed
+  currentSibling: null, // reference sibling now
+  initialIndex: null, // reference model index when grabbed
+  currentIndex: null, // reference model index now
+  tempModel: null, // if o.isContainer is used, model can be provided as well, it is temporary saved here during drags
+  dragOverEvents: {}, // drag over events fired on element behind cursor
+  lastElementBehindCursor: null, // last element behind cursor
+  grabbed: null // holds mousedown context until first mousemove
+};
 
-dragularModule.factory('dragularService', ["$rootScope", function dragularServiceFunction($rootScope) {
+var dragularService = function ($rootScope) {
   // abbreviations
   var doc = document,
       docElm = doc.documentElement;
@@ -2293,7 +2298,7 @@ dragularModule.factory('dragularService', ["$rootScope", function dragularServic
       target.fireEvent('on' + e.eventType, e);
     }
   }
-  
+
   function getBool(prop, args, context){
     if(angular.isFunction(prop)){
       return !!prop.apply(context || this, args || shared);
@@ -2302,7 +2307,12 @@ dragularModule.factory('dragularService', ["$rootScope", function dragularServic
     }
   }
 
-}]);
+};
+
+dragularService.$inject = ['$rootScope'];
+
+module.exports = dragularService;
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./dragularModule":30}]},{},[26]);
+},{}]},{},[26])(26)
+});
