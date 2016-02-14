@@ -1,7 +1,7 @@
 /* global angular */
 'use strict';
 
-module.exports = function ($interval, $element, dragularService) {
+var ScrollingDragCtrl = function ($interval, $element, dragularService) {
   var timer,
     leftScrollContainer = document.getElementById('leftScroll'),
     rightScrollContainer = document.getElementById('rightScroll'),
@@ -33,3 +33,7 @@ module.exports = function ($interval, $element, dragularService) {
     });
   }
 };
+
+ScrollingDragCtrl.$inject = ['$interval', '$element', 'dragularService'];
+
+module.exports = ScrollingDragCtrl;

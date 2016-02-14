@@ -1,6 +1,6 @@
 'use strict';
 
-module.exports = function ($element, dragularService) {
+var BoundingBoxLockXCtrl = function ($element, dragularService) {
   var boundingBox = $element.children().children()[0];
   dragularService.cleanEnviroment();
   dragularService(boundingBox, {
@@ -8,3 +8,7 @@ module.exports = function ($element, dragularService) {
     lockX: true
   });
 };
+
+BoundingBoxLockXCtrl.$inject = ['$element', 'dragularService'];
+
+module.exports = BoundingBoxLockXCtrl;

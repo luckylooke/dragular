@@ -1,6 +1,6 @@
 'use strict';
 
-module.exports = function TodoCtrl($element, dragularService) {
+var BoundingBoxLockYCtrl = function ($element, dragularService) {
   var boundingBox = $element.children().children()[0];
   dragularService.cleanEnviroment();
   dragularService(boundingBox, {
@@ -8,3 +8,7 @@ module.exports = function TodoCtrl($element, dragularService) {
     lockY: true
   });
 };
+
+BoundingBoxLockYCtrl.$inject = ['$element', 'dragularService'];
+
+module.exports = BoundingBoxLockYCtrl;

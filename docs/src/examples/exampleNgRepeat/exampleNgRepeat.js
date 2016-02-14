@@ -1,6 +1,6 @@
 'use strict';
 
-module.exports = function ($scope, $element, dragularService) {
+var NgRepeatCtrl = function ($scope, $element, dragularService) {
   dragularService.cleanEnviroment();
   dragularService($element.children());
   $scope.items = [{
@@ -23,3 +23,7 @@ module.exports = function ($scope, $element, dragularService) {
     $scope.items.splice(index, 1);
   };
 };
+
+NgRepeatCtrl.$inject = ['$scope', '$element', 'dragularService'];
+
+module.exports = NgRepeatCtrl;

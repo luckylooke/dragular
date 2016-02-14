@@ -1,6 +1,6 @@
 'use strict';
 
-module.exports =  function ($timeout, $scope, $element, dragularService) {
+var NestedNgRepeatCtrl = function ($timeout, $scope, $element, dragularService) {
   $timeout(function() { // timeount due to ngRepeat to be ready
     dragularService.cleanEnviroment();
     dragularService($element, {
@@ -49,3 +49,7 @@ module.exports =  function ($timeout, $scope, $element, dragularService) {
     }]
   }];
 };
+
+NestedNgRepeatCtrl.$inject = ['$timeout', '$scope', '$element', 'dragularService'];
+
+module.exports = NestedNgRepeatCtrl;

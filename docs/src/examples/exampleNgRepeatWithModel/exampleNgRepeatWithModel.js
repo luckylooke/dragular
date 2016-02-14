@@ -1,6 +1,6 @@
 'use strict';
 
-module.exports = function ($scope, $element, dragularService) {
+var NgRepeatWithModelCtrl = function ($scope, $element, dragularService) {
   $scope.items = [{
     content: 'Try to add or remove some elements (click on +- buttons), you will see that it is not problem for dragular.'
   }, {
@@ -23,3 +23,7 @@ module.exports = function ($scope, $element, dragularService) {
     $scope.items.splice(index, 1);
   };
 };
+
+NgRepeatWithModelCtrl.$inject = ['$scope', '$element', 'dragularService'];
+
+module.exports = NgRepeatWithModelCtrl;

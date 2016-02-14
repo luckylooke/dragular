@@ -1,6 +1,6 @@
 'use strict';
 
-module.exports =  function ($scope, $element, dragularService, $filter) {
+var NgRepeatFilteredWithModelCtrl = function ($scope, $element, dragularService, $filter) {
   $scope.items1 = [{
     content: 'Move me, but you can only drop me in one of these containers.'
   }, {
@@ -65,3 +65,7 @@ module.exports =  function ($scope, $element, dragularService, $filter) {
     containersFilteredModel: [$scope.filteredModel1, $scope.filteredModel2]
   });
 };
+
+NgRepeatFilteredWithModelCtrl.$inject = ['$scope', '$element', 'dragularService', '$filter'];
+
+module.exports = NgRepeatFilteredWithModelCtrl;

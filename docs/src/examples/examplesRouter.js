@@ -1,6 +1,6 @@
 'use strict';
 
-module.exports = function ($stateProvider, $urlRouterProvider) {
+var examplesRouter = function ($stateProvider, $urlRouterProvider) {
   $urlRouterProvider.otherwise('/home');
 
   var timer,
@@ -41,3 +41,7 @@ module.exports = function ($stateProvider, $urlRouterProvider) {
       templateUrl: 'partials/partial-contribute.html'
     });
 };
+
+examplesRouter.$inject = ['$stateProvider', '$urlRouterProvider'];
+
+module.exports = examplesRouter;

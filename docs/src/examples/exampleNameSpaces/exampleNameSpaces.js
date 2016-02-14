@@ -1,6 +1,6 @@
 'use strict';
 
-module.exports = function ($element, dragularService) {
+var NameSpacesCtrl = function ($element, dragularService) {
   dragularService.cleanEnviroment();
   dragularService([$element.children()[0], $element.children()[2]], {
     nameSpace: 'apples'
@@ -12,3 +12,7 @@ module.exports = function ($element, dragularService) {
     nameSpace: ['oranges', 'apples']
   });
 };
+
+NameSpacesCtrl.$inject = ['$element', 'dragularService'];
+
+module.exports = NameSpacesCtrl;

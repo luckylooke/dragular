@@ -1,6 +1,6 @@
 'use strict';
 
-module.exports = function ($element, dragularService) {
+var CustomClassesCtrl = function ($element, dragularService) {
   dragularService.cleanEnviroment();
   dragularService($element.children(), {
     classes: {
@@ -8,3 +8,7 @@ module.exports = function ($element, dragularService) {
     }
   });
 };
+
+CustomClassesCtrl.$inject = ['$element', 'dragularService'];
+
+module.exports = CustomClassesCtrl;

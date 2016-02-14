@@ -1,6 +1,6 @@
 'use strict';
 
-module.exports = function DirectiveCtrl($scope) {
+var DirectiveCtrl = function ($scope) {
   $scope.dragularOptions = {
     classes: {
       mirror: 'custom-green-mirror'
@@ -8,3 +8,7 @@ module.exports = function DirectiveCtrl($scope) {
     nameSpace: 'same' // just connecting left and right container
   };
 };
+
+DirectiveCtrl.$inject = ['$scope'];
+
+module.exports = DirectiveCtrl;

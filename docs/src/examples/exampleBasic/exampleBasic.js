@@ -1,6 +1,10 @@
 'use strict';
 
-module.exports = function TodoCtrl($element, dragularService) {
+var BasicCtrl = function ($element, dragularService) {
   dragularService.cleanEnviroment();
   dragularService('.containerVertical');
 };
+
+BasicCtrl.$inject = ['$element', 'dragularService'];
+
+module.exports = BasicCtrl;

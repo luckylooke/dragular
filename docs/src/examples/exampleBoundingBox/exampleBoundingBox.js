@@ -1,6 +1,6 @@
 'use strict';
 
-module.exports = function TodoCtrl($element, dragularService) {
+var BoundingBoxCtrl = function ($element, dragularService) {
   var boundingBox = $element[0];
   dragularService.cleanEnviroment();
 
@@ -8,3 +8,7 @@ module.exports = function TodoCtrl($element, dragularService) {
     boundingBox: boundingBox
   });
 };
+
+BoundingBoxCtrl.$inject = ['$element', 'dragularService'];
+
+module.exports = BoundingBoxCtrl;

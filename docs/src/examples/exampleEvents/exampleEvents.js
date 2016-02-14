@@ -1,6 +1,6 @@
 'use strict';
 
-module.exports = function ($scope, $element, dragularService, $timeout) {
+var EventsCtrl = function ($scope, $element, dragularService, $timeout) {
   dragularService.cleanEnviroment();
   dragularService($element.children(), {
     scope: $scope
@@ -30,3 +30,7 @@ module.exports = function ($scope, $element, dragularService, $timeout) {
     };
   }
 };
+
+EventsCtrl.$inject = ['$scope', '$element', 'dragularService', '$timeout'];
+
+module.exports = EventsCtrl;

@@ -1,7 +1,7 @@
 /* global angular */
 'use strict';
 
-module.exports = function ($element, dragularService) {
+var DragOverEventsCtrl = function ($element, dragularService) {
   dragularService.cleanEnviroment();
   dragularService([$element.children()[0], $element.children()[2]], {
     nameSpace: 'apples'
@@ -41,3 +41,7 @@ module.exports = function ($element, dragularService) {
     notContainer.removeClass('gu-over');
   });
 };
+
+DragOverEventsCtrl.$inject = ['$element', 'dragularService'];
+
+module.exports = DragOverEventsCtrl;

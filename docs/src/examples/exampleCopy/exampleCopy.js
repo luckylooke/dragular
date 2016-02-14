@@ -1,8 +1,12 @@
 'use strict';
 
-module.exports = function ($element, dragularService) {
+var CopyCtrl = function ($element, dragularService) {
   dragularService.cleanEnviroment();
   dragularService($element.children(), {
     copy: true
   });
 };
+
+CopyCtrl.$inject = ['$element', 'dragularService'];
+
+module.exports = CopyCtrl;

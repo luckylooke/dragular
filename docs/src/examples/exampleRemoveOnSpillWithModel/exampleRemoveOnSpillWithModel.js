@@ -1,6 +1,6 @@
 'use strict';
 
-module.exports = function ($scope, $element, dragularService) {
+var RemoveOnSpillWithModelCtrl = function ($scope, $element, dragularService) {
   $scope.items1 = [{
     content: 'Move me, but you can only drop me in containers.'
   }, {
@@ -26,3 +26,7 @@ module.exports = function ($scope, $element, dragularService) {
     removeOnSpill: true
   });
 };
+
+RemoveOnSpillWithModelCtrl.$inject = ['$scope', '$element', 'dragularService'];
+
+module.exports = RemoveOnSpillWithModelCtrl;

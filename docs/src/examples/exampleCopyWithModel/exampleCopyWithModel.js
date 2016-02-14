@@ -1,6 +1,6 @@
 'use strict';
 
-module.exports = function ($scope, $element, dragularService) {
+var CopyModelCtrl = function ($scope, $element, dragularService) {
   $scope.items1 = [{
     content: 'Move me, and make copy on drop.'
   }, {
@@ -26,3 +26,7 @@ module.exports = function ($scope, $element, dragularService) {
     copy: true
   });
 };
+
+CopyModelCtrl.$inject = ['$scope', '$element', 'dragularService'];
+
+module.exports = CopyModelCtrl;

@@ -1,6 +1,6 @@
 'use strict';
 
-module.exports = function TodoCtrl($element, dragularService) {
+var HandleCtrl = function ($element, dragularService) {
   dragularService.cleanEnviroment();
 	dragularService($element.children(), {
     moves: function(el, container, handle) {
@@ -8,3 +8,7 @@ module.exports = function TodoCtrl($element, dragularService) {
     }
   });
 };
+
+HandleCtrl.$inject = ['$element', 'dragularService'];
+
+module.exports = HandleCtrl;

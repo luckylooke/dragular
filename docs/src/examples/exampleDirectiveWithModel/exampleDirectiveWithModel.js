@@ -1,6 +1,6 @@
 'use strict';
 
-module.exports = function ($scope) {
+var DirectiveModelCtrl = function ($scope) {
   $scope.items1 = [{
     content: 'Move me, and make copy on drop.'
   }, {
@@ -27,3 +27,7 @@ module.exports = function ($scope) {
     nameSpace: 'common' // just connecting left and right container
   };
 };
+
+DirectiveModelCtrl.$inject = ['$scope'];
+
+module.exports = DirectiveModelCtrl;

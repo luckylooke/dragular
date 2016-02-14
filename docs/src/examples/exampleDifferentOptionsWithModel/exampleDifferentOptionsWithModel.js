@@ -1,6 +1,6 @@
 'use strict';
 
-module.exports = function ($scope, $element, dragularService) {
+var DifferentOptionsModelCtrl = function ($scope, $element, dragularService) {
   $scope.items1 = [{
     content: 'Move me, but you can only drop me in one of these containers.'
   }, {
@@ -47,3 +47,7 @@ module.exports = function ($scope, $element, dragularService) {
   });
 
 };
+
+DifferentOptionsModelCtrl.$inject = ['$scope', '$element', 'dragularService'];
+
+module.exports = DifferentOptionsModelCtrl;

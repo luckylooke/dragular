@@ -1,15 +1,18 @@
 (function(f){if(typeof exports==="object"&&typeof module!=="undefined"){module.exports=f()}else if(typeof define==="function"&&define.amd){define([],f)}else{var g;if(typeof window!=="undefined"){g=window}else if(typeof global!=="undefined"){g=global}else if(typeof self!=="undefined"){g=self}else{g=this}g.dragular = f()}})(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
 'use strict';
 
-module.exports = function TodoCtrl($element, dragularService) {
+var BasicCtrl = function ($element, dragularService) {
   dragularService.cleanEnviroment();
   dragularService('.containerVertical');
 };
 
+BasicCtrl.$inject = ['$element', 'dragularService'];
+
+module.exports = BasicCtrl;
+
 },{}],2:[function(require,module,exports){
 'use strict';
-
-module.exports = function ($scope, $element, dragularService) {
+var BasicModelCtrl = function ($scope, $element, dragularService) {
   $scope.items1 = [{
     content: 'Move me, but you can only drop me in one of these containers.'
   }, {
@@ -35,10 +38,14 @@ module.exports = function ($scope, $element, dragularService) {
   });
 };
 
+BasicModelCtrl.$inject = ['$scope', '$element', 'dragularService'];
+
+module.exports = BasicModelCtrl;
+
 },{}],3:[function(require,module,exports){
 'use strict';
 
-module.exports = function TodoCtrl($element, dragularService) {
+var BoundingBoxCtrl = function ($element, dragularService) {
   var boundingBox = $element[0];
   dragularService.cleanEnviroment();
 
@@ -47,10 +54,14 @@ module.exports = function TodoCtrl($element, dragularService) {
   });
 };
 
+BoundingBoxCtrl.$inject = ['$element', 'dragularService'];
+
+module.exports = BoundingBoxCtrl;
+
 },{}],4:[function(require,module,exports){
 'use strict';
 
-module.exports = function ($element, dragularService) {
+var BoundingBoxLockXCtrl = function ($element, dragularService) {
   var boundingBox = $element.children().children()[0];
   dragularService.cleanEnviroment();
   dragularService(boundingBox, {
@@ -59,10 +70,14 @@ module.exports = function ($element, dragularService) {
   });
 };
 
+BoundingBoxLockXCtrl.$inject = ['$element', 'dragularService'];
+
+module.exports = BoundingBoxLockXCtrl;
+
 },{}],5:[function(require,module,exports){
 'use strict';
 
-module.exports = function TodoCtrl($element, dragularService) {
+var BoundingBoxLockYCtrl = function ($element, dragularService) {
   var boundingBox = $element.children().children()[0];
   dragularService.cleanEnviroment();
   dragularService(boundingBox, {
@@ -71,20 +86,28 @@ module.exports = function TodoCtrl($element, dragularService) {
   });
 };
 
+BoundingBoxLockYCtrl.$inject = ['$element', 'dragularService'];
+
+module.exports = BoundingBoxLockYCtrl;
+
 },{}],6:[function(require,module,exports){
 'use strict';
 
-module.exports = function ($element, dragularService) {
+var CopyCtrl = function ($element, dragularService) {
   dragularService.cleanEnviroment();
   dragularService($element.children(), {
     copy: true
   });
 };
 
+CopyCtrl.$inject = ['$element', 'dragularService'];
+
+module.exports = CopyCtrl;
+
 },{}],7:[function(require,module,exports){
 'use strict';
 
-module.exports = function ($scope, $element, dragularService) {
+var CopyModelCtrl = function ($scope, $element, dragularService) {
   $scope.items1 = [{
     content: 'Move me, and make copy on drop.'
   }, {
@@ -111,10 +134,14 @@ module.exports = function ($scope, $element, dragularService) {
   });
 };
 
+CopyModelCtrl.$inject = ['$scope', '$element', 'dragularService'];
+
+module.exports = CopyModelCtrl;
+
 },{}],8:[function(require,module,exports){
 'use strict';
 
-module.exports = function ($element, dragularService) {
+var CustomClassesCtrl = function ($element, dragularService) {
   dragularService.cleanEnviroment();
   dragularService($element.children(), {
     classes: {
@@ -123,10 +150,14 @@ module.exports = function ($element, dragularService) {
   });
 };
 
+CustomClassesCtrl.$inject = ['$element', 'dragularService'];
+
+module.exports = CustomClassesCtrl;
+
 },{}],9:[function(require,module,exports){
 'use strict';
 
-module.exports = function ($scope, $element, dragularService) {
+var DifferentOptionsModelCtrl = function ($scope, $element, dragularService) {
   $scope.items1 = [{
     content: 'Move me, but you can only drop me in one of these containers.'
   }, {
@@ -174,10 +205,14 @@ module.exports = function ($scope, $element, dragularService) {
 
 };
 
+DifferentOptionsModelCtrl.$inject = ['$scope', '$element', 'dragularService'];
+
+module.exports = DifferentOptionsModelCtrl;
+
 },{}],10:[function(require,module,exports){
 'use strict';
 
-module.exports = function DirectiveCtrl($scope) {
+var DirectiveCtrl = function ($scope) {
   $scope.dragularOptions = {
     classes: {
       mirror: 'custom-green-mirror'
@@ -186,10 +221,14 @@ module.exports = function DirectiveCtrl($scope) {
   };
 };
 
+DirectiveCtrl.$inject = ['$scope'];
+
+module.exports = DirectiveCtrl;
+
 },{}],11:[function(require,module,exports){
 'use strict';
 
-module.exports = function ($scope) {
+var DirectiveModelCtrl = function ($scope) {
   $scope.items1 = [{
     content: 'Move me, and make copy on drop.'
   }, {
@@ -217,11 +256,15 @@ module.exports = function ($scope) {
   };
 };
 
+DirectiveModelCtrl.$inject = ['$scope'];
+
+module.exports = DirectiveModelCtrl;
+
 },{}],12:[function(require,module,exports){
 /* global angular */
 'use strict';
 
-module.exports = function ($element, dragularService) {
+var DragOverEventsCtrl = function ($element, dragularService) {
   dragularService.cleanEnviroment();
   dragularService([$element.children()[0], $element.children()[2]], {
     nameSpace: 'apples'
@@ -262,10 +305,14 @@ module.exports = function ($element, dragularService) {
   });
 };
 
+DragOverEventsCtrl.$inject = ['$element', 'dragularService'];
+
+module.exports = DragOverEventsCtrl;
+
 },{}],13:[function(require,module,exports){
 'use strict';
 
-module.exports = function ($scope, $element, dragularService, $timeout) {
+var EventsCtrl = function ($scope, $element, dragularService, $timeout) {
   dragularService.cleanEnviroment();
   dragularService($element.children(), {
     scope: $scope
@@ -296,10 +343,14 @@ module.exports = function ($scope, $element, dragularService, $timeout) {
   }
 };
 
+EventsCtrl.$inject = ['$scope', '$element', 'dragularService', '$timeout'];
+
+module.exports = EventsCtrl;
+
 },{}],14:[function(require,module,exports){
 'use strict';
 
-module.exports = function TodoCtrl($element, dragularService) {
+var HandleCtrl = function ($element, dragularService) {
   dragularService.cleanEnviroment();
 	dragularService($element.children(), {
     moves: function(el, container, handle) {
@@ -308,9 +359,14 @@ module.exports = function TodoCtrl($element, dragularService) {
   });
 };
 
+HandleCtrl.$inject = ['$element', 'dragularService'];
+
+module.exports = HandleCtrl;
+
 },{}],15:[function(require,module,exports){
 'use strict';
-module.exports = function ($scope, $element, dragularService) {
+
+var IsContainerModelCtrl = function ($scope, $element, dragularService) {
   $scope.items1 = [{
     content: 'Move me, but you can only drop me in one of these containers.'
   }, {
@@ -342,10 +398,14 @@ module.exports = function ($scope, $element, dragularService) {
   };
 };
 
+IsContainerModelCtrl.$inject = ['$scope', '$element', 'dragularService'];
+
+module.exports = IsContainerModelCtrl;
+
 },{}],16:[function(require,module,exports){
 'use strict';
 
-module.exports = function ($element, dragularService) {
+var NameSpacesCtrl = function ($element, dragularService) {
   dragularService.cleanEnviroment();
   dragularService([$element.children()[0], $element.children()[2]], {
     nameSpace: 'apples'
@@ -358,10 +418,14 @@ module.exports = function ($element, dragularService) {
   });
 };
 
+NameSpacesCtrl.$inject = ['$element', 'dragularService'];
+
+module.exports = NameSpacesCtrl;
+
 },{}],17:[function(require,module,exports){
 'use strict';
 
-module.exports =  function ($timeout, $scope, $element, dragularService) {
+var NestedNgRepeatCtrl = function ($timeout, $scope, $element, dragularService) {
   $timeout(function() { // timeount due to ngRepeat to be ready
     dragularService.cleanEnviroment();
     dragularService($element, {
@@ -411,10 +475,14 @@ module.exports =  function ($timeout, $scope, $element, dragularService) {
   }];
 };
 
+NestedNgRepeatCtrl.$inject = ['$timeout', '$scope', '$element', 'dragularService'];
+
+module.exports = NestedNgRepeatCtrl;
+
 },{}],18:[function(require,module,exports){
 'use strict';
 
-module.exports = function ($timeout, $scope, $element, dragularService) {
+var NestedNgRepeatWithModelCtrl = function ($timeout, $scope, $element, dragularService) {
   $timeout(function() { // timeount due to nested ngRepeat to be ready
     var container = $element.children().eq(0).children(),
       parentContainers = container.children(),
@@ -482,10 +550,14 @@ module.exports = function ($timeout, $scope, $element, dragularService) {
   }];
 };
 
+NestedNgRepeatWithModelCtrl.$inject = ['$timeout', '$scope', '$element', 'dragularService'];
+
+module.exports = NestedNgRepeatWithModelCtrl;
+
 },{}],19:[function(require,module,exports){
 'use strict';
 
-module.exports = function ($scope, $element, dragularService) {
+var NgRepeatCtrl = function ($scope, $element, dragularService) {
   dragularService.cleanEnviroment();
   dragularService($element.children());
   $scope.items = [{
@@ -509,10 +581,14 @@ module.exports = function ($scope, $element, dragularService) {
   };
 };
 
+NgRepeatCtrl.$inject = ['$scope', '$element', 'dragularService'];
+
+module.exports = NgRepeatCtrl;
+
 },{}],20:[function(require,module,exports){
 'use strict';
 
-module.exports = function ($scope, $element, dragularService) {
+var NgRepeatWithModelCtrl = function ($scope, $element, dragularService) {
   $scope.items = [{
     content: 'Try to add or remove some elements (click on +- buttons), you will see that it is not problem for dragular.'
   }, {
@@ -536,20 +612,28 @@ module.exports = function ($scope, $element, dragularService) {
   };
 };
 
+NgRepeatWithModelCtrl.$inject = ['$scope', '$element', 'dragularService'];
+
+module.exports = NgRepeatWithModelCtrl;
+
 },{}],21:[function(require,module,exports){
 'use strict';
 
-module.exports = function ($element, dragularService) {
+var RemoveOnSpillCtrl = function ($element, dragularService) {
   dragularService.cleanEnviroment();
 	dragularService($element.children(), {
     removeOnSpill: true
   });
 };
 
+RemoveOnSpillCtrl.$inject = ['$element', 'dragularService'];
+
+module.exports = RemoveOnSpillCtrl;
+
 },{}],22:[function(require,module,exports){
 'use strict';
 
-module.exports = function ($scope, $element, dragularService) {
+var RemoveOnSpillWithModelCtrl = function ($scope, $element, dragularService) {
   $scope.items1 = [{
     content: 'Move me, but you can only drop me in containers.'
   }, {
@@ -576,21 +660,29 @@ module.exports = function ($scope, $element, dragularService) {
   });
 };
 
+RemoveOnSpillWithModelCtrl.$inject = ['$scope', '$element', 'dragularService'];
+
+module.exports = RemoveOnSpillWithModelCtrl;
+
 },{}],23:[function(require,module,exports){
 'use strict';
 
-module.exports = function ($element, dragularService) {
+var RevertOnSpillCtrl = function ($element, dragularService) {
   dragularService.cleanEnviroment();
   dragularService($element.children(), {
     revertOnSpill: true
   });
 };
 
+RevertOnSpillCtrl.$inject = ['$element', 'dragularService'];
+
+module.exports = RevertOnSpillCtrl;
+
 },{}],24:[function(require,module,exports){
 /* global angular */
 'use strict';
 
-module.exports = function ($interval, $element, dragularService) {
+var ScrollingDragCtrl = function ($interval, $element, dragularService) {
   var timer,
     leftScrollContainer = document.getElementById('leftScroll'),
     rightScrollContainer = document.getElementById('rightScroll'),
@@ -623,6 +715,10 @@ module.exports = function ($interval, $element, dragularService) {
   }
 };
 
+ScrollingDragCtrl.$inject = ['$interval', '$element', 'dragularService'];
+
+module.exports = ScrollingDragCtrl;
+
 },{}],25:[function(require,module,exports){
 /* global angular, hljs */
 'use strict';
@@ -646,8 +742,8 @@ var DragOverEventsCtrl = require('./exampleDragOverEvents/exampleDragOverEvents'
 var EventsCtrl = require('./exampleEvents/exampleEvents');
 var HandleCtrl = require('./exampleHandle/exampleHandle');
 var IsContainerModelCtrl = require('./exampleIsContainerWithModel/exampleIsContainerWithModel');
-var NestedNgRepeatCtrl = require('./exampleNestedNgRepeat/exampleNestedNgRepeat');
 var NameSpacesCtrl = require('./exampleNameSpaces/exampleNameSpaces');
+var NestedNgRepeatCtrl = require('./exampleNestedNgRepeat/exampleNestedNgRepeat');
 var NestedNgRepeatWithModelCtrl = require('./exampleNestedNgRepeatWithModel/exampleNestedNgRepeatWithModel');
 var NgRepeatCtrl = require('./exampleNgRepeat/exampleNgRepeat');
 var NgRepeatFilteredWithModelCtrl = require('./exampleNgRepeat/exampleNgRepeat');
@@ -665,33 +761,33 @@ require('./templates');
  */
 
 angular
-  .module('examplesApp', ['dragularModule', 'templates', 'ui.router'])
-  .config(['$stateProvider', '$urlRouterProvider', examplesRouter])
-  .controller('Basic', ['$element', 'dragularService', BasicCtrl])
-  .controller('BasicModel', ['$scope', '$element', 'dragularService', BasicModelCtrl])
-  .controller('BoundingBox', ['$element', 'dragularService', BoundingBoxCtrl])
-  .controller('BoundingBoxLockX', ['$element', 'dragularService', BoundingBoxLockXCtrl])
-  .controller('BoundingBoxLockY', ['$element', 'dragularService', BoundingBoxLockYCtrl])
-  .controller('Copy', ['$element', 'dragularService', CopyCtrl])
-  .controller('CopyModel', ['$scope', '$element', 'dragularService', CopyModelCtrl])
-  .controller('CustomClasses', ['$element', 'dragularService', CustomClassesCtrl])
-  .controller('DifferentOptionsModel', ['$scope', '$element', 'dragularService', DifferentOptionsModelCtrl])
-  .controller('Directive', ['$scope', DirectiveCtrl])
-  .controller('DirectiveModel', ['$scope', DirectiveModelCtrl])
-  .controller('DragOverEvents', ['$element', 'dragularService', DragOverEventsCtrl])
-  .controller('Events', ['$scope', '$element', 'dragularService', '$timeout', EventsCtrl])
-  .controller('Handle', ['$element', 'dragularService', HandleCtrl])
-  .controller('IsContainerModel', ['$scope', '$element', 'dragularService', IsContainerModelCtrl])
-  .controller('NestedNgRepeat', ['$timeout', '$scope', '$element', 'dragularService', NestedNgRepeatCtrl])
-  .controller('NameSpaces', ['$element', 'dragularService', NameSpacesCtrl])
-  .controller('NestedNgRepeatWithModel', ['$timeout', '$scope', '$element', 'dragularService', NestedNgRepeatWithModelCtrl])
-  .controller('NgRepeat', ['$scope', '$element', 'dragularService', NgRepeatCtrl])
-  .controller('NgRepeatFilteredWithModel', ['$scope', '$element', 'dragularService', '$filter', NgRepeatFilteredWithModelCtrl])
-  .controller('NgRepeatWithModel', ['$scope', '$element', 'dragularService', NgRepeatWithModelCtrl])
-  .controller('RemoveOnSpill', ['$element', 'dragularService', RemoveOnSpillCtrl])
-  .controller('RemoveOnSpillWithModel', ['$scope', '$element', 'dragularService', RemoveOnSpillWithModelCtrl])
-  .controller('RevertOnSpill', ['$element', 'dragularService', RevertOnSpillCtrl])
-  .controller('ScrollingDrag', ['$interval', '$element', 'dragularService', ScrollingDragCtrl])
+  .module('examplesApp', [dragular, 'templates', 'ui.router'])
+  .config(examplesRouter)
+  .controller('Basic', BasicCtrl)
+  .controller('BasicModel', BasicModelCtrl)
+  .controller('BoundingBox', BoundingBoxCtrl)
+  .controller('BoundingBoxLockX', BoundingBoxLockXCtrl)
+  .controller('BoundingBoxLockY', BoundingBoxLockYCtrl)
+  .controller('Copy', CopyCtrl)
+  .controller('CopyModel', CopyModelCtrl)
+  .controller('CustomClasses', CustomClassesCtrl)
+  .controller('DifferentOptionsModel', DifferentOptionsModelCtrl)
+  .controller('Directive', DirectiveCtrl)
+  .controller('DirectiveModel', DirectiveModelCtrl)
+  .controller('DragOverEvents', DragOverEventsCtrl)
+  .controller('Events', EventsCtrl)
+  .controller('Handle', HandleCtrl)
+  .controller('IsContainerModel', IsContainerModelCtrl)
+  .controller('NameSpaces', NameSpacesCtrl)
+  .controller('NestedNgRepeat',  NestedNgRepeatCtrl)
+  .controller('NestedNgRepeatWithModel', NestedNgRepeatWithModelCtrl)
+  .controller('NgRepeat', NgRepeatCtrl)
+  .controller('NgRepeatFilteredWithModel', NgRepeatFilteredWithModelCtrl)
+  .controller('NgRepeatWithModel', NgRepeatWithModelCtrl)
+  .controller('RemoveOnSpill', RemoveOnSpillCtrl)
+  .controller('RemoveOnSpillWithModel', RemoveOnSpillWithModelCtrl)
+  .controller('RevertOnSpill', RevertOnSpillCtrl)
+  .controller('ScrollingDrag', ScrollingDragCtrl)
   .controller('ExAppCtrl', ['$scope', function($scope) {
     $scope.examplesList = [{
         template: 'docsInstall/docsInstall.html',
@@ -821,7 +917,7 @@ angular
 },{"../../../src/dragularModule":29,"./exampleBasic/exampleBasic":1,"./exampleBasicWithModel/exampleBasicWithModel":2,"./exampleBoundingBox/exampleBoundingBox":3,"./exampleBoundingBoxLockX/exampleBoundingBoxLockX":4,"./exampleBoundingBoxLockY/exampleBoundingBoxLockY":5,"./exampleCopy/exampleCopy":6,"./exampleCopyWithModel/exampleCopyWithModel":7,"./exampleCustomClasses/exampleCustomClasses":8,"./exampleDifferentOptionsWithModel/exampleDifferentOptionsWithModel":9,"./exampleDirective/exampleDirective":10,"./exampleDirectiveWithModel/exampleDirectiveWithModel":11,"./exampleDragOverEvents/exampleDragOverEvents":12,"./exampleEvents/exampleEvents":13,"./exampleHandle/exampleHandle":14,"./exampleIsContainerWithModel/exampleIsContainerWithModel":15,"./exampleNameSpaces/exampleNameSpaces":16,"./exampleNestedNgRepeat/exampleNestedNgRepeat":17,"./exampleNestedNgRepeatWithModel/exampleNestedNgRepeatWithModel":18,"./exampleNgRepeat/exampleNgRepeat":19,"./exampleNgRepeatWithModel/exampleNgRepeatWithModel":20,"./exampleRemoveOnSpill/exampleRemoveOnSpill":21,"./exampleRemoveOnSpillWithModel/exampleRemoveOnSpillWithModel":22,"./exampleRevertOnSpill/exampleRevertOnSpill.js":23,"./exampleScrollingDrag/exampleScrollingDrag.js":24,"./examplesRouter":26,"./templates":27}],26:[function(require,module,exports){
 'use strict';
 
-module.exports = function ($stateProvider, $urlRouterProvider) {
+var examplesRouter = function ($stateProvider, $urlRouterProvider) {
   $urlRouterProvider.otherwise('/home');
 
   var timer,
@@ -838,7 +934,7 @@ module.exports = function ($stateProvider, $urlRouterProvider) {
       }
     };
 
-    ctrl.$inject = ['$state', '$stateParams', '$timeout'];
+  ctrl.$inject = ['$state', '$stateParams', '$timeout'];
 
   $stateProvider
     .state('home', {
@@ -863,6 +959,10 @@ module.exports = function ($stateProvider, $urlRouterProvider) {
     });
 };
 
+examplesRouter.$inject = ['$stateProvider', '$urlRouterProvider'];
+
+module.exports = examplesRouter;
+
 },{}],27:[function(require,module,exports){
 'use strict'; module.exports = angular.module("templates", []).run(["$templateCache", function($templateCache) {$templateCache.put("docsInstall/docsInstall.html","<h2>Install</h2>\n<p>download dragular.js and dragular.css from dist folder</p>\n<p>OR clone git</p>\n<pre><code>\ngit clone http://github.com/luckylooke/dragular.git\n</code></pre>\n<p>OR use npm</p>\n<pre><code>\n[sudo] npm install dragular\n</code></pre>\n<p>OR use bower</p>\n<pre><code>\nbower install dragular\n</code></pre>\n<p>AND include files into your project</p>\n<pre><code>\n&lt;link href=\'styles/dragular.css\' rel=\'stylesheet\' type=\'text/css\' /&gt;\n&lt;script src=\'scripts/dragular.js\'&gt;&lt;/script&gt;\n</code></pre>\n<p>AND put dragularModule into dependency array</p>\n<pre><code>\nvar app = angular.module(\'myApp\', [\'dragularModule\', \'otherDependencies\']);\n</code></pre>\n<p>DONE :)</p>\n");
 $templateCache.put("exampleBasic/exampleBasic.html","<div class=\'parent\'>\n  <h2>Basic</h2>\n  <label for=\'hy\'>Move stuff between these two containers. Note how the stuff gets inserted near the mouse pointer? Great stuff.</label>\n  <div class=\'wrapper\' ng-controller=\"Basic\">\n    <div class=\'containerVertical\'>\n      <div>Move me, but you can only drop me in one of these containers.</div>\n      <div>If you try to drop me somewhere other than these containers, I\'ll just come back.</div>\n      <div>Item 3.</div>\n      <div>Item 6.</div>\n    </div>\n    <div class=\'containerVertical\'>\n      <div>You can drop me in the left container, otherwise I\'ll stay here.</div>\n      <div ng-click=\"clicked = !clicked\" ng-class=\"clicked && \'clickedClass\'\">Try to click me, dragular distinguish drag from click</div>\n      <div>Item 5.</div>\n    </div>\n  </div>\n  <pre>\n        <code>\n// JS\n  controller(\'Basic\', [\'$element\', \'dragularService\', function TodoCtrl($element, dragularService) {\n    dragularService(\'.containerVertical\');\n  }])\n        </code>\n        <code>\n// CSS\n.clickedClass {\n  background-color: orange !important;\n}\n        </code>\n        <code>\n&lt;!-- HTML --&gt;\n  &lt;div class=\'wrapper\' ng-controller=&quot;Basic&quot;&gt;\n    &lt;div class=\'containerVertical\'&gt;\n        &lt;div&gt;Move me, but you can only drop me in one of these containers.&lt;/div&gt;\n        &lt;div&gt;If you try to drop me somewhere other than these containers, I\'ll just come back.&lt;/div&gt;\n        &lt;div&gt;Item 3.&lt;/div&gt;\n        &lt;div&gt;Item 6.&lt;/div&gt;\n    &lt;/div&gt;\n    &lt;div class=\'containerVertical\'&gt;\n        &lt;div&gt;You can drop me in the left container, otherwise I\'ll stay here.&lt;/div&gt;\n        &lt;div ng-click=\"clicked = !clicked\" ng-class=\"clicked && \'clickedClass\'\"&gt;Try to click me, dragular distinguish drag from click&lt;/div&gt;\n        &lt;div&gt;Item 5.&lt;/div&gt;\n    &lt;/div&gt;\n&lt;/div&gt;\n        </code>\n      </pre>\n</div>\n");
@@ -870,8 +970,8 @@ $templateCache.put("exampleBasicWithModel/exampleBasicWithModel.html","<div clas
 $templateCache.put("exampleBoundingBox/exampleBoundingBox.html","        <div class=\'parent\'>\n            <h2>BoundingBox</h2>\n            <label for=\'hy\'>You can provide element in options.boundingBox to limit crossing element borders.</label>\n            <div class=\'wrapper\' ng-controller=\"BoundingBox\">\n                <div class=\'containerVertical\'>\n                    <div>This items cannot cross its example element, just try it your selves.</div>\n                    <div>Item 2.</div>\n                    <div>Item 3.</div>\n                    <div>Item 6.</div>\n                </div>\n                <div class=\'containerVertical\'>\n                    <div>This items cannot cross its example element, just try it your selves.</div>\n                    <div>Item 4.</div>\n                    <div>Item 5.</div>\n                </div>\n            </div>\n            <pre>\n        <code>\n  dragularService([$element.children(), {\n    boundingBox: $element\n  });\n        </code>\n      </pre>\n        </div>");
 $templateCache.put("exampleBoundingBoxLockX/exampleBoundingBoxLockX.html","<div class=\'parent\'>\n            <h2>BoundingBox and lockX</h2>\n            <label for=\'hy\'>Movement can be locked to X or Y axis and also you can provide element in options.boundingBox to limit crossing element borders.</label>\n            <div class=\'wrapper\' ng-controller=\"BoundingBoxLockX\">\n                <div class=\'containerHorizontal\'>\n                    <div class=\'boundingBox\'>\n                        <div class=\"width25\">Items are locked in X axis movement and cannot cross its closest parent div.boundingBox, just try it your selves.</div>\n                        <div class=\"width25\">item 2</div>\n                        <div class=\"width25\">item 3</div>\n                        <div class=\"width25\">item 4</div>\n                    </div>\n                </div>\n            </div>\n            <pre>\n        <code>\n  dragularService([$element.children()[0].children(), {\n    boundingBox: $element.children()[0],\n    lockX: true\n  });\n        </code>\n      </pre>\n        </div>");
 $templateCache.put("exampleBoundingBoxLockY/exampleBoundingBoxLockY.html","        <div class=\'parent\'>\n            <h2>BoundingBox and LockY</h2>\n            <label for=\'hy\'>Movement can be locked to X or Y axis and also you can provide element in options.boundingBox to limit crossing element borders.</label>\n            <div class=\'wrapper\' ng-controller=\"BoundingBoxLockY\">\n                <div class=\'containerVertical\'>\n                    <div class=\'boundingBox\'>\n                        <div>Items are locked in Y axis movement and cannot cross its closest parent div.boundingBox, just try it your selves.</div>\n                        <div>item 2</div>\n                        <div>item 3</div>\n                        <div>item 4</div>\n                        <div>item 5</div>\n                        <div>item 6</div>\n                    </div>\n                </div>\n            </div>\n            <pre>\n        <code>\n  dragularService([$element.children()[0].children(), {\n    boundingBox: $element.children()[0],\n    lockY: true\n  });\n        </code>\n      </pre>\n        </div>");
-$templateCache.put("exampleCopyWithModel/exampleCopyWithModel.html","<div class=\'parent\'>\n  <h2>Copy - with model</h2>\n  <label for=\'hy\'>Copying stuff is great too.</label>\n  <div class=\'wrapper\' ng-controller=\"CopyModel\">\n    <div class=\'tableRow\'>\n      <div class=\'containerVertical\'>\n        <div ng-repeat=\"item in items1\">{{item.content}}</div>\n      </div>\n      <div class=\'containerVertical\'>\n        <div ng-repeat=\"item in items2\">{{item.content}}</div>\n      </div>\n    </div>\n    <div class=\"tableRow\">\n      <div class=\'containerVertical\'>\n        <div>Items1:\n          <br/>{{items1 | json}}</div>\n      </div>\n      <div class=\'containerVertical\'>\n        <div>Items2:\n          <br/>{{items2 | json}}</div>\n      </div>\n    </div>\n  </div>\n  <pre>\n        <code>\n// JS\n  controller(\'CopyModel\', [\'$scope\', \'$element\', \'dragularService\', function TodoCtrl($scope, $element, dragularService) {\n    $scope.items1 = [{\n      content: \'Move me, and make copy on drop.\'\n    }, {\n      content: \'If you try to drop me somewhere other than these containers, I\\\'ll just come back.\'\n    }, {\n      content: \'Item 3\'\n    }, {\n      content: \'Item 4\'\n    }];\n    $scope.items2 = [{\n      content: \'Item 5\'\n    }, {\n      content: \'Item 6\'\n    }, {\n      content: \'Item 7\'\n    }, {\n      content: \'Item 8\'\n    }];\n    var containers = $element.children().children();\n    dragularService([containers[0],containers[1]],{\n      containersModel: [$scope.items1, $scope.items2],\n      copy: true\n    });\n  }])\n        </code>\n        <code>\n&lt;!-- HTML --&gt;\n&lt;div class=\'wrapper\' ng-controller=&quot;CopyModel&quot; ng-show=&quot;globals.showModelExamples&quot;&gt;\n    &lt;div class=\'tableRow\'&gt;\n      &lt;div class=\'containerVertical\'&gt;\n        &lt;div ng-repeat=&quot;item in items1&quot;&gt;{{item.content}}&lt;/div&gt;\n      &lt;/div&gt;\n      &lt;div class=\'containerVertical\'&gt;\n        &lt;div ng-repeat=&quot;item in items2&quot;&gt;{{item.content}}&lt;/div&gt;\n      &lt;/div&gt;\n    &lt;/div&gt;\n    &lt;div class=&quot;tableRow&quot;&gt;\n      &lt;div class=&quot;container&quot;&gt;\n        &lt;div&gt;Items1:\n          &lt;br/&gt;{{items1 | json}}&lt;/div&gt;\n      &lt;/div&gt;\n      &lt;div class=&quot;container&quot;&gt;\n        &lt;div&gt;Items2:\n          &lt;br/&gt;{{items2 | json}}&lt;/div&gt;\n      &lt;/div&gt;\n    &lt;/div&gt;\n  &lt;/div&gt;\n        </code>\n      </pre>\n</div>\n");
 $templateCache.put("exampleCopy/exampleCopy.html","<div class=\'parent\'>\n  <h2>Copy</h2>\n  <label for=\'hy\'>Copying stuff is great too.</label>\n  <div class=\'wrapper\' ng-controller=\"Copy\" ng-hide=\"globals.showModelExamples\">\n    <div id=\'left2\' class=\'containerVertical\'>\n      <div>Move me, and make copy on drop.</div>\n      <div>If you try to drop me somewhere other than these containers, I\'ll just come back.</div>\n    </div>\n    <div id=\'right2\' class=\'containerVertical\'>\n      <div>You can drop me in the left container, otherwise I\'ll stay here.</div>\n    </div>\n  </div>\n  <pre>\n        <code>\n// JS\n  controller(\'Copy\', [\'$element\', \'dragularService\', function TodoCtrl($element, dragularService) {\n    dragularService($element.children(), {\n      copy: true\n    });\n  }])\n        </code>\n        <code>\n&lt;!-- HTML --&gt;\n&lt;div class=\'wrapper\' ng-controller=&quot;Copy&quot; ng-hide=&quot;globals.showModelExamples&quot;&gt;\n    &lt;div id=\'left2\' class=\'containerVertical\'&gt;\n      &lt;div&gt;Move me, and make copy on drop.&lt;/div&gt;\n      &lt;div&gt;If you try to drop me somewhere other than these containers, I\'ll just come back.&lt;/div&gt;\n    &lt;/div&gt;\n    &lt;div id=\'right2\' class=\'containerVertical\'&gt;\n      &lt;div&gt;You can drop me in the left container, otherwise I\'ll stay here.&lt;/div&gt;\n    &lt;/div&gt;\n  &lt;/div&gt;\n        </code>\n      </pre>\n</div>\n");
+$templateCache.put("exampleCopyWithModel/exampleCopyWithModel.html","<div class=\'parent\'>\n  <h2>Copy - with model</h2>\n  <label for=\'hy\'>Copying stuff is great too.</label>\n  <div class=\'wrapper\' ng-controller=\"CopyModel\">\n    <div class=\'tableRow\'>\n      <div class=\'containerVertical\'>\n        <div ng-repeat=\"item in items1\">{{item.content}}</div>\n      </div>\n      <div class=\'containerVertical\'>\n        <div ng-repeat=\"item in items2\">{{item.content}}</div>\n      </div>\n    </div>\n    <div class=\"tableRow\">\n      <div class=\'containerVertical\'>\n        <div>Items1:\n          <br/>{{items1 | json}}</div>\n      </div>\n      <div class=\'containerVertical\'>\n        <div>Items2:\n          <br/>{{items2 | json}}</div>\n      </div>\n    </div>\n  </div>\n  <pre>\n        <code>\n// JS\n  controller(\'CopyModel\', [\'$scope\', \'$element\', \'dragularService\', function TodoCtrl($scope, $element, dragularService) {\n    $scope.items1 = [{\n      content: \'Move me, and make copy on drop.\'\n    }, {\n      content: \'If you try to drop me somewhere other than these containers, I\\\'ll just come back.\'\n    }, {\n      content: \'Item 3\'\n    }, {\n      content: \'Item 4\'\n    }];\n    $scope.items2 = [{\n      content: \'Item 5\'\n    }, {\n      content: \'Item 6\'\n    }, {\n      content: \'Item 7\'\n    }, {\n      content: \'Item 8\'\n    }];\n    var containers = $element.children().children();\n    dragularService([containers[0],containers[1]],{\n      containersModel: [$scope.items1, $scope.items2],\n      copy: true\n    });\n  }])\n        </code>\n        <code>\n&lt;!-- HTML --&gt;\n&lt;div class=\'wrapper\' ng-controller=&quot;CopyModel&quot; ng-show=&quot;globals.showModelExamples&quot;&gt;\n    &lt;div class=\'tableRow\'&gt;\n      &lt;div class=\'containerVertical\'&gt;\n        &lt;div ng-repeat=&quot;item in items1&quot;&gt;{{item.content}}&lt;/div&gt;\n      &lt;/div&gt;\n      &lt;div class=\'containerVertical\'&gt;\n        &lt;div ng-repeat=&quot;item in items2&quot;&gt;{{item.content}}&lt;/div&gt;\n      &lt;/div&gt;\n    &lt;/div&gt;\n    &lt;div class=&quot;tableRow&quot;&gt;\n      &lt;div class=&quot;container&quot;&gt;\n        &lt;div&gt;Items1:\n          &lt;br/&gt;{{items1 | json}}&lt;/div&gt;\n      &lt;/div&gt;\n      &lt;div class=&quot;container&quot;&gt;\n        &lt;div&gt;Items2:\n          &lt;br/&gt;{{items2 | json}}&lt;/div&gt;\n      &lt;/div&gt;\n    &lt;/div&gt;\n  &lt;/div&gt;\n        </code>\n      </pre>\n</div>\n");
 $templateCache.put("exampleCustomClasses/exampleCustomClasses.html","<div class=\'parent\'>\n    <h2>Custom classes</h2>\n    <label for=\'hy\'>You can overwrite buildin classes by providing classes names in object via options.classes.</label>\n    <div class=\'wrapper\' ng-controller=\"CustomClasses\">\n        <div id=\'left4\' class=\'containerVertical\'>\n            <div>Move me, but you can only drop me in one of these containers.</div>\n            <div>If you try to drop me somewhere other than these containers, I\'ll just come back.</div>\n            <div>Item 3.</div>\n            <div>Item 6.</div>\n        </div>\n        <div id=\'right3\' class=\'containerVertical\'>\n            <div>You can drop me in the left container, otherwise I\'ll stay here.</div>\n            <div>Item 4.</div>\n            <div>Item 5.</div>\n        </div>\n    </div>\n    <pre>\n        <code>\n  dragularService([document.getElementById(left), document.getElementById(right)], { classes: {\n    mirror: \'custom-green-mirror\'\n  } });\n\n  // Default classes are:\n  option.classes = {\n    mirror: \'gu-mirror\',\n    hide: \'gu-hide\',\n    unselectable: \'gu-unselectable\',\n    transit: \'gu-transit\',\n    overActive: \'gu-over-active\',\n    overAccepts: \'gu-over-accept\',\n    overDeclines: \'gu-over-decline\'\n  };\n        </code>\n      </pre>\n</div>\n");
 $templateCache.put("exampleDifferentOptionsWithModel/exampleDifferentOptionsWithModel.html","<div class=\'parent\'>\n  <h2>Different options - with model</h2>\n  <label for=\'hy\'>You may need to setup different options (rules) for each container. For such setup you need to initialize each container separately. <b>Do not initialize same container twice!</b> In example bellow you can copy from left to right, but not otherwise. And from right container items can be removed on spill.</label>\n  <div class=\'wrapper\' ng-controller=\"DifferentOptionsModel\">\n    <div class=\'tableRow\'>\n      <div id=\"containerLeft\" class=\'containerVertical\'>\n        <div ng-repeat=\"item in items1\">{{item.content}}</div>\n      </div>\n      <div id=\"containerRight\" class=\'containerVertical\'>\n        <div ng-repeat=\"item in items2\">{{item.content}}</div>\n      </div>\n    </div>\n    <div class=\"tableRow\">\n      <div class=\'containerVertical\'>\n        <pre>Items1:\n          <br/>{{items1 | json}}</pre>\n      </div>\n      <div class=\'containerVertical\'>\n        <pre>Items2:\n          <br/>{{items2 | json}}</pre>\n      </div>\n    </div>\n  </div>\n  <pre>\n        <code>\n// JS\n  .controller(\'DifferentOptionsModel\', [\'$scope\', \'$element\', \'dragularService\', function TodoCtrl($scope, $element, dragularService) {\n    $scope.items1 = [{\n      content: \'Move me, but you can only drop me in one of these containers.\'\n    }, {\n      content: \'If you try to drop me somewhere other than these containers, I\\\'ll just come back.\'\n    }, {\n      content: \'Item 3\'\n    }, {\n      content: \'Item 4\'\n    }];\n    $scope.items2 = [{\n      content: \'Item 5\'\n    }, {\n      content: \'Item 6\'\n    }, {\n      content: \'Item 7\'\n    }, {\n      content: \'Item 8\'\n    }];\n\n    var containerLeft = document.querySelector(\'#containerLeft\'),\n      containerRight = document.querySelector(\'#containerRight\');\n\n    function accepts(el, target, source) {\n      if (source === containerLeft || source === target) {\n        return true;\n      }\n    }\n\n    dragularService([containerLeft], {\n      containersModel: [$scope.items1],\n      copy: true,\n      //move only from left to right  \n      accepts: accepts\n    });\n\n    dragularService([containerRight], {\n      containersModel: [$scope.items2],\n      removeOnSpill: true,\n      //move only from left to right  \n      accepts: accepts\n    });\n\n  }])\n        </code>\n        <code>\n&lt;!-- HTML --&gt;\n&lt;div class=\'wrapper\' ng-controller=&quot;DifferentOptionsModel&quot;&gt;\n    &lt;div class=\'tableRow\'&gt;\n      &lt;div id=&quot;containerLeft&quot; class=\'containerVertical\'&gt;\n        &lt;div ng-repeat=&quot;item in items1&quot;&gt;{{item.content}}&lt;/div&gt;\n      &lt;/div&gt;\n      &lt;div id=&quot;containerRight&quot; class=\'containerVertical\'&gt;\n        &lt;div ng-repeat=&quot;item in items2&quot;&gt;{{item.content}}&lt;/div&gt;\n      &lt;/div&gt;\n    &lt;/div&gt;\n    &lt;div class=&quot;tableRow&quot;&gt;\n      &lt;div class=\'containerVertical\'&gt;\n        &lt;pre&gt;Items1:\n          &lt;br/&gt;{{items1 | json}}&lt;/pre&gt;\n      &lt;/div&gt;\n      &lt;div class=\'containerVertical\'&gt;\n        &lt;pre&gt;Items2:\n          &lt;br/&gt;{{items2 | json}}&lt;/pre&gt;\n      &lt;/div&gt;\n    &lt;/div&gt;\n  &lt;/div&gt;\n        </code>\n      </pre>\n</div>\n");
 $templateCache.put("exampleDirective/exampleDirective.html","<div class=\'parent\'>\n  <h2>Directive</h2>\n  <label for=\'hy\'>Same as custom classes example, but showing use of directive.</label>\n  <div class=\'wrapper\' ng-controller=\"Directive\">\n    <div class=\'containerVertical\' dragular=\"dragularOptions\">\n      <div>Move me, but you can only drop me in one of these containers.</div>\n      <div>If you try to drop me somewhere other than these containers, I\'ll just come back.</div>\n      <div>Item 3.</div>\n      <div>Item 6.</div>\n    </div>\n    <div class=\'containerVertical\' dragular=\'{\"classes\":{\"mirror\":\"custom-green-mirror\"},\"nameSpace\":\"same\"}\'>\n      <div>You can drop me in the left container, otherwise I\'ll stay here.</div>\n      <div>Item 4.</div>\n      <div>Item 5.</div>\n    </div>\n  </div>\n  <pre>\n        <code>\n// JS\n  controller(\'Directive\', [\'$scope\', \'dragularService\', function TodoCtrl($scope) {\n    $scope.dragularOptions = {\n      classes: {\n        mirror: \'custom-green-mirror\'\n      },\n      nameSpace: \'common\' // just connecting left and right container\n    };\n  }])\n        </code>\n        <code>\n&lt;!-- HTML --&gt;\n&lt;div class=\'wrapper\' ng-controller=&quot;Directive&quot;&gt;\n    &lt;div class=\'containerVertical\' dragular=&quot;dragularOptions&quot;&gt;\n      &lt;div&gt;Move me, but you can only drop me in one of these containers.&lt;/div&gt;\n      &lt;div&gt;If you try to drop me somewhere other than these containers, I\'ll just come back.&lt;/div&gt;\n      &lt;div&gt;Item 3.&lt;/div&gt;\n      &lt;div&gt;Item 6.&lt;/div&gt;\n    &lt;/div&gt;\n    &lt;div class=\'containerVertical\' dragular=\'{&quot;classes&quot;:{&quot;mirror&quot;:&quot;custom-green-mirror&quot;},&quot;nameSpace&quot;:&quot;same&quot;}\'&gt;\n      &lt;div&gt;You can drop me in the left container, otherwise I\'ll stay here.&lt;/div&gt;\n      &lt;div&gt;Item 4.&lt;/div&gt;\n      &lt;div&gt;Item 5.&lt;/div&gt;\n    &lt;/div&gt;\n  &lt;/div&gt;\n        </code>\n      </pre>\n</div>\n");
