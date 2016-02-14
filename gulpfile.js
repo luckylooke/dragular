@@ -17,7 +17,6 @@ var browserSync = require('browser-sync');
 var jshint = require('gulp-jshint');
 var sourcemaps = require('gulp-sourcemaps');
 var concat = require('gulp-concat');
-var ngAnnotate = require('browserify-ngannotate');
 var templateCache = require('gulp-angular-templatecache');
 var ghPages = require('gulp-gh-pages');
 var markdown = require('gulp-markdown');
@@ -46,7 +45,7 @@ var config = {
       type: 'dragular',
       entryPoint: './src/dragularModule.js',
       bundleName: 'dragular.js',
-      dest: './dist',
+      dest: './dist'
     },
     docs: {
       type: 'docs',
@@ -87,11 +86,6 @@ function buildScript() {
     standalone: config.isProd ? 'dragular' : undefined
   }, watchify.args);
 
-  var transforms = [
-    'bulkify',
-    ngAnnotate
-  ];
-
   // Watch files for changes and only rebuilds what it needs to
   if (!config.isProd) {
     bundler = watchify(bundler);
@@ -99,11 +93,6 @@ function buildScript() {
       lintAndRebundle();
     });
   }
-
-  // Apply browserify transformations
-  transforms.forEach(function(transform) {
-    bundler.transform(transform);
-  });
 
   function rebundle() {
     var stream = bundler.bundle();
@@ -194,10 +183,10 @@ gulp.task('lint:docs', function() {
 gulp.task('serve', function () {
 
   browserSync({
-    
+
     port: (typeof process !== 'undefined' && process.env.PORT) || config.browserSync.port, // cloud9 improvement
     server: {
-      baseDir: config.browserSync.server,
+      baseDir: config.browserSync.server
     },
     logConnections: true,
     logFileChanges: true,
@@ -214,7 +203,7 @@ gulp.task('templates:docs', function() {
   return gulp.src(config.docs.templates)
     .pipe(templateCache({
       moduleSystem: 'Browserify',
-      standalone: true,
+      standalone: true
     }))
     .pipe(gulp.dest(config.docs.src));
 });
