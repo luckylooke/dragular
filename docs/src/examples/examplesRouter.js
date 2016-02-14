@@ -17,6 +17,8 @@ module.exports = function ($stateProvider, $urlRouterProvider) {
       }
     };
 
+  ctrl.$inject = ['$state', '$stateParams', '$timeout'];
+
   $stateProvider
     .state('home', {
       url: '/home',

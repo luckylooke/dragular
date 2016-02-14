@@ -1,6 +1,6 @@
 'use strict';
 
-module.exports = function TodoCtrl($scope) {
+module.exports = function ($scope) {
   $scope.items1 = [{
     content: 'Move me, and make copy on drop.'
   }, {
