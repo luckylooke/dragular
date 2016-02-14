@@ -2,9 +2,34 @@
 'use strict';
 
 // var angular = require('angular');
-var bulk = require('bulk-require');
 
-require('../../../src/dragularModule');
+var dragular = require('../../../src/dragularModule');
+var examplesRouter = require('./examplesRouter');
+var BasicCtrl = require('./exampleBasic/exampleBasic');
+var BasicModelCtrl = require('./exampleBasicWithModel/exampleBasicWithModel');
+var BoundingBoxCtrl = require('./exampleBoundingBox/exampleBoundingBox');
+var BoundingBoxLockXCtrl = require('./exampleBoundingBoxLockX/exampleBoundingBoxLockX');
+var BoundingBoxLockYCtrl = require('./exampleBoundingBoxLockY/exampleBoundingBoxLockY');
+var CopyCtrl = require('./exampleCopy/exampleCopy');
+var CopyModelCtrl = require('./exampleCopyWithModel/exampleCopyWithModel');
+var CustomClassesCtrl = require('./exampleCustomClasses/exampleCustomClasses');
+var DifferentOptionsModelCtrl = require('./exampleDifferentOptionsWithModel/exampleDifferentOptionsWithModel');
+var DirectiveCtrl = require('./exampleDirective/exampleDirective');
+var DirectiveModelCtrl = require('./exampleDirectiveWithModel/exampleDirectiveWithModel');
+var DragOverEventsCtrl = require('./exampleDragOverEvents/exampleDragOverEvents');
+var EventsCtrl = require('./exampleEvents/exampleEvents');
+var HandleCtrl = require('./exampleHandle/exampleHandle');
+var IsContainerModelCtrl = require('./exampleIsContainerWithModel/exampleIsContainerWithModel');
+var NestedNgRepeatCtrl = require('./exampleNestedNgRepeat/exampleNestedNgRepeat');
+var NameSpacesCtrl = require('./exampleNameSpaces/exampleNameSpaces');
+var NestedNgRepeatWithModelCtrl = require('./exampleNestedNgRepeatWithModel/exampleNestedNgRepeatWithModel');
+var NgRepeatCtrl = require('./exampleNgRepeat/exampleNgRepeat');
+var NgRepeatFilteredWithModelCtrl = require('./exampleNgRepeat/exampleNgRepeat');
+var NgRepeatWithModelCtrl = require('./exampleNgRepeatWithModel/exampleNgRepeatWithModel');
+var RemoveOnSpillCtrl = require('./exampleRemoveOnSpill/exampleRemoveOnSpill');
+var RemoveOnSpillWithModelCtrl = require('./exampleRemoveOnSpillWithModel/exampleRemoveOnSpillWithModel');
+var RevertOnSpillCtrl = require('./exampleRevertOnSpill/exampleRevertOnSpill.js');
+var ScrollingDragCtrl = require('./exampleScrollingDrag/exampleScrollingDrag.js');
 require('./templates');
 
 /**
@@ -13,7 +38,35 @@ require('./templates');
  *  DEMO app for dragular https://github.com/luckylooke/dragular
  */
 
-module.exports = angular.module('examplesApp', ['dragularModule', 'templates', 'ui.router']).controller('ExAppCtrl', ['$scope', function($scope) {
+angular
+  .module('examplesApp', [dragular, 'templates', 'ui.router'])
+  .config(['$stateProvider', '$urlRouterProvider', examplesRouter])
+  .controller('Basic', ['$element', 'dragularService', BasicCtrl])
+  .controller('BasicModel', ['$scope', '$element', 'dragularService', BasicModelCtrl])
+  .controller('BoundingBox', ['$element', 'dragularService', BoundingBoxCtrl])
+  .controller('BoundingBoxLockX', ['$element', 'dragularService', BoundingBoxLockXCtrl])
+  .controller('BoundingBoxLockY', ['$element', 'dragularService', BoundingBoxLockYCtrl])
+  .controller('Copy', ['$element', 'dragularService', CopyCtrl])
+  .controller('CopyModel', ['$scope', '$element', 'dragularService', CopyModelCtrl])
+  .controller('CustomClasses', ['$element', 'dragularService', CustomClassesCtrl])
+  .controller('DifferentOptionsModel', ['$scope', '$element', 'dragularService', DifferentOptionsModelCtrl])
+  .controller('Directive', ['$scope', DirectiveCtrl])
+  .controller('DirectiveModel', ['$scope', DirectiveModelCtrl])
+  .controller('DragOverEvents', ['$element', 'dragularService', DragOverEventsCtrl])
+  .controller('Events', ['$scope', '$element', 'dragularService', '$timeout', EventsCtrl])
+  .controller('Handle', ['$element', 'dragularService', HandleCtrl])
+  .controller('IsContainerModel', ['$scope', '$element', 'dragularService', IsContainerModelCtrl])
+  .controller('NestedNgRepeat', ['$timeout', '$scope', '$element', 'dragularService', NestedNgRepeatCtrl])
+  .controller('NameSpaces', ['$element', 'dragularService', NameSpacesCtrl])
+  .controller('NestedNgRepeatWithModel', ['$timeout', '$scope', '$element', 'dragularService', NestedNgRepeatWithModelCtrl])
+  .controller('NgRepeat', ['$scope', '$element', 'dragularService', NgRepeatCtrl])
+  .controller('NgRepeatFilteredWithModel', ['$scope', '$element', 'dragularService', '$filter', NgRepeatFilteredWithModelCtrl])
+  .controller('NgRepeatWithModel', ['$scope', '$element', 'dragularService', NgRepeatWithModelCtrl])
+  .controller('RemoveOnSpill', ['$element', 'dragularService', RemoveOnSpillCtrl])
+  .controller('RemoveOnSpillWithModel', ['$scope', '$element', 'dragularService', RemoveOnSpillWithModelCtrl])
+  .controller('RevertOnSpill', ['$element', 'dragularService', RevertOnSpillCtrl])
+  .controller('ScrollingDrag', ['$interval', '$element', 'dragularService', ScrollingDragCtrl])
+  .controller('ExAppCtrl', ['$scope', function($scope) {
     $scope.examplesList = [{
         template: 'docsInstall/docsInstall.html',
         link: 'docsInstall',
@@ -137,6 +190,4 @@ module.exports = angular.module('examplesApp', ['dragularModule', 'templates', '
         rowOffcanvas.toggleClass('active');
     };
 
-}]);
-
-bulk(__dirname, ['./**/!(*App).js']);
+  }]);
