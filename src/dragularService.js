@@ -6,43 +6,42 @@
  * Angular version of dragula https://github.com/bevacqua/dragula
  */
 
-var dragularModule = require('./dragularModule'),
-  shared = { // sahred object between all service instances
-      classesCache: {}, // classes lookup cache
-      containersCtx: {}, // containers model
-      containers: {}, // containers
-      mirror: null, // mirror image
-      source: null, // source container
-      item: null, // item being dragged
-      copy: null, // copy flag
-      sourceItem: null, // item originaly dragged if copy is enabled
-      sourceModel: null, // source container model
-      sourceFilteredModel: null, // source container filtered model if relevant
-      target: null, // droppable container under drag item
-      targetCtx: null, // target container context
-      targetModel: null, // target container model
-      lastDropTarget: null, // last container item was over
-      offsetX: null, // reference x
-      offsetY: null, // reference y
-      moveX: null, // reference move x
-      moveY: null, // reference move y
-      offsetXr: null, // reference x right for boundingBox feature
-      offsetYb: null, // reference y bottom for boundingBox feature
-      clientX: null, // cache client x, init at grab, update at drag
-      clientY: null, // cache client y, init at grab, update at drag
-      mirrorWidth: null, // mirror width for boundingBox feature
-      mirrorHeight: null, // mirror height for boundingBox feature
-      initialSibling: null, // reference sibling when grabbed
-      currentSibling: null, // reference sibling now
-      initialIndex: null, // reference model index when grabbed
-      currentIndex: null, // reference model index now
-      tempModel: null, // if o.isContainer is used, model can be provided as well, it is temporary saved here during drags
-      dragOverEvents: {}, // drag over events fired on element behind cursor
-      lastElementBehindCursor: null, // last element behind cursor
-      grabbed: null // holds mousedown context until first mousemove
-    };
+var shared = { // sahred object between all service instances
+  classesCache: {}, // classes lookup cache
+  containersCtx: {}, // containers model
+  containers: {}, // containers
+  mirror: null, // mirror image
+  source: null, // source container
+  item: null, // item being dragged
+  copy: null, // copy flag
+  sourceItem: null, // item originaly dragged if copy is enabled
+  sourceModel: null, // source container model
+  sourceFilteredModel: null, // source container filtered model if relevant
+  target: null, // droppable container under drag item
+  targetCtx: null, // target container context
+  targetModel: null, // target container model
+  lastDropTarget: null, // last container item was over
+  offsetX: null, // reference x
+  offsetY: null, // reference y
+  moveX: null, // reference move x
+  moveY: null, // reference move y
+  offsetXr: null, // reference x right for boundingBox feature
+  offsetYb: null, // reference y bottom for boundingBox feature
+  clientX: null, // cache client x, init at grab, update at drag
+  clientY: null, // cache client y, init at grab, update at drag
+  mirrorWidth: null, // mirror width for boundingBox feature
+  mirrorHeight: null, // mirror height for boundingBox feature
+  initialSibling: null, // reference sibling when grabbed
+  currentSibling: null, // reference sibling now
+  initialIndex: null, // reference model index when grabbed
+  currentIndex: null, // reference model index now
+  tempModel: null, // if o.isContainer is used, model can be provided as well, it is temporary saved here during drags
+  dragOverEvents: {}, // drag over events fired on element behind cursor
+  lastElementBehindCursor: null, // last element behind cursor
+  grabbed: null // holds mousedown context until first mousemove
+};
 
-dragularModule.factory('dragularService', function dragularServiceFunction($rootScope) {
+var dragularService = function ($rootScope) {
   // abbreviations
   var doc = document,
       docElm = doc.documentElement;
@@ -1129,7 +1128,7 @@ dragularModule.factory('dragularService', function dragularServiceFunction($root
       target.fireEvent('on' + e.eventType, e);
     }
   }
-  
+
   function getBool(prop, args, context){
     if(angular.isFunction(prop)){
       return !!prop.apply(context || this, args || shared);
@@ -1138,4 +1137,8 @@ dragularModule.factory('dragularService', function dragularServiceFunction($root
     }
   }
 
-});
+};
+
+dragularService.$inject = ['$rootScope'];
+
+module.exports = dragularService;

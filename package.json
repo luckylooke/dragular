@@ -43,8 +43,6 @@
     "brfs": "^1.4.1",
     "browser-sync": "^2.8.0",
     "browserify": "^11.0.0",
-    "browserify-ngannotate": "^1.0.1",
-    "bulkify": "^1.1.1",
     "gulp": "^3.9.0",
     "gulp-angular-templatecache": "^1.7.0",
     "gulp-autoprefixer": "^2.3.1",
