@@ -423,7 +423,7 @@ div.scrollBar {
 .gu-mirror {
   position: fixed !important;
   margin: 0 !important;
-  width: z-index 9999 !important;
+  z-index: 9999 !important;
   opacity: 0.8;
 }
 
