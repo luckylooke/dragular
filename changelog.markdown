@@ -3,6 +3,10 @@
 - **[Braking change!]** rename 'dragulardrag' event to 'dragulardragstart'
 - new event 'dragulardrag' emited each iteration while dragging
 
+# 4.0.1 John Whick
+- possibility to use it as a CommonJS module #62
+- jQuery enviroment fixes #63
+
 # 4.0.0 Uprising
 
 - **[Braking change!]** options object reference is now live, so can be changed on the fly with instant effect, this feature can be disabled by 'options.copyOptions = true' flag so dragular then make copy of options object. It also means than provided options object will be extended with default value where option property is undefined.
