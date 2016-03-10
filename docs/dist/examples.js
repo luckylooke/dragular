@@ -551,7 +551,6 @@
 	    function registerEvents(remove) {
 	      var op = remove ? 'off' : 'on';
 	      regEvent(docElm, op, 'mouseup', release);
-	      // regEvent(docElm, op, 'mousemove', startBecauseMouseMoved);
 
 	      initialContainers.forEach(function addMouseDown(container) {
 	        regEvent(container, 'on', 'mousedown', grab);
@@ -605,6 +604,9 @@
 	      ungrab();
 	      if (!drake.dragging) {
 	        return;
+	      }
+	      if (e.originalEvent){
+	          e = e.originalEvent; // jQuery enviroment
 	      }
 
 	      shared.clientX = getCoord('clientX', e);
@@ -694,6 +696,9 @@
 	    function startBecauseMouseMoved(e) {
 	      if (!shared.grabbed || drake.dragging) {
 	        return;
+	      }
+	      if (e.originalEvent){
+	          e = e.originalEvent; // jQuery enviroment
 	      }
 	      if (whichMouseButton(e) === 0) {
 	        release({});
@@ -1018,6 +1023,9 @@
 	      if (!shared.mirror) {
 	        return;
 	      }
+	      if (e.originalEvent){
+	          e = e.originalEvent; // jQuery enviroment
+	      }
 
 	      // update coordinates
 	      shared.clientX = getCoord('clientX', e);
@@ -1142,6 +1150,9 @@
 
 	    function scrollContainer(e) {
 	      if (shared.target) {
+	        if (e.originalEvent){
+	            e = e.originalEvent; // jQuery enviroment
+	        }
 	        var before = shared.target.scrollTop;
 	        shared.target.scrollTop += e.deltaY;
 	        // block scroll of the document when container can be scrolled
@@ -1306,6 +1317,9 @@
 	  }
 
 	  function preventGrabbed(e) {
+	    if (e.originalEvent){
+	        e = e.originalEvent; // jQuery enviroment
+	    }
 	    if (shared.grabbed) {
 	      e.preventDefault();
 	    }
