@@ -1096,7 +1096,8 @@
 	  }
 
 	  function whichMouseButton (e) {
-	    if (e.touches !== void 0) { return e.touches.length; }
+	    if (e.touches) { return e.touches.length; }
+	    if (e.originalEvent && e.originalEvent.touches) { return e.originalEvent.touches.length; }
 	    if (e.buttons !== undefined) { return e.buttons; }
 	    if (e.which !== undefined) { return e.which; }
 	    var button = e.button;
