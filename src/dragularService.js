@@ -1163,6 +1163,6 @@ var dragularService = function ($rootScope, $compile) {
 
 };
 
-dragularService.$inject = ['$rootScope'];
+dragularService.$inject = ['$rootScope', '$compile'];
 
 module.exports = dragularService;

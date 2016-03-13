@@ -1488,7 +1488,7 @@
 
 	};
 
-	dragularService.$inject = ['$rootScope'];
+	dragularService.$inject = ['$rootScope', '$compile'];
 
 	module.exports = dragularService;
 
