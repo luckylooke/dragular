@@ -565,9 +565,12 @@ var dragularService = function ($rootScope, $compile) {
 
       function afterDrop() {
         if(o.compileItemOnDrop){
-            var scope = angular.element(target).scope();  
-            scope.$applyAsync(function() {
-                var content = $compile(sourceItem)(scope);
+            var scope = angular.element(target).scope();
+            scope.$applyAsync(function(){
+                var content = $compile(shared.copy ? sourceItem.cloneNode(true) : sourceItem)(scope);                   
+                if(item.parentNode === target){
+                    target.removeChild(item);
+                }
                 target.insertBefore(content[0], currentSibling);
             });
         }
