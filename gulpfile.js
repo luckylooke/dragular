@@ -208,14 +208,14 @@ gulp.task('watch:docs', ['serve'], function() {
 * on changes, generate non-minified but concatenated output.
 */
 gulp.task('dev', function() {
-  config.isProd = false;
+  config.isProd = true;
   scriptDefaults = config.scripts.dragular;
 
   sequence(['scripts', 'styles'], 'watch');
 });
 
 gulp.task('dev:docs', function() {
-  config.isProd = false;
+  config.isProd = true;
   scriptDefaults = config.scripts.docs;
 
   sequence('markdown', 'templates:docs', ['scripts', 'styles:docs'], 'watch:docs');
