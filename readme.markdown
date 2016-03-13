@@ -361,6 +361,11 @@ myEventNames = {
 }
 ```
 
+### `options.compileItemOnDrop`
+
+In case your draggable items are customized by other directives/attributes, you can use this flag to run compilation of droped item after drop. It is not supposed to be used with containers items rendered by ng-repeat. In such case you are supposed to add directives/attributes to item template and use logic in controller to enable/disable them.
+
+
 ## `Events`
 
 If $scope is provided as options.scope the following events can be tracked using `$scope.on(type, listener)`:

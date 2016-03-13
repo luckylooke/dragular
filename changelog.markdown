@@ -1,7 +1,10 @@
-# X.X.X plan
+# X.X.X planned - not implemented
 - **[Braking change!]** rename 'shared' property to 'state'
 - **[Braking change!]** rename 'dragulardrag' event to 'dragulardragstart'
 - new event 'dragulardrag' emited each iteration while dragging
+
+# 4.1.0
+- compileItemOnDrop fixes #71
 
 # 4.0.1 John Whick
 - possibility to use it as a CommonJS module #62
