@@ -36,7 +36,7 @@ var config = {
     port: '3000',
     server: './docs'
   },
-  // Predefined scripts configs to keep tasks DRY
+  // Predefined scripts & styles configs to keep tasks DRY
   scripts: {
     dragular: {
       type: 'dragular',
@@ -51,16 +51,34 @@ var config = {
       dest: './docs/dist'
     }
   },
+  styles: {
+    dragular: {
+      entryPoint: './src/*.css',
+      bundleName: 'dragular.css',
+      dest: './dist'
+    },
+    docs: {
+      entryPoint: [
+        './src/*.css',
+        './docs/src/**/*.css'
+      ],
+      bundleName: 'examples.css',
+      dest: './docs/dist'
+    }
+  },
   // A flag attribute to switch modes
   isProd: false
 };
 
 /*
-* scriptDefaults stores current scripts settings (like entry point or
+* Defaults stores stores temporary scripts & styles settings (like entry point or
 * output directory). This metadata is used to configure the webpack compilation
 * process.
 */
-var scriptDefaults = config.scripts.dragular;
+var defaults = {
+  scripts: config.scripts.dragular,
+  styles: config.styles.dragular
+}
 
 function handleErrors(err) {
   gutil.log(err.toString());
@@ -73,15 +91,15 @@ function handleErrors(err) {
 function buildScript() {
 
   function rebundle() {
-    return gulp.src(scriptDefaults.entryPoint)
+    return gulp.src(defaults.scripts.entryPoint)
       .on('error', handleErrors)
       .pipe(webpack({
         watch: config.isProd ? false : true,
         output: {
-          filename: scriptDefaults.bundleName
+          filename: defaults.scripts.bundleName
         }
       }))
-      .pipe(gulpif(config.isProd, gulp.dest(scriptDefaults.dest)))
+      .pipe(gulpif(config.isProd, gulp.dest(defaults.scripts.dest)))
       .pipe(gulpif(config.isProd, sourcemaps.init({loadMaps: true})))
       .pipe(gulpif(config.isProd, uglify({
         compress: { drop_console: true }
@@ -93,12 +111,12 @@ function buildScript() {
         title: 'Scripts: '
       }))
       .pipe(gulpif(config.isProd, sourcemaps.write('./')))
-      .pipe(gulp.dest(scriptDefaults.dest))
+      .pipe(gulp.dest(defaults.scripts.dest))
       .pipe(gulpif(browserSync.active, browserSync.stream()));
   }
 
   function lintAndRebundle() {
-    if (scriptDefaults.type === 'dragular') {
+    if (defaults.scripts.type === 'dragular') {
       return sequence('lint', rebundle);
     }
 
@@ -114,13 +132,13 @@ gulp.task('scripts', function() {
 
 gulp.task('styles', function() {
 
-  return gulp.src(config.dragular.styles)
+  return gulp.src(defaults.styles.entryPoint)
     .pipe(autoprefixer({
       browsers: [ 'last 15 versions', '> 1%', 'ie 8', 'ie 7' ],
       cascade: false
     }))
-    .pipe(concat('dragular.css'))
-    .pipe(gulpif(config.isProd, gulp.dest(config.dragular.dest)))
+    .pipe(concat(defaults.styles.bundleName))
+    .pipe(gulpif(config.isProd, gulp.dest(defaults.styles.dest)))
     .pipe(gulpif(config.isProd, minifyCss()))
     .pipe(gulpif(config.isProd, rename({
       suffix: '.min'
@@ -128,23 +146,8 @@ gulp.task('styles', function() {
     .pipe(size({
       title: 'Styles: '
     }))
-    .pipe(gulp.dest(config.dragular.dest))
+    .pipe(gulp.dest(defaults.styles.dest))
     .pipe(gulpif(browserSync.active, browserSync.stream()));
-});
-
-gulp.task('styles:docs', function() {
-
-  return gulp.src([
-    config.docs.styles,
-    config.dragular.styles
-  ])
-  .pipe(autoprefixer({
-    browsers: [ 'last 15 versions', '> 1%', 'ie 8', 'ie 7' ],
-    cascade: false
-  }))
-  .pipe(concat('examples.css'))
-  .pipe(gulp.dest(config.docs.dest))
-  .pipe(gulpif(browserSync.active, browserSync.stream()));
 });
 
 gulp.task('lint', function() {
@@ -197,7 +200,7 @@ gulp.task('watch', ['serve'], function() {
 });
 
 gulp.task('watch:docs', ['serve'], function() {
-  gulp.watch(config.docs.styles,  ['styles:docs']);
+  gulp.watch(config.docs.styles,  ['styles']);
   gulp.watch(config.docs.templates,  ['templates:docs']);
   gulp.watch(config.docs.index, browserSync.reload);
   gulp.watch('./CONTRIBUTING.md', ['markdown']);
@@ -209,16 +212,22 @@ gulp.task('watch:docs', ['serve'], function() {
 */
 gulp.task('dev', function() {
   config.isProd = true;
-  scriptDefaults = config.scripts.dragular;
+  defaults = {
+    scripts: config.scripts.dragular,
+    styles: config.styles.dragular
+  };
 
   sequence(['scripts', 'styles'], 'watch');
 });
 
 gulp.task('dev:docs', function() {
   config.isProd = true;
-  scriptDefaults = config.scripts.docs;
+  defaults = {
+    scripts: config.scripts.docs,
+    styles: config.styles.docs
+  };
 
-  sequence('markdown', 'templates:docs', ['scripts', 'styles:docs'], 'watch:docs');
+  sequence('markdown', 'templates:docs', ['scripts', 'styles'], 'watch:docs');
 });
 
 /*
@@ -226,14 +235,20 @@ gulp.task('dev:docs', function() {
 */
 gulp.task('build', function() {
   config.isProd = true;
-  scriptDefaults = config.scripts.dragular;
+  defaults = {
+    scripts: config.scripts.dragular,
+    styles: config.styles.dragular
+  };
 
   sequence(['scripts', 'styles'], 'build:docs');
 });
 
 gulp.task('build:docs', function() {
   config.isProd = true;
-  scriptDefaults = config.scripts.docs;
+  defaults = {
+    scripts: config.scripts.docs,
+    styles: config.styles.docs
+  };
 
   sequence('markdown', 'templates:docs', ['scripts', 'styles']);
 });
