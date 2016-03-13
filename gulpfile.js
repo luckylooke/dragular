@@ -100,6 +100,9 @@ function buildScript() {
         }
       }))
       .pipe(gulpif(config.isProd, gulp.dest(defaults.scripts.dest)))
+      .pipe(gulpif(config.isProd, size({
+        title: 'Non-minified scripts: '
+      })))
       .pipe(gulpif(config.isProd, sourcemaps.init({loadMaps: true})))
       .pipe(gulpif(config.isProd, uglify({
         compress: { drop_console: true }
@@ -139,6 +142,9 @@ gulp.task('styles', function() {
     }))
     .pipe(concat(defaults.styles.bundleName))
     .pipe(gulpif(config.isProd, gulp.dest(defaults.styles.dest)))
+    .pipe(gulpif(config.isProd, size({
+      title: 'Non-minified styles:  '
+    })))
     .pipe(gulpif(config.isProd, minifyCss()))
     .pipe(gulpif(config.isProd, rename({
       suffix: '.min'
