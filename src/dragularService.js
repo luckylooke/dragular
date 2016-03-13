@@ -515,6 +515,9 @@ var dragularService = function ($rootScope, $compile) {
     }
 
     function drop(item, target) {
+      var sourceItem = shared.sourceItem,
+          currentSibling = shared.currentSibling;
+        
       if (shared.copy && g(o.copySortSource) && target === shared.source && getParent(item)) {
         item.parentNode.removeChild(shared.sourceItem);
       }
@@ -562,10 +565,10 @@ var dragularService = function ($rootScope, $compile) {
 
       function afterDrop() {
         if(o.compileItemOnDrop){
-            var scope = angular.element(shared.target).scope();  
+            var scope = angular.element(target).scope();  
             scope.$applyAsync(function() {
-                var content = $compile(shared.sourceItem)(scope);
-                shared.target.insertBefore(content, shared.currentSibling);
+                var content = $compile(sourceItem)(scope);
+                target.insertBefore(content[0], currentSibling);
             });
         }
         
