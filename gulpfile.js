@@ -71,7 +71,7 @@ var config = {
 };
 
 /*
-* Defaults stores stores temporary scripts & styles settings (like entry point or
+* Defaults stores temporary scripts & styles settings (like entry point or
 * output directory). This metadata is used to configure the webpack compilation
 * process.
 */
