@@ -534,6 +534,9 @@ var dragularService = function ($rootScope, $compile) {
           shared.initialIndex = shared.sourceModel.indexOf(shared.sourceFilteredModel[shared.initialIndex]);
         }
         $rootScope.$applyAsync(function applyDrop() {
+          if(!shared.sourceModel){
+              return;
+          }
           if (target === shared.source) {
             shared.sourceModel.splice(dropIndex, 0, shared.sourceModel.splice(shared.initialIndex, 1)[0]);
           } else {
@@ -965,9 +968,9 @@ var dragularService = function ($rootScope, $compile) {
       },
       $el = angular.element(el);
 
-    if (global.navigator.pointerEnabled) {
+    if (global.navigator.pointerEnabled && pointers[type]) {
       $el[op](pointers[type], fn);
-    } else if (global.navigator.msPointerEnabled) {
+    } else if (global.navigator.msPointerEnabled && microsoft[type]) {
       $el[op](microsoft[type], fn);
     } else if (touch[type]) {
       $el[op](touch[type], fn);
