@@ -50,7 +50,7 @@
 	var dragularService = __webpack_require__(2);
 
 	/**
-	 * Dragular 4.0.0 by Luckylooke https://github.com/luckylooke/dragular
+	 * Dragular 4.1.0 by Luckylooke https://github.com/luckylooke/dragular
 	 * Angular version of dragula https://github.com/bevacqua/dragula
 	 */
 	module.exports = 'dragularModule';
@@ -167,7 +167,7 @@
 	  grabbed: null // holds mousedown context until first mousemove
 	};
 
-	var dragularService = function ($rootScope) {
+	var dragularService = function ($rootScope, $compile) {
 	  // abbreviations
 	  var doc = document,
 	      docElm = doc.documentElement;
@@ -235,7 +235,8 @@
 	        lockY: false, // lock movement into y-axis
 	        boundingBox: false, // lock movement inside this element boundaries
 	        mirrorContainer: doc.body, // element for appending mirror
-	        ignoreInputTextSelection: true // text selection in inputs wont be considered as drag
+	        ignoreInputTextSelection: true, // text selection in inputs wont be considered as drag
+	        compileItemOnDrop: false
 	      },
 	      drake = {
 	        containers: shared.containers,
@@ -640,6 +641,9 @@
 	    }
 
 	    function drop(item, target) {
+	      var sourceItem = shared.sourceItem,
+	          currentSibling = shared.currentSibling;
+	        
 	      if (shared.copy && g(o.copySortSource) && target === shared.source && getParent(item)) {
 	        item.parentNode.removeChild(shared.sourceItem);
 	      }
@@ -656,6 +660,9 @@
 	          shared.initialIndex = shared.sourceModel.indexOf(shared.sourceFilteredModel[shared.initialIndex]);
 	        }
 	        $rootScope.$applyAsync(function applyDrop() {
+	          if(!shared.sourceModel){
+	              return;
+	          }
 	          if (target === shared.source) {
 	            shared.sourceModel.splice(dropIndex, 0, shared.sourceModel.splice(shared.initialIndex, 1)[0]);
 	          } else {
@@ -666,7 +673,7 @@
 	            } else {
 	              shared.targetModel = shared.tempModel;
 	            }
-
+	            
 	            target.removeChild(item); // element must be removed for ngRepeat to apply correctly
 
 	            if (!shared.copy) {
@@ -679,15 +686,24 @@
 	            item.parentNode.removeChild(item);
 	          }
 
-	          emitDropEvent();
-	          cleanup();
+	          afterDrop();
 	        });
 	      } else {
-	        emitDropEvent();
-	        cleanup();
+	        afterDrop();
 	      }
 
-	      function emitDropEvent() {
+	      function afterDrop() {
+	        if(o.compileItemOnDrop){
+	            var scope = angular.element(target).scope();
+	            scope.$applyAsync(function(){
+	                var content = $compile(shared.copy ? sourceItem.cloneNode(true) : sourceItem)(scope);                   
+	                if(item.parentNode === target){
+	                    target.removeChild(item);
+	                }
+	                target.insertBefore(content[0], currentSibling);
+	            });
+	        }
+	        
 	        if (o.scope) {
 	          if (isInitialPlacement(target)) {
 	            o.scope.$emit(o.eventNames.dragularcancel, item, shared.source, shared.sourceModel, shared.initialIndex);
@@ -695,6 +711,8 @@
 	            o.scope.$emit(o.eventNames.dragulardrop, item, target, shared.source, shared.sourceModel, shared.initialIndex, shared.targetModel, dropIndex);
 	          }
 	        }
+	        
+	        cleanup();
 	      }
 	    }
 
@@ -1076,9 +1094,9 @@
 	      },
 	      $el = angular.element(el);
 
-	    if (global.navigator.pointerEnabled) {
+	    if (global.navigator.pointerEnabled && pointers[type]) {
 	      $el[op](pointers[type], fn);
-	    } else if (global.navigator.msPointerEnabled) {
+	    } else if (global.navigator.msPointerEnabled && microsoft[type]) {
 	      $el[op](microsoft[type], fn);
 	    } else if (touch[type]) {
 	      $el[op](touch[type], fn);
@@ -1280,7 +1298,7 @@
 
 	};
 
-	dragularService.$inject = ['$rootScope'];
+	dragularService.$inject = ['$rootScope', '$compile'];
 
 	module.exports = dragularService;
 
