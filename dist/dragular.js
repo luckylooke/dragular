@@ -50,7 +50,7 @@
 	var dragularService = __webpack_require__(2);
 
 	/**
-	 * Dragular 4.0.0 by Luckylooke https://github.com/luckylooke/dragular
+	 * Dragular 4.1.0 by Luckylooke https://github.com/luckylooke/dragular
 	 * Angular version of dragula https://github.com/bevacqua/dragula
 	 */
 	module.exports = 'dragularModule';
@@ -660,6 +660,9 @@
 	          shared.initialIndex = shared.sourceModel.indexOf(shared.sourceFilteredModel[shared.initialIndex]);
 	        }
 	        $rootScope.$applyAsync(function applyDrop() {
+	          if(!shared.sourceModel){
+	              return;
+	          }
 	          if (target === shared.source) {
 	            shared.sourceModel.splice(dropIndex, 0, shared.sourceModel.splice(shared.initialIndex, 1)[0]);
 	          } else {

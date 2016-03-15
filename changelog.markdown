@@ -3,7 +3,8 @@
 - **[Braking change!]** rename 'dragulardrag' event to 'dragulardragstart'
 - new event 'dragulardrag' emited each iteration while dragging
 
-# 4.1.0
+# 4.1.0 Dora
+- IE bug fixes #68
 - compileItemOnDrop fixes #71
 
 # 4.0.1 John Whick
