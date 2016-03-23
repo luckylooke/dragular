@@ -38,6 +38,7 @@ var config = {
   },
   // Predefined scripts & styles configs to keep tasks DRY
   scripts: {
+    libraryTarget: 'umd',
     dragular: {
       type: 'dragular',
       entryPoint: './src/dragularModule.js',
@@ -96,6 +97,7 @@ function buildScript() {
       .pipe(webpack({
         watch: config.isProd ? false : true,
         output: {
+          libraryTarget: config.scripts.libraryTarget,
           filename: defaults.scripts.bundleName
         }
       }))
