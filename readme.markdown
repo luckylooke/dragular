@@ -160,6 +160,9 @@ For better readability of views.
 ```html
 <div dragular-name-space="oranges"></div>
 ```
+### dragular-on-init atribute
+
+Same as options.onInit see bellow.
 
 ## Options
 
@@ -364,6 +367,10 @@ myEventNames = {
 ### `options.compileItemOnDrop`
 
 In case your draggable items are customized by other directives/attributes, you can use this flag to run compilation of droped item after drop. It is not supposed to be used with containers items rendered by ng-repeat. In such case you are supposed to add directives/attributes to item template and use logic in controller to enable/disable them.
+
+### `options.onInit`
+
+You can provide function callback called after dragular initialisation with drake as first argument.
 
 
 ## `Events`

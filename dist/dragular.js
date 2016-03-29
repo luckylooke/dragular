@@ -110,6 +110,10 @@
 	        options.nameSpace = iAttrs.dragularNameSpace.split(' ');
 	      }
 
+	      if(iAttrs.dragularOnInit){
+	        options.onInit = $scope.$eval(iAttrs.dragularOnInit);
+	      }
+
 	      drake = dragularService(iElm[0], options);
 	    }
 	  };
@@ -236,7 +240,8 @@
 	        boundingBox: false, // lock movement inside this element boundaries
 	        mirrorContainer: doc.body, // element for appending mirror
 	        ignoreInputTextSelection: true, // text selection in inputs wont be considered as drag
-	        compileItemOnDrop: false
+	        compileItemOnDrop: false,
+	        onInit: false // function callback called after dragular initialisation and providing drake as first argument
 	      },
 	      drake = {
 	        containers: shared.containers,
@@ -255,6 +260,10 @@
 	    extendOptions();
 	    processOptionsObject();
 	    registerEvents();
+	    
+	    if(o.onInit){
+	       o.onInit(drake); 
+	    }
 
 	    return drake;
 
