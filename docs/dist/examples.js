@@ -80,13 +80,13 @@ return /******/ (function(modules) { // webpackBootstrap
 	var NestedNgRepeatCtrl = __webpack_require__(21);
 	var NestedNgRepeatWithModelCtrl = __webpack_require__(22);
 	var NgRepeatCtrl = __webpack_require__(23);
-	var NgRepeatFilteredWithModelCtrl = __webpack_require__(23);
-	var NgRepeatWithModelCtrl = __webpack_require__(24);
-	var RemoveOnSpillCtrl = __webpack_require__(25);
-	var RemoveOnSpillWithModelCtrl = __webpack_require__(26);
-	var RevertOnSpillCtrl = __webpack_require__(27);
-	var ScrollingDragCtrl = __webpack_require__(28);
-	__webpack_require__(29);
+	var NgRepeatFilteredWithModelCtrl = __webpack_require__(24);
+	var NgRepeatWithModelCtrl = __webpack_require__(25);
+	var RemoveOnSpillCtrl = __webpack_require__(26);
+	var RemoveOnSpillWithModelCtrl = __webpack_require__(27);
+	var RevertOnSpillCtrl = __webpack_require__(28);
+	var ScrollingDragCtrl = __webpack_require__(29);
+	__webpack_require__(30);
 
 	/**
 	 *  Module Example App
@@ -2244,6 +2244,83 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	'use strict';
 
+	var NgRepeatFilteredWithModelCtrl = function ($scope, $element, dragularService, $filter) {
+	  $scope.items1 = [{
+	    content: 'Move me, but you can only drop me in one of these containers.'
+	  }, {
+	    content: 'If you try to drop me somewhere other than these containers, I\'ll just come back.'
+	  }, {
+	    content: 'Apple 3'
+	  }, {
+	    content: 'Orange 4'
+	  }, {
+	    content: 'Orange 5'
+	  }, {
+	    content: 'Apple 6'
+	  }, {
+	    content: 'Apple 7'
+	  }, {
+	    content: 'Apple 8'
+	  }];
+	  $scope.items2 = [{
+	    content: 'Apple 9'
+	  }, {
+	    content: 'Orange 10'
+	  }, {
+	    content: 'Orange 11'
+	  }, {
+	    content: 'Apple 12'
+	  }, {
+	    content: 'Orange 13'
+	  }, {
+	    content: 'Apple 14'
+	  }];
+	  $scope.filter1query = 'Orange';
+	  $scope.filter2query = 'Orange';
+	  $scope.filteredModel1 = [];
+	  $scope.filteredModel2 = [];
+	  $scope.getFilteredModel = function (filteredModel, items, filterQuery) {
+	    filteredModel.length = 0;
+	    /*
+	    * Following one-liner is same like:
+	    *   var filteredModelTemp = $filter('filter')(items, filterQuery);
+	    *   angular.forEach(filteredModelTemp, function(item){
+	    *     filteredModel.push(item);
+	    *   });
+	    * Or like:
+	    *   var filteredModelTemp = $filter('filter')(items, filterQuery);
+	    *   for(var i; i < filteredModelTemp.length; i++){
+	    *     filteredModel.push(filteredModelTemp[i]);
+	    *   }
+	    *
+	    * You cannot just assign filtered array to filteredModel like this:
+	    *   filteredModel = $filter('filter')(items, filterQuery);
+	    * Because you would replace the array object you provide to dragular with new one.
+	    * So dragular will continue to use the one it was provided on init.
+	    * Hopefully I make it clear. :)
+	     */
+	    [].push.apply(filteredModel, $filter('filter')(items, filterQuery));
+	    return filteredModel;
+	  };
+	  var containers = $element.children().eq(1).children();
+	  dragularService.cleanEnviroment();
+	  dragularService([containers[0],containers[1]],{
+	    containersModel: [$scope.items1, $scope.items2],
+	    containersFilteredModel: [$scope.filteredModel1, $scope.filteredModel2]
+	  });
+	};
+
+	NgRepeatFilteredWithModelCtrl.$inject = ['$scope', '$element', 'dragularService', '$filter'];
+
+	module.exports = NgRepeatFilteredWithModelCtrl;
+
+
+/***/ },
+/* 25 */
+/***/ function(module, exports) {
+
+	'use strict';
+
 	var NgRepeatWithModelCtrl = function ($scope, $element, dragularService) {
 	  $scope.items = [{
 	    content: 'Try to add or remove some elements (click on +- buttons), you will see that it is not problem for dragular.'
@@ -2274,7 +2351,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 25 */
+/* 26 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -2292,7 +2369,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 26 */
+/* 27 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -2330,7 +2407,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 27 */
+/* 28 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -2348,7 +2425,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 28 */
+/* 29 */
 /***/ function(module, exports) {
 
 	/* global angular */
@@ -2393,7 +2470,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 29 */
+/* 30 */
 /***/ function(module, exports) {
 
 	'use strict'; module.exports = angular.module("templates", []).run(["$templateCache", function($templateCache) {$templateCache.put("docsInstall/docsInstall.html","<h2>Install</h2>\n<p>download dragular.js and dragular.css from dist folder</p>\n<p>OR clone git</p>\n<pre><code>\ngit clone http://github.com/luckylooke/dragular.git\n</code></pre>\n<p>OR use npm</p>\n<pre><code>\n[sudo] npm install dragular\n</code></pre>\n<p>OR use bower</p>\n<pre><code>\nbower install dragular\n</code></pre>\n<p>AND include files into your project</p>\n<pre><code>\n&lt;link href=\'styles/dragular.css\' rel=\'stylesheet\' type=\'text/css\' /&gt;\n&lt;script src=\'scripts/dragular.js\'&gt;&lt;/script&gt;\n</code></pre>\n<p>AND put dragularModule into dependency array</p>\n<pre><code>\nvar app = angular.module(\'myApp\', [\'dragularModule\', \'otherDependencies\']);\n</code></pre>\n<p>DONE :)</p>\n");
