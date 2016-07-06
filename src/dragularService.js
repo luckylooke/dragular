@@ -635,7 +635,7 @@ var dragularService = function ($rootScope, $compile) {
         drop(shared.item, parent);
       } else if (o.scope) {
         if (initial || reverts) {
-          o.scope.$emit(o.eventNames.dragularcancel, shared.item, shared.source);
+          o.scope.$emit(o.eventNames.dragularcancel, shared.item, shared.source, shared.sourceModel, shared.initialIndex);
         }
       }
 
