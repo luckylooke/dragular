@@ -170,7 +170,7 @@ The options are detailed below. All boolean options can be also function returni
 
 ### `options.containers`
 
-Container element, NodeList, array of elements, jQuery object returnet by selector or any array-like object where containers elements are placed on properties named 0,1,2,.. etc. 
+Container element, NodeList, array of elements, jQuery object returned by selector or any array-like object where containers elements are placed on properties named 0,1,2,.. etc. 
 
 ### `options.containersModel`
 
@@ -297,15 +297,15 @@ When an element is dropped onto a container, it'll be placed near the point wher
 
 Scope can be provided for emitting events, you can provide whichever scope you like.
 
-### `options.lockX' 
+### `options.lockX` 
 
 Lock movement into x-axis.
 
-### `options.lockY
+### `options.lockY`
 
 Lock movement into y-axis.
 
-### `options.boundingBox'
+### `options.boundingBox`
 
 Lock movement inside provided element boundaries.
 
@@ -373,7 +373,7 @@ In case your draggable items are customized by other directives/attributes, you 
 You can provide function callback called after dragular initialisation with drake as first argument.
 
 
-## `Events`
+## Events
 
 If $scope is provided as options.scope the following events can be tracked using `$scope.on(type, listener)`:
 
