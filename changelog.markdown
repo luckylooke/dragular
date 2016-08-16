@@ -2,7 +2,7 @@
 - **[Braking change!]** rename 'dragulardrag' event to 'dragulardragstart'
 - new event 'dragulardrag' emited each iteration while dragging
 
-# 4.2.1
+# 4.2.1 Skyfall
 - fixed #102
 - transit class added after mirror rendering #101
 - original DOM events passed as new parameter to angular listeners #97

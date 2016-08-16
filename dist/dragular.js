@@ -60,7 +60,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	var dragularService = __webpack_require__(2);
 
 	/**
-	 * Dragular 4.2.0 by Luckylooke https://github.com/luckylooke/dragular
+	 * Dragular 4.2.1 by Luckylooke https://github.com/luckylooke/dragular
 	 * Angular version of dragula https://github.com/bevacqua/dragula
 	 */
 	module.exports = 'dragularModule';
@@ -779,7 +779,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        drop(shared.item, parent);
 	      } else if (o.scope) {
 	        if (initial || reverts) {
-	          o.scope.$emit(o.eventNames.dragularcancel, shared.item, shared.source);
+	          o.scope.$emit(o.eventNames.dragularcancel, shared.item, shared.source, shared.sourceModel, shared.initialIndex);
 	        }
 	      }
 
