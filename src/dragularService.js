@@ -525,15 +525,14 @@ var dragularService = function ($rootScope, $compile) {
         return;
       }
       var sourceItem = shared.sourceItem,
-          currentSibling = shared.currentSibling;
+          currentSibling = shared.currentSibling,
+          dropIndex = domIndexOf(item, target);
         
       if (shared.copy && g(o.copySortSource) && target === shared.source && getParent(item)) {
         item.parentNode.removeChild(shared.sourceItem);
       }
 
       if (shared.sourceModel && !isInitialPlacement(target)) {
-
-        var dropIndex = domIndexOf(item, target);
         if(shared.targetCtx.fm){ // target has filtered model
           // convert index from index-in-filteredModel to index-in-model
           dropIndex = shared.targetCtx.m.indexOf(shared.targetCtx.fm[dropIndex]);

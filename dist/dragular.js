@@ -60,7 +60,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	var dragularService = __webpack_require__(2);
 
 	/**
-	 * Dragular 4.2.1 by Luckylooke https://github.com/luckylooke/dragular
+	 * Dragular 4.2.2 by Luckylooke https://github.com/luckylooke/dragular
 	 * Angular version of dragula https://github.com/bevacqua/dragula
 	 */
 	module.exports = 'dragularModule';
@@ -665,15 +665,14 @@ return /******/ (function(modules) { // webpackBootstrap
 	        return;
 	      }
 	      var sourceItem = shared.sourceItem,
-	          currentSibling = shared.currentSibling;
+	          currentSibling = shared.currentSibling,
+	          dropIndex = domIndexOf(item, target);
 	        
 	      if (shared.copy && g(o.copySortSource) && target === shared.source && getParent(item)) {
 	        item.parentNode.removeChild(shared.sourceItem);
 	      }
 
 	      if (shared.sourceModel && !isInitialPlacement(target)) {
-
-	        var dropIndex = domIndexOf(item, target);
 	        if(shared.targetCtx.fm){ // target has filtered model
 	          // convert index from index-in-filteredModel to index-in-model
 	          dropIndex = shared.targetCtx.m.indexOf(shared.targetCtx.fm[dropIndex]);

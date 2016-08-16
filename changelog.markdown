@@ -2,6 +2,9 @@
 - **[Braking change!]** rename 'dragulardrag' event to 'dragulardragstart'
 - new event 'dragulardrag' emited each iteration while dragging
 
+# 4.2.2 The Drop
+- fixed #104 - drop index undefined in dragulardrop event listeners
+
 # 4.2.1 Skyfall
 - fixed #102
 - transit class added after mirror rendering #101
