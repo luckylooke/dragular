@@ -2,6 +2,10 @@
 - **[Braking change!]** rename 'dragulardrag' event to 'dragulardragstart'
 - new event 'dragulardrag' emited each iteration while dragging
 
+# 4.2.1
+- fixed #102
+- transit class added after mirror rendering #101
+
 # 4.2.0 Bad Moms
 - UMD compatible #79
 - options.onInit, on init callback function, closes #65

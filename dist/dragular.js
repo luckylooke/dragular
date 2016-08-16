@@ -569,8 +569,8 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	      e.preventDefault();
 
-	      addClass(shared.item, o.classes.transit);
 	      renderMirrorImage();
+	      addClass(shared.item, o.classes.transit);
 	      // initial position
 	      shared.mirror.style.left = shared.clientX - shared.offsetX + 'px';
 	      shared.mirror.style.top = shared.clientY - shared.offsetY + 'px';
@@ -1015,7 +1015,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	      shared.mirrorHeight = rect.height;
 	      shared.mirror.style.width = getRectWidth(rect) + 'px';
 	      shared.mirror.style.height = getRectHeight(rect) + 'px';
-	      rmClass(shared.mirror, o.classes.transit);
 	      addClass(shared.mirror, o.classes.mirror);
 	      o.mirrorContainer.appendChild(shared.mirror);
 	      regEvent(docElm, 'on', 'mousemove', drag);
