@@ -652,7 +652,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	      }
 
 	      if (o.scope) {
-	        o.scope.$emit(o.eventNames.dragularrelease, shared.item, shared.source);
+	        o.scope.$emit(o.eventNames.dragularrelease, shared.item, shared.source, e);
 	      }
 	    }
 
@@ -1165,13 +1165,13 @@ return /******/ (function(modules) { // webpackBootstrap
 	        dropTarget.insertBefore(shared.item, reference); // if reference is null item is inserted at the end
 
 	        if (o.scope) {
-	          o.scope.$emit(o.eventNames.dragularshadow, shared.item, dropTarget);
+	          o.scope.$emit(o.eventNames.dragularshadow, shared.item, dropTarget, e);
 	        }
 	      }
 
 	      function moved(type) {
 	        if (o.scope) {
-	          o.scope.$emit(o.eventNames['dragular' + type], shared.item, shared.lastDropTarget, shared.source);
+	          o.scope.$emit(o.eventNames['dragular' + type], shared.item, shared.lastDropTarget, shared.source, e);
 	        }
 	        if (g(o.removeOnSpill) === true) {
 	          type === 'over' ? spillOver() : spillOut();

@@ -5,6 +5,7 @@
 # 4.2.1
 - fixed #102
 - transit class added after mirror rendering #101
+- original DOM events passed as new parameter to angular listeners #97
 
 # 4.2.0 Bad Moms
 - UMD compatible #79
