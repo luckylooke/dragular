@@ -380,14 +380,15 @@ If $scope is provided as options.scope the following events can be tracked using
 Event Name | Listener Arguments      | Event Description
 -----------|-------------------------|-------------------------------------------------------------------------------------
 `dragulardrag`     | `Event, el, container`         | `el` was lifted from `container`
-`dragularrelease`     | `Event, el, container`         | user released button
+`dragularrelease`     | `Event, el, container, DOM-Event`         | user released button
 `dragulardragend`  | `Event, el`                    | Dragging event for `el` ended with either `cancel`, `remove`, or `drop`
 `dragulardrop`     | `Event, el, target-container, source-container, con-model, el-index, target-model, drop-index` | `el` was dropped into `target-container` from `source-container`, `con-model` if models are used, provides model representating the source container and `el-index` is original index(position) in `source-container`. `target-model` is model of target container and `drop-index` is index (position) of drop.
 `dragularcancel`   | `Event, el, container, con-model, el-index`         | `el` was being dragged but it got nowhere and went back into `container`, its last stable parent. `con-model` if models are used, provides model representating the source container and `el-index` is original index(position) in `container`.
 `dragularremove`   | `Event, el, container, con-model, el-index`         | `el` was being dragged but it got nowhere and it was removed from the DOM. Its last stable parent was `container`. `con-model` if models are used, provides model representating the source container and `el-index` is original index(position) in `container`.
-`dragularshadow`   | `Event, el, container`         | `el`, _the visual aid shadow_, was moved into `container`. May trigger many times as the position of `Event, el` changes, even within the same `container`
+`dragularshadow`   | `Event, el, container, DOM-Event`         | `el`, _the visual aid shadow_, was moved into `container`. May trigger many times as the position of `Event, el` changes, even within the same `container`
 `dragularcloned`   | `Event, clone, original`       | DOM element `original` was cloned as `clone`. Triggers for mirror images and when `copy: true`
-`dragularout`   | `Event, el, target, container`       | Dragged element `el` left hovered target `target` and orginaly came from `container`
+`dragularover`   | `Event, el, target, container, DOM-Event`       | Dragged element `el` left hover target `target` and orginaly came from `container`
+`dragularout`   | `Event, el, target, container, DOM-Event`       | Dragged element `el` left hovered target `target` and orginaly came from `container`
 
 Event names can be modified via options.eventNames.
 
