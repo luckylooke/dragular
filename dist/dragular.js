@@ -660,6 +660,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	    }
 
 	    function drop(item, target) {
+	      if(!item){ // https://github.com/luckylooke/dragular/issues/102
+	        cleanup();
+	        return;
+	      }
 	      var sourceItem = shared.sourceItem,
 	          currentSibling = shared.currentSibling;
 	        
@@ -1198,6 +1202,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	  }
 
 	  function nextEl(el) {
+	    if(!el){ // https://github.com/luckylooke/dragular/issues/102
+	      return;
+	    }
 	    return el.nextElementSibling || manually();
 
 	    function manually() {
