@@ -176,7 +176,9 @@ Container element, NodeList, array of elements, jQuery object returned by select
 
 If you wish to have model synced with containers state, you need to provide it within this property. For single container you can provide an array with items in it. Items can by any type. For multiple containers you need to provide array of arrays (2D-array), where order of arrays representing containers (models) must be same as order of containers elements provided in `containers` parameter of service.
 
-Please note that if you are using filters on your items you must provide filtered array no source one!
+You can also provide callback function via `options.containersModel` which is called everytime drag starts. It must return array or 2D-array as mentioned in above paragraph.
+
+**Please note that if you are using filters on your items you must provide filtered array no source one!**
 ```html
   <input ng-model="query">
   <div id="container">
