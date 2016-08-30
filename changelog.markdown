@@ -2,6 +2,9 @@
 - **[Braking change!]** rename 'dragulardrag' event to 'dragulardragstart'
 - new event 'dragulardrag' emited each iteration while dragging
 
+# 4.2.3 The lost explorer
+- fixed #107 - IE dragging issue, drag did not start
+
 # 4.2.2 The Drop
 - fixed #104 - drop index undefined in dragulardrop event listeners
 
