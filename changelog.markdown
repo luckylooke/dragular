@@ -2,6 +2,9 @@
 - **[Braking change!]** rename 'dragulardrag' event to 'dragulardragstart'
 - new event 'dragulardrag' emited each iteration while dragging
 
+# 4.2.4 Trolls
+- fixed #87 - problem in example "NestedNgRepeat", input field doesnt work
+
 # 4.2.3 The lost explorer
 - fixed #107 - IE dragging issue, drag did not start
 

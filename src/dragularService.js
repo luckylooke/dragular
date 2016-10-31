@@ -273,8 +273,9 @@ var dragularService = function ($rootScope, $compile) {
       shared.grabbed = context;
       eventualMovements();
       if (e.type === 'mousedown') {
-        if (isInput(context.item)) { // see also: https://github.com/bevacqua/dragula/issues/208
-          context.item.focus(); // fixes https://github.com/bevacqua/dragula/issues/176
+        if (isInput(e.target)) { // see also: https://github.com/bevacqua/dragula/issues/208
+          e.target.focus(); // fixes https://github.com/bevacqua/dragula/issues/176
+          // changed from context.item to e.target fixing https://github.com/luckylooke/dragular/issues/87#issuecomment-256865796
         } else {
           e.preventDefault(); // fixes https://github.com/bevacqua/dragula/issues/155
         }
