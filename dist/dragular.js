@@ -138,7 +138,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /* 2 */
 /***/ function(module, exports) {
 
-	/* WEBPACK VAR INJECTION */(function(global) {/* global angular */
+	/* global angular */
 	'use strict';
 
 	/**
@@ -1116,9 +1116,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	      },
 	      $el = angular.element(el);
 
-	    if (global.navigator.pointerEnabled && pointers[type]) {
+	    if (window.navigator.pointerEnabled && pointers[type]) {
 	      $el[op](pointers[type], fn);
-	    } else if (global.navigator.msPointerEnabled && microsoft[type]) {
+	    } else if (window.navigator.msPointerEnabled && microsoft[type]) {
 	      $el[op](microsoft[type], fn);
 	    } else if (touch[type]) {
 	      $el[op](touch[type], fn);
@@ -1327,7 +1327,6 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	module.exports = dragularService;
 
-	/* WEBPACK VAR INJECTION */}.call(exports, (function() { return this; }())))
 
 /***/ }
 /******/ ])
