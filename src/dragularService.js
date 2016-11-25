@@ -976,9 +976,9 @@ var dragularService = function ($rootScope, $compile) {
       },
       $el = angular.element(el);
 
-    if (window.navigator.pointerEnabled && pointers[type]) {
+    if (typeof navigator !== 'undefined' && navigator.pointerEnabled && pointers[type]) {
       $el[op](pointers[type], fn);
-    } else if (window.navigator.msPointerEnabled && microsoft[type]) {
+    } else if (typeof navigator !== 'undefined' && navigator.msPointerEnabled && microsoft[type]) {
       $el[op](microsoft[type], fn);
     } else if (touch[type]) {
       $el[op](touch[type], fn);

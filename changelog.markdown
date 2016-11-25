@@ -2,6 +2,9 @@
 - **[Braking change!]** rename 'dragulardrag' event to 'dragulardragstart'
 - new event 'dragulardrag' emited each iteration while dragging
 
+# 4.2.5 Di-strict 9
+- fixing #108 - Webpack and strict mode
+
 # 4.2.4 Trolls
 - fixed #87 - problem in example "NestedNgRepeat", input field doesnt work
 
