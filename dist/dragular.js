@@ -60,7 +60,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	var dragularService = __webpack_require__(2);
 
 	/**
-	 * Dragular 4.2.4 by Luckylooke https://github.com/luckylooke/dragular
+	 * Dragular 4.3.0 by Luckylooke https://github.com/luckylooke/dragular
 	 * Angular version of dragula https://github.com/bevacqua/dragula
 	 */
 	module.exports = 'dragularModule';
@@ -281,12 +281,15 @@ return /******/ (function(modules) { // webpackBootstrap
 	    // Initial functions: -----------------------------------------------------------------------------------------------------------------
 
 	    function sanitizeContainersModel(containersModel) {
-	      if (typeof(containersModel) === 'function') {
+	      if (typeof containersModel === 'function') {
 	        return containersModel;
-	      }
-	      if (Array.isArray(containersModel)) {
-	        //                  |-------- is 2D array? -----------|
-	        return Array.isArray(containersModel[0]) ? containersModel : [containersModel];
+	      } else if (Array.isArray(containersModel)) {
+	          //                  |-------- is 2D array? -----------|
+	          return Array.isArray(containersModel[0]) ? containersModel : [containersModel];
+	      } else if (typeof containersModel === 'string' && (o.scope || o.containersModelCtx)) {
+	          return function () {
+	              return o.containersModelCtx ? o.containersModelCtx[containersModel] : o.scope[containersModel];
+	          };
 	      } else {
 	        return [];
 	      }

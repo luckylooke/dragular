@@ -141,12 +141,15 @@ var dragularService = function ($rootScope, $compile) {
     // Initial functions: -----------------------------------------------------------------------------------------------------------------
 
     function sanitizeContainersModel(containersModel) {
-      if (typeof(containersModel) === 'function') {
+      if (typeof containersModel === 'function') {
         return containersModel;
-      }
-      if (Array.isArray(containersModel)) {
-        //                  |-------- is 2D array? -----------|
-        return Array.isArray(containersModel[0]) ? containersModel : [containersModel];
+      } else if (Array.isArray(containersModel)) {
+          //                  |-------- is 2D array? -----------|
+          return Array.isArray(containersModel[0]) ? containersModel : [containersModel];
+      } else if (typeof containersModel === 'string' && (o.scope || o.containersModelCtx)) {
+          return function () {
+              return o.containersModelCtx ? o.containersModelCtx[containersModel] : o.scope[containersModel];
+          };
       } else {
         return [];
       }

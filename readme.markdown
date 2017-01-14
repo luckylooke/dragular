@@ -10,7 +10,7 @@ Browser support includes every sane browser and **IE7+**. <sub>_(Granted you pol
 
 I am working on huge angular project and I am using several drag&drop libraries in it, one for UI, one for lists, etc.. I want to use one full-featured drag&drop library for whole project. As I could not find any suitable, I decided to create one. I have choosen great library [dragula](http://github.com/bevacqua/dragula) by [Nicolas Bevacqua](http://github.com/bevacqua) as my starting point, make it more angular and started to put features in it! If you wish light-weight angular version of dragula, there is [official angular version of dragula](http://github.com/bevacqua/angular-dragula).
 
-<b>Actual version 4.2.5 is based on dragula 3.6.3 and tested with angular 1.5.5.</b>
+<b>Actual version 4.3.0 is based on dragula 3.6.3 and tested with angular 1.5.5.</b>
 
 # Differences of dragular (against dragula)
 
@@ -177,6 +177,8 @@ Container element, NodeList, array of elements, jQuery object returned by select
 If you wish to have model synced with containers state, you need to provide it within this property. For single container you can provide an array with items in it. Items can by any type. For multiple containers you need to provide array of arrays (2D-array), where order of arrays representing containers (models) must be same as order of containers elements provided in `containers` parameter of service.
 
 You can also provide callback function via `options.containersModel` which is called everytime drag starts. It must return array or 2D-array as mentioned in above paragraph.
+
+String can be also provided to `options.containersModel` which is used against `options.scope` if provided, if not there is also opportunity to provide another object via `options.containersModelCtx` to be used as context and provided string will be evaluated against this object. In case that both `options.containersModelCtx` and `options.scope` are provided, `options.containersModelCtx` has higher priority, so it will be evaluated against it. Target property must be array or 2D-array as mentioned in first paragraph.
 
 **Please note that if you are using filters on your items you must provide filtered array no source one!**
 ```html

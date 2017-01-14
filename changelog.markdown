@@ -2,6 +2,9 @@
 - **[Braking change!]** rename 'dragulardrag' event to 'dragulardragstart'
 - new event 'dragulardrag' emited each iteration while dragging
 
+# 4.3.0 Hitman
+- added new options for `options.containersModel`, it accepts also string from now
+
 # 4.2.5 Di-strict 9
 - fixing #108 - Webpack and strict mode
 
