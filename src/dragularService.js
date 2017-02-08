@@ -195,6 +195,7 @@ var dragularService = function ($rootScope, $compile) {
       }
       // sanitize initialContainers
       initialContainers = makeArray(initialContainers);
+      o.initialContainers = initialContainers;
 
       // sanitize o.containersModel
       o.containersModel = sanitizeContainersModel(o.containersModel);
@@ -225,7 +226,7 @@ var dragularService = function ($rootScope, $compile) {
           shared.containers[nameSpace][i + shLen] = initialContainers[i];
           shared.containersCtx[nameSpace][i + shLen] = {
             o: o,
-            m: getContainersModel()[i], // can be undefined
+            m: getContainersModel(o)[i], // can be undefined
             fm: o.containersFilteredModel[i] // can be undefined
           };
         }
@@ -342,8 +343,8 @@ var dragularService = function ($rootScope, $compile) {
       return false;
     }
 
-    function getContainersModel() {
-      return (typeof(o.containersModel) === 'function') ? sanitizeContainersModel(o.containersModel(drake, shared)) : o.containersModel;
+    function getContainersModel(opt) {
+      return (typeof(opt.containersModel) === 'function') ? sanitizeContainersModel(opt.containersModel((opt === o ? drake : null), shared)) : opt.containersModel;
     }
 
     function removeContainers(all) {
@@ -497,7 +498,7 @@ var dragularService = function ($rootScope, $compile) {
 
       // prepare models operations
       var containerIndex = initialContainers.indexOf(context.source);
-      shared.sourceModel = getContainersModel()[containerIndex];
+      shared.sourceModel = getContainersModel(o)[containerIndex];
 
       shared.sourceFilteredModel = o.containersFilteredModel[containerIndex];
       shared.initialIndex = domIndexOf(context.item, context.source);
@@ -565,7 +566,10 @@ var dragularService = function ($rootScope, $compile) {
             if (!shared.copy) {
               shared.sourceModel.splice(shared.initialIndex, 1);
             }
-            shared.targetModel.splice(dropIndex, 0, shared.dropElmModel);
+
+            if(shared.targetModel){
+                shared.targetModel.splice(dropIndex, 0, shared.dropElmModel);
+            }
           }
 
           if (getParent(item)) {
@@ -685,11 +689,13 @@ var dragularService = function ($rootScope, $compile) {
 
     // find valid drop container
     function findDropTarget(elementBehindCursor, clientX, clientY) {  // watch performance - running each move!
-      var target = elementBehindCursor;
+      var target = elementBehindCursor,
+          targetCtx = null;
 
       while (target && !accepted()) {
         target = getParent(target);
       }
+      shared.targetCtx = targetCtx;
       return target;
 
       function accepted() {
@@ -698,29 +704,41 @@ var dragularService = function ($rootScope, $compile) {
         if (isContainer(target)) { // is droppable?
 
           var immediate = getImmediateChild(target, elementBehindCursor),
-            reference = getReference(target, immediate, clientX, clientY),
-            initial = isInitialPlacement(target, reference),
-            i = o.nameSpace.length;
+              reference = getReference(target, immediate, clientX, clientY),
+              initial = isInitialPlacement(target, reference),
+              i = o.nameSpace.length,
+              nameSpace;
 
-          while (i--) {
-            if (shared.containers[o.nameSpace[i]].indexOf(target) !== -1) {
-              shared.targetCtx = shared.containersCtx[o.nameSpace[i]][shared.containers[o.nameSpace[i]].indexOf(target)];
+          while (i--) { // for each namespace
+              nameSpace = o.nameSpace[i];
+            if (shared.containers[nameSpace].indexOf(target) !== -1) {
+              targetCtx = getTargetCtx(nameSpace);
               break;
-            }
-            if (!shared.targetCtx) {
-              shared.targetCtx = shared.containersCtx.dragularCommon[shared.containers.dragularCommon.indexOf(target)];
             }
           }
 
+          if (!targetCtx) {
+              targetCtx = getTargetCtx('dragularCommon');
+          }
+
+          if(targetCtx && typeof targetCtx.o.containersModel === 'function'){
+          // fix targetCtx.m(odel) for dynamic containersModel
+            targetCtx.m = getContainersModel(targetCtx.o)[targetCtx.o.initialContainers.indexOf(target)];
+          }
+
           accepts = initial ||
-            (shared.targetCtx.o.accepts(shared.item, target, shared.source, reference, shared.sourceModel, shared.initialIndex) &&
+            (targetCtx.o.accepts(shared.item, target, shared.source, reference, shared.sourceModel, shared.initialIndex) &&
               o.canBeAccepted(shared.item, target, shared.source, reference, shared.sourceModel, shared.initialIndex));
 
-          if (shared.target !== target) { // used for scroll issue
+          if (shared.target !== target) { // shared.target must be actual (used for scroll issue)
             shared.target = target;
           }
         }
         return accepts;
+      }
+
+      function getTargetCtx(nameSpace){
+          return shared.containersCtx[nameSpace][shared.containers[nameSpace].indexOf(target)];
       }
     }
 
