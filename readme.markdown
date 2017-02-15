@@ -379,7 +379,7 @@ You can provide function callback called after dragular initialisation with drak
 
 ## Events
 
-If $scope is provided as options.scope the following events can be tracked using `$scope.on(type, listener)`:
+If $scope is provided as options.scope the following events can be tracked using `$scope.$on(type, listener)`:
 
 Event Name | Listener Arguments      | Event Description
 -----------|-------------------------|-------------------------------------------------------------------------------------
