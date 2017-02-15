@@ -726,9 +726,13 @@ var dragularService = function ($rootScope, $compile) {
             targetCtx.m = getContainersModel(targetCtx.o)[targetCtx.o.initialContainers.indexOf(target)];
           }
 
-          accepts = initial ||
+          accepts = initial || !targetCtx || // isContainer custom fn used
             (targetCtx.o.accepts(shared.item, target, shared.source, reference, shared.sourceModel, shared.initialIndex) &&
               o.canBeAccepted(shared.item, target, shared.source, reference, shared.sourceModel, shared.initialIndex));
+
+          if(!targetCtx){
+            targetCtx = {};
+          }
 
           if (shared.target !== target) { // shared.target must be actual (used for scroll issue)
             shared.target = target;

@@ -60,7 +60,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	var dragularService = __webpack_require__(2);
 
 	/**
-	 * Dragular 4.3.1 by Luckylooke https://github.com/luckylooke/dragular
+	 * Dragular 4.3.2 by Luckylooke https://github.com/luckylooke/dragular
 	 * Angular version of dragula https://github.com/bevacqua/dragula
 	 */
 	module.exports = 'dragularModule';
@@ -866,9 +866,13 @@ return /******/ (function(modules) { // webpackBootstrap
 	            targetCtx.m = getContainersModel(targetCtx.o)[targetCtx.o.initialContainers.indexOf(target)];
 	          }
 
-	          accepts = initial ||
+	          accepts = initial || !targetCtx || // isContainer custom fn used
 	            (targetCtx.o.accepts(shared.item, target, shared.source, reference, shared.sourceModel, shared.initialIndex) &&
 	              o.canBeAccepted(shared.item, target, shared.source, reference, shared.sourceModel, shared.initialIndex));
+
+	          if(!targetCtx){
+	            targetCtx = {};
+	          }
 
 	          if (shared.target !== target) { // shared.target must be actual (used for scroll issue)
 	            shared.target = target;

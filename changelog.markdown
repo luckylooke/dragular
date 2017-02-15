@@ -1,6 +1,9 @@
-# X.X.X planned - not implemented
+# TODO X.X.X planned - not implemented
 - **[Braking change!]** rename 'dragulardrag' event to 'dragulardragstart'
 - new event 'dragulardrag' emited each iteration while dragging
+
+# 4.3.2 War of the Worlds
+- fixed #120 isContainer example not working
 
 # 4.3.1 Robin Hood
 - fixed dynamic (function) `options.containersModel` for target containers models
