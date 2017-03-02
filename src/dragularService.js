@@ -130,9 +130,9 @@ var dragularService = function ($rootScope, $compile) {
     extendOptions();
     processOptionsObject();
     registerEvents();
-    
+
     if(o.onInit){
-       o.onInit(drake); 
+       o.onInit(drake);
     }
 
     return drake;
@@ -477,7 +477,9 @@ var dragularService = function ($rootScope, $compile) {
     function manualStart(item) {
       var context = canStart(item);
       if (context) {
-        start(context);
+        shared.grabbed = context;
+        eventualMovements();
+        //start(context);
       }
     }
 
@@ -532,7 +534,7 @@ var dragularService = function ($rootScope, $compile) {
       var sourceItem = shared.sourceItem,
           currentSibling = shared.currentSibling,
           dropIndex = domIndexOf(item, target);
-        
+
       if (shared.copy && g(o.copySortSource) && target === shared.source && getParent(item)) {
         item.parentNode.removeChild(shared.sourceItem);
       }
@@ -560,7 +562,7 @@ var dragularService = function ($rootScope, $compile) {
             } else {
               shared.targetModel = shared.tempModel;
             }
-            
+
             target.removeChild(item); // element must be removed for ngRepeat to apply correctly
 
             if (!shared.copy) {
@@ -586,14 +588,14 @@ var dragularService = function ($rootScope, $compile) {
         if(o.compileItemOnDrop){
             var scope = angular.element(target).scope();
             scope.$applyAsync(function(){
-                var content = $compile(shared.copy ? sourceItem.cloneNode(true) : sourceItem)(scope);                   
+                var content = $compile(shared.copy ? sourceItem.cloneNode(true) : sourceItem)(scope);
                 if(item.parentNode === target){
                     target.removeChild(item);
                 }
                 target.insertBefore(content[0], currentSibling);
             });
         }
-        
+
         if (o.scope) {
           if (isInitialPlacement(target)) {
             o.scope.$emit(o.eventNames.dragularcancel, item, shared.source, shared.sourceModel, shared.initialIndex);
@@ -601,7 +603,7 @@ var dragularService = function ($rootScope, $compile) {
             o.scope.$emit(o.eventNames.dragulardrop, item, target, shared.source, shared.sourceModel, shared.initialIndex, shared.targetModel, dropIndex);
           }
         }
-        
+
         cleanup();
       }
     }
