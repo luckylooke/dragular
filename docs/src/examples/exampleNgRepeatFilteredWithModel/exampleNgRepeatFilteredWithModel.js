@@ -56,7 +56,13 @@ var NgRepeatFilteredWithModelCtrl = function ($scope, $element, dragularService,
     * Hopefully I make it clear. :)
      */
     [].push.apply(filteredModel, $filter('filter')(items, filterQuery));
-    return filteredModel;
+
+    // Example with orderBy filter:
+    //   var tmp = [];
+    //   [].push.apply(tmp, $filter('filter')(items, filterQuery));
+    //   [].push.apply(filteredModel, $filter('orderBy')(tmp, '+content'));
+
+      return filteredModel;
   };
   var containers = $element.children().eq(1).children();
   dragularService.cleanEnviroment();
