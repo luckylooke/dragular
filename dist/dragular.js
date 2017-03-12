@@ -271,7 +271,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    processOptionsObject();
 	    registerEvents();
 	    
-	    if(o.onInit){
+	    if (o.onInit){
 	       o.onInit(drake); 
 	    }
 
@@ -313,11 +313,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	    function extendOptions(){
 	      var tmp = angular.extend({}, defaultOptions, o); // tmp for keeping defaults untouched
 	      angular.extend(o, tmp); // merge defaults back into options
-	      if(o.classes){
+	      if (o.classes){
 	        tmp = angular.extend({}, defaultClasses, o.classes);
 	        angular.extend(o.classes, tmp);
 	      }
-	      if(o.eventNames){
+	      if (o.eventNames){
 	        tmp = angular.extend({}, defaultEventNames, o.eventNames);
 	        angular.extend(o.eventNames, tmp);
 	      }
@@ -330,7 +330,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	      }
 
 	      // initial containers provided via options are higher priority then by parameter
-	      if(o.containers){
+	      if (o.containers){
 	        initialContainers = o.containers;
 	      }
 	      // sanitize initialContainers
@@ -381,10 +381,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	        regEvent(container, 'on', 'mousedown', grab);
 	      });
 
-	      if(!remove){ // create dragular DOM events
+	      if (!remove){ // create dragular DOM events
 	        angular.forEach(['dragularenter', 'dragularleave', 'dragularrelease'], function prepareDragOverEvents(name) {
 	          var eventName = o.eventNames[name];
-	          if(!shared.dragOverEvents[eventName]){
+	          if (!shared.dragOverEvents[eventName]){
 	            if (doc.createEvent) {
 	              shared.dragOverEvents[eventName] = doc.createEvent('HTMLEvents');
 	              shared.dragOverEvents[eventName].initEvent(eventName, true, true);
@@ -465,7 +465,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    // Main logic functions (end of event handler functions): -----------------------------------------------------------------------------------------------------------------
 
 	    function isContainer(el) {
-	      if(!el){
+	      if (!el){
 	        return false;
 	      }
 	      var i = o.nameSpace.length;
@@ -665,7 +665,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    }
 
 	    function drop(item, target) {
-	      if(!item){ // https://github.com/luckylooke/dragular/issues/102
+	      if (!item){ // https://github.com/luckylooke/dragular/issues/102
 	        cleanup();
 	        return;
 	      }
@@ -673,25 +673,26 @@ return /******/ (function(modules) { // webpackBootstrap
 	          currentSibling = shared.currentSibling,
 	          dropIndex = domIndexOf(item, target);
 	        
-	      if (shared.copy && g(o.copySortSource) && target === shared.source && getParent(item)) {
+	      if (shared.copy && target === shared.source && getParent(item) && g(o.copySortSource)) {
 	        item.parentNode.removeChild(shared.sourceItem);
 	      }
 
 	      if (shared.sourceModel && !isInitialPlacement(target)) {
-	        if(shared.targetCtx.fm){ // target has filtered model
+	        if (shared.targetCtx.fm){ // target has filtered model
 	          // convert index from index-in-filteredModel to index-in-model
 	          dropIndex = shared.targetCtx.m.indexOf(shared.targetCtx.fm[dropIndex]);
 	        }
-	        if(shared.sourceFilteredModel){ // target has filtered model
+	        if (shared.sourceFilteredModel){ // source has filtered model
 	          // convert index from index-in-filteredModel to index-in-model
 	          shared.initialIndex = shared.sourceModel.indexOf(shared.sourceFilteredModel[shared.initialIndex]);
 	        }
 	        $rootScope.$applyAsync(function applyDrop() {
-	          if(!shared.sourceModel){
+	          if (!shared.sourceModel){
 	              return;
 	          }
 	          if (target === shared.source) {
 	            shared.sourceModel.splice(dropIndex, 0, shared.sourceModel.splice(shared.initialIndex, 1)[0]);
+		          console.log('dragular', JSON.stringify(shared.sourceModel, null, '\t'));
 	          } else {
 	            shared.dropElmModel = shared.copy && !o.dontCopyModel ? angular.copy(shared.sourceModel[shared.initialIndex]) : shared.sourceModel[shared.initialIndex];
 
@@ -707,11 +708,12 @@ return /******/ (function(modules) { // webpackBootstrap
 	              shared.sourceModel.splice(shared.initialIndex, 1);
 	            }
 
-	            if(shared.targetModel){
+	            if (shared.targetModel){
 	                shared.targetModel.splice(dropIndex, 0, shared.dropElmModel);
 	            }
 	          }
 
+	          // removing element, as protection against duplicates, angular ng-repeat will create new item according to model
 	          if (getParent(item)) {
 	            item.parentNode.removeChild(item);
 	          }
@@ -723,15 +725,18 @@ return /******/ (function(modules) { // webpackBootstrap
 	      }
 
 	      function afterDrop() {
-	        if(o.compileItemOnDrop){
-	            var scope = angular.element(target).scope();
-	            scope.$applyAsync(function(){
-	                var content = $compile(shared.copy ? sourceItem.cloneNode(true) : sourceItem)(scope);                   
-	                if(item.parentNode === target){
-	                    target.removeChild(item);
-	                }
-	                target.insertBefore(content[0], currentSibling);
-	            });
+	        if (o.compileItemOnDrop){
+	            var scope = angular.element(target).scope ? angular.element(target).scope() : o.scope;
+	            if(scope){
+	              scope.$applyAsync(function(){
+	                  var content = $compile(shared.copy ? sourceItem.cloneNode(true) : sourceItem)(scope);
+	                  if(item.parentNode === target){
+	                      target.removeChild(item);
+	                  }
+	                  target.insertBefore(content[0], currentSibling);
+	                  cleanup();
+	              });
+	            }
 	        }
 	        
 	        if (o.scope) {
@@ -741,8 +746,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	            o.scope.$emit(o.eventNames.dragulardrop, item, target, shared.source, shared.sourceModel, shared.initialIndex, shared.targetModel, dropIndex);
 	          }
 	        }
-	        
-	        cleanup();
+
+	        if (!o.compileItemOnDrop){
+	          cleanup();
+	        }
 	      }
 	    }
 
@@ -796,6 +803,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    }
 
 	    function cleanup() {
+	      console.log('cleanup');
 	      ungrab();
 	      removeMirrorImage();
 
@@ -810,7 +818,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	      }
 
 	      if (o.scope) {
-	        if(shared.lastDropTarget){
+	        if (shared.lastDropTarget){
 	         o.scope.$emit(o.eventNames.dragularout, shared.item, shared.lastDropTarget, shared.source);
 	        }
 	        o.scope.$emit(o.eventNames.dragulardragend, shared.item);
@@ -861,7 +869,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	              targetCtx = getTargetCtx('dragularCommon');
 	          }
 
-	          if(targetCtx && typeof targetCtx.o.containersModel === 'function'){
+	          if (targetCtx && typeof targetCtx.o.containersModel === 'function'){
 	          // fix targetCtx.m(odel) for dynamic containersModel
 	            targetCtx.m = getContainersModel(targetCtx.o)[targetCtx.o.initialContainers.indexOf(target)];
 	          }
@@ -870,7 +878,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	            (targetCtx.o.accepts(shared.item, target, shared.source, reference, shared.sourceModel, shared.initialIndex) &&
 	              o.canBeAccepted(shared.item, target, shared.source, reference, shared.sourceModel, shared.initialIndex));
 
-	          if(!targetCtx){
+	          if (!targetCtx){
 	            targetCtx = {};
 	          }
 
@@ -1055,7 +1063,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        rmClass(doc.body, o.classes.unselectable);
 	        regEvent(docElm, 'off', 'mousemove', drag);
 	        regEvent(shared.mirror, 'off', 'wheel', scrollContainer);
-	        if(getParent(shared.mirror)){
+	        if (getParent(shared.mirror)){
 	          shared.mirror.parentNode.removeChild(shared.mirror);
 	        }
 	        shared.mirror = null;
@@ -1226,7 +1234,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	  }
 
 	  function nextEl(el) {
-	    if(!el){ // https://github.com/luckylooke/dragular/issues/102
+	    if (!el){ // https://github.com/luckylooke/dragular/issues/102
 	      return;
 	    }
 	    return el.nextElementSibling || manually();
@@ -1339,7 +1347,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	  }
 
 	  function getBool(prop, args, context){
-	    if(angular.isFunction(prop)){
+	    if (angular.isFunction(prop)){
 	      return !!prop.apply(context || this, args || shared);
 	    }else{
 	      return !!prop;

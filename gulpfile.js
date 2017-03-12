@@ -212,6 +212,7 @@ gulp.task('watch', ['serve'], function() {
 
 gulp.task('watch:docs', ['serve'], function() {
   gulp.watch(config.docs.styles,  ['styles']);
+  gulp.watch(config.docs.scripts,  ['scripts']);
   gulp.watch(config.docs.templates,  ['templates:docs']);
   gulp.watch(config.docs.index, browserSync.reload);
   gulp.watch('./CONTRIBUTING.md', ['markdown']);
