@@ -2,7 +2,7 @@
   <div id="rowOffcanvas" class="row row-offcanvas row-offcanvas-left">
     <div class="col-xs-6 col-sm-3 sidebar-offcanvas" id="sidebar">
       <div class="list-group">
-        <a ng-repeat="example in examplesList" ui-sref="docs.detail({link:example.link})" ui-sref-active="active" class="list-group-item">{{example.title}}</a>
+        <a ng-repeat="example in examplesList" ng-click="toggleSidebar()" ui-sref="docs.detail({link:example.link})" ui-sref-active="active" class="list-group-item">{{example.title}}</a>
       </div>
     </div>
     <!--/.sidebar-offcanvas-->
