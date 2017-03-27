@@ -2,7 +2,7 @@
 
 var EventsCtrl = function ($scope, $element, dragularService, $timeout) {
   dragularService.cleanEnviroment();
-  dragularService($element.children(), {
+  var drake = dragularService($element.children(), {
     scope: $scope
   });
   $scope.$on('dragulardrag', function(e, el) {
@@ -26,7 +26,7 @@ var EventsCtrl = function ($scope, $element, dragularService, $timeout) {
 
   function myFn(eventName) {
     return function() {
-      console.log(eventName, arguments);
+      console.log(eventName, arguments, drake);
     };
   }
 };
