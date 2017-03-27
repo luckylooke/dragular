@@ -20,9 +20,26 @@ var BasicModelCtrl = function ($scope, $element, dragularService) {
   }];
   var containers = $element.children().eq(0).children();
   dragularService.cleanEnviroment();
+  // var drake = dragularService([containers[0],containers[1]],{
   dragularService([containers[0],containers[1]],{
-    containersModel: [$scope.items1, $scope.items2]
+    containersModel: [$scope.items1, $scope.items2],
+      // scope: $scope
   });
+
+	// $scope.$on('dragularcloned', myFn('cloned'));
+	// $scope.$on('dragulardrag', myFn('drag'));
+	// $scope.$on('dragularcancel', myFn('cancel'));
+	// $scope.$on('dragulardrop', myFn('drop'));
+	// $scope.$on('dragularremove', myFn('remove'));
+	// $scope.$on('dragulardragend', myFn('dragend'));
+	// $scope.$on('dragularshadow', myFn('shadow'));
+	//
+	// function myFn(eventName) {
+	// 	return function() {
+	// 		console.log(eventName, arguments, drake);
+	// 	};
+	// }
+
 };
 
 BasicModelCtrl.$inject = ['$scope', '$element', 'dragularService'];
