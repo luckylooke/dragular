@@ -1149,14 +1149,25 @@ return /******/ (function(modules) { // webpackBootstrap
 	      },
 	      $el = angular.element(el);
 
-	    if (typeof navigator !== 'undefined' && navigator.pointerEnabled && pointers[type]) {
-	      $el[op](pointers[type], fn);
-	    } else if (typeof navigator !== 'undefined' && navigator.msPointerEnabled && microsoft[type]) {
-	      $el[op](microsoft[type], fn);
-	    } else if (touch[type]) {
-	      $el[op](touch[type], fn);
+	    if (el.addEventListener) {
+
+	        var opConvert = { on: 'addEventListener', off: 'removeEventListener' };
+	        el[ opConvert[ op ] ]( type, fn, { passive: false } );
+	        el[ opConvert[ op ] ]( touch[ type ], fn, { passive: false } );
+	        console.log('dingdong2');
+
+	    } else {
+
+	      if (typeof navigator !== 'undefined' && navigator.pointerEnabled && pointers[type]) {
+	        $el[op](pointers[type], fn);
+	      } else if (typeof navigator !== 'undefined' && navigator.msPointerEnabled && microsoft[type]) {
+	        $el[op](microsoft[type], fn);
+	      } else if (touch[type]) {
+	        $el[op](touch[type], fn);
+	      }
+	      $el[op](type, fn)
+
 	    }
-	    $el[op](type, fn);
 	  }
 
 	  function never() {

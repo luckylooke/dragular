@@ -2,6 +2,9 @@
 - **[Braking change!]** rename 'dragulardrag' event to 'dragulardragstart'
 - new event 'dragulardrag' emited each iteration while dragging
 
+# 4.3.3
+- fixed #131 drags mixed with scrolling (caused by chrome update)
+
 # 4.3.2 War of the Worlds
 - fixed #120 isContainer example not working
 

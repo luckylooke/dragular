@@ -208,6 +208,7 @@ gulp.task('templates:docs', function() {
 */
 gulp.task('watch', ['serve'], function() {
   gulp.watch(config.dragular.styles,  ['styles']);
+  gulp.watch(config.docs.scripts,  ['scripts']);
 });
 
 gulp.task('watch:docs', ['serve'], function() {
