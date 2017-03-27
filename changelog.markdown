@@ -1,11 +1,7 @@
-# TODO X.X.X planned - not implemented
-- **[Braking change!]** rename 'dragulardrag' event to 'dragulardragstart'
-- new event 'dragulardrag' emited each iteration while dragging
-
-# 4.3.3
+# 4.3.3 The Gods Must Be Crazy
 - fixed #131 drags mixed with scrolling (caused by chrome update)
 - fixed #129 drag stucks on no-container release
-- fixed #128 canBeAccepted dod not work in combination with isContainer
+- fixed #128 canBeAccepted did not work in combination with isContainer
 - added options object as second argument to onInit (requested in #65)
 
 # 4.3.2 War of the Worlds

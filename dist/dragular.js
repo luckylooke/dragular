@@ -60,7 +60,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	var dragularService = __webpack_require__(2);
 
 	/**
-	 * Dragular 4.3.2 by Luckylooke https://github.com/luckylooke/dragular
+	 * Dragular 4.3.3 by Luckylooke https://github.com/luckylooke/dragular
 	 * Angular version of dragula https://github.com/bevacqua/dragula
 	 */
 	module.exports = 'dragularModule';
@@ -272,7 +272,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    registerEvents();
 	    
 	    if (o.onInit){
-	       o.onInit(drake); 
+	       o.onInit(drake, o);
 	    }
 
 	    return drake;
@@ -548,6 +548,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	      movements();
 	      end();
 	      start(grabbed);
+	      if (!shared.item) return;
 
 	      // automaticly detect direction of elements if not set in options
 	      if (!o.direction && getParent(shared.sourceItem)) {
@@ -678,7 +679,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	      }
 
 	      if (shared.sourceModel && !isInitialPlacement(target)) {
-	        if (shared.targetCtx.fm){ // target has filtered model
+	        if (shared.targetCtx && shared.targetCtx.fm){ // target has filtered model
 	          // convert index from index-in-filteredModel to index-in-model
 	          dropIndex = shared.targetCtx.m.indexOf(shared.targetCtx.fm[dropIndex]);
 	        }
@@ -692,12 +693,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	          }
 	          if (target === shared.source) {
 	            shared.sourceModel.splice(dropIndex, 0, shared.sourceModel.splice(shared.initialIndex, 1)[0]);
-		          console.log('dragular', JSON.stringify(shared.sourceModel, null, '\t'));
 	          } else {
 	            shared.dropElmModel = shared.copy && !o.dontCopyModel ? angular.copy(shared.sourceModel[shared.initialIndex]) : shared.sourceModel[shared.initialIndex];
 
 	            if (!shared.tempModel) {
-	              shared.targetModel = shared.targetCtx.m;
+	              shared.targetModel = ( shared.targetCtx && shared.targetCtx.m ) || shared.sourceModel;
 	            } else {
 	              shared.targetModel = shared.tempModel;
 	            }
@@ -803,7 +803,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	    }
 
 	    function cleanup() {
-	      console.log('cleanup');
 	      ungrab();
 	      removeMirrorImage();
 
@@ -859,7 +858,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	          while (i--) { // for each namespace
 	              nameSpace = o.nameSpace[i];
-	            if (shared.containers[nameSpace].indexOf(target) !== -1) {
+	            if (shared.containers[nameSpace].indexOf(target) != -1) {
 	              targetCtx = getTargetCtx(nameSpace);
 	              break;
 	            }
@@ -874,9 +873,16 @@ return /******/ (function(modules) { // webpackBootstrap
 	            targetCtx.m = getContainersModel(targetCtx.o)[targetCtx.o.initialContainers.indexOf(target)];
 	          }
 
-	          accepts = initial || !targetCtx || // isContainer custom fn used
-	            (targetCtx.o.accepts(shared.item, target, shared.source, reference, shared.sourceModel, shared.initialIndex) &&
-	              o.canBeAccepted(shared.item, target, shared.source, reference, shared.sourceModel, shared.initialIndex));
+	          if ( targetCtx && targetCtx.o.accepts ){
+	            if ( targetCtx ){
+	              accepts = targetCtx.o.accepts(shared.item, target, shared.source, reference, shared.sourceModel, shared.initialIndex)
+	                          && o.canBeAccepted(shared.item, target, shared.source, reference, shared.sourceModel, shared.initialIndex)
+	            } else {
+	              o.canBeAccepted(shared.item, target, shared.source, reference, shared.sourceModel, shared.initialIndex)
+	            }
+	          } else {
+	              accepts = initial;
+	          }
 
 	          if (!targetCtx){
 	            targetCtx = {};
@@ -1154,7 +1160,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	        var opConvert = { on: 'addEventListener', off: 'removeEventListener' };
 	        el[ opConvert[ op ] ]( type, fn, { passive: false } );
 	        el[ opConvert[ op ] ]( touch[ type ], fn, { passive: false } );
-	        console.log('dingdong2');
 
 	    } else {
 
