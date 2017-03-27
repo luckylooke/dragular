@@ -538,7 +538,7 @@ var dragularService = function ($rootScope, $compile) {
       }
 
       if (shared.sourceModel && !isInitialPlacement(target)) {
-        if (shared.targetCtx.fm){ // target has filtered model
+        if (shared.targetCtx && shared.targetCtx.fm){ // target has filtered model
           // convert index from index-in-filteredModel to index-in-model
           dropIndex = shared.targetCtx.m.indexOf(shared.targetCtx.fm[dropIndex]);
         }
@@ -556,7 +556,7 @@ var dragularService = function ($rootScope, $compile) {
             shared.dropElmModel = shared.copy && !o.dontCopyModel ? angular.copy(shared.sourceModel[shared.initialIndex]) : shared.sourceModel[shared.initialIndex];
 
             if (!shared.tempModel) {
-              shared.targetModel = shared.targetCtx.m;
+              shared.targetModel = ( shared.targetCtx && shared.targetCtx.m ) || shared.sourceModel;
             } else {
               shared.targetModel = shared.tempModel;
             }
@@ -717,7 +717,7 @@ var dragularService = function ($rootScope, $compile) {
 
           while (i--) { // for each namespace
               nameSpace = o.nameSpace[i];
-            if (shared.containers[nameSpace].indexOf(target) !== -1) {
+            if (shared.containers[nameSpace].indexOf(target) != -1) {
               targetCtx = getTargetCtx(nameSpace);
               break;
             }

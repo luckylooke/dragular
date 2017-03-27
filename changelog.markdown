@@ -4,6 +4,7 @@
 
 # 4.3.3
 - fixed #131 drags mixed with scrolling (caused by chrome update)
+- fixed #129 drag stucks on no-container release
 
 # 4.3.2 War of the Worlds
 - fixed #120 isContainer example not working

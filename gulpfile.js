@@ -208,10 +208,12 @@ gulp.task('templates:docs', function() {
 */
 gulp.task('watch', ['serve'], function() {
   gulp.watch(config.dragular.styles,  ['styles']);
-  gulp.watch(config.docs.scripts,  ['scripts']);
+  gulp.watch(config.dragular.scripts,  ['scripts']);
 });
 
 gulp.task('watch:docs', ['serve'], function() {
+  gulp.watch(config.dragular.styles,  ['styles']);
+  gulp.watch(config.dragular.scripts,  ['scripts']);
   gulp.watch(config.docs.styles,  ['styles']);
   gulp.watch(config.docs.scripts,  ['scripts']);
   gulp.watch(config.docs.templates,  ['templates:docs']);
