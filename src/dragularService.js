@@ -478,7 +478,9 @@ var dragularService = function ($rootScope, $compile) {
     function manualStart(item) {
       var context = canStart(item);
       if (context) {
-        start(context);
+        shared.grabbed = context;
+        eventualMovements();
+        //start(context);
       }
     }
 
