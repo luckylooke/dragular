@@ -408,6 +408,7 @@ var dragularService = function ($rootScope, $compile) {
       movements();
       end();
       start(grabbed);
+      if (!shared.item) return;
 
       // automaticly detect direction of elements if not set in options
       if (!o.direction && getParent(shared.sourceItem)) {
