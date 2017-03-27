@@ -552,7 +552,6 @@ var dragularService = function ($rootScope, $compile) {
           }
           if (target === shared.source) {
             shared.sourceModel.splice(dropIndex, 0, shared.sourceModel.splice(shared.initialIndex, 1)[0]);
-	          console.log('dragular', JSON.stringify(shared.sourceModel, null, '\t'));
           } else {
             shared.dropElmModel = shared.copy && !o.dontCopyModel ? angular.copy(shared.sourceModel[shared.initialIndex]) : shared.sourceModel[shared.initialIndex];
 
@@ -663,7 +662,6 @@ var dragularService = function ($rootScope, $compile) {
     }
 
     function cleanup() {
-      console.log('cleanup');
       ungrab();
       removeMirrorImage();
 
