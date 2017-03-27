@@ -408,7 +408,7 @@ var dragularService = function ($rootScope, $compile) {
       movements();
       end();
       start(grabbed);
-      if (!shared.item) return;
+      if (!shared.item){ return; }
 
       // automaticly detect direction of elements if not set in options
       if (!o.direction && getParent(shared.sourceItem)) {
@@ -720,7 +720,7 @@ var dragularService = function ($rootScope, $compile) {
 
           while (i--) { // for each namespace
               nameSpace = o.nameSpace[i];
-            if (shared.containers[nameSpace].indexOf(target) != -1) {
+            if (shared.containers[nameSpace].indexOf(target) !== -1) {
               targetCtx = getTargetCtx(nameSpace);
               break;
             }
@@ -737,10 +737,9 @@ var dragularService = function ($rootScope, $compile) {
 
           if ( targetCtx && targetCtx.o.accepts ){
             if ( targetCtx ){
-              accepts = targetCtx.o.accepts(shared.item, target, shared.source, reference, shared.sourceModel, shared.initialIndex)
-                          && o.canBeAccepted(shared.item, target, shared.source, reference, shared.sourceModel, shared.initialIndex)
+              accepts = targetCtx.o.accepts(shared.item, target, shared.source, reference, shared.sourceModel, shared.initialIndex) && o.canBeAccepted(shared.item, target, shared.source, reference, shared.sourceModel, shared.initialIndex);
             } else {
-              o.canBeAccepted(shared.item, target, shared.source, reference, shared.sourceModel, shared.initialIndex)
+              o.canBeAccepted(shared.item, target, shared.source, reference, shared.sourceModel, shared.initialIndex);
             }
           } else {
               accepts = initial;
@@ -1032,7 +1031,7 @@ var dragularService = function ($rootScope, $compile) {
       } else if (touch[type]) {
         $el[op](touch[type], fn);
       }
-      $el[op](type, fn)
+      $el[op](type, fn);
 
     }
   }
