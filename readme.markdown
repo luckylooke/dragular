@@ -374,7 +374,7 @@ In case your draggable items are customized by other directives/attributes, you 
 
 ### `options.onInit`
 
-You can provide function callback called after dragular initialisation with drake as first argument.
+You can provide function callback called after dragular initialisation with drake as first argument and options object as second argumant.
 
 
 ## Events

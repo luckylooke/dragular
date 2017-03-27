@@ -471,7 +471,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    registerEvents();
 	    
 	    if (o.onInit){
-	       o.onInit(drake); 
+	       o.onInit(drake, o);
 	    }
 
 	    return drake;
