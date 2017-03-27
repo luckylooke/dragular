@@ -21,8 +21,18 @@ var BasicModelCtrl = function ($scope, $element, dragularService) {
   var containers = $element.children().eq(0).children();
   dragularService.cleanEnviroment();
   // var drake = dragularService([containers[0],containers[1]],{
-  dragularService([containers[0],containers[1]],{
+  // dragularService([containers[0]],{
+  dragularService([containers[0], containers[1]],{
     containersModel: [$scope.items1, $scope.items2],
+      // canBeAccepted: function () {
+      //     return false;
+      // },
+      // isContainer: function (el) {
+      //     return el.id == 'test';
+      // },
+      // isContainerModel: function () {
+      //     return $scope.items2;
+      // }
       // scope: $scope
   });
 
