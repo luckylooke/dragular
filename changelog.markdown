@@ -1,3 +1,6 @@
+# 4.3.4 Home alone
+- merged forgotten changes from master PRs
+
 # 4.3.3 The Gods Must Be Crazy
 - fixed #131 drags mixed with scrolling (caused by chrome update)
 - fixed #129 drag stucks on no-container release
