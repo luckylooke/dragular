@@ -1,3 +1,8 @@
+# 4.4.0
+- isContainerAccepts - acceptation function for isContainer containers
+- some docs improvements
+- fixed #132 - not working isContainer with models
+
 # 4.3.4 Home alone
 - merged forgotten changes from master PRs
 

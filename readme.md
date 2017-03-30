@@ -228,27 +228,32 @@ See 'options.containersModel' above for usecase.
 
 ### `options.isContainer`
 
-Element can be forced to be container by custom logic function.
+Element can be forced to be container by custom logic function. Tested element is passed as argument.
 
 ### `options.isContainerModel`
 
-If isContainer function is provided, you can provide also respective model.
+If isContainer function is provided, you can provide also respective model. Tested element is passed as argument.
+
+### `options.isContainerAccepts`
+
+If isContainer function is provided, you can provide also respective acceptation function. Parameters are same as for `options.accepts`.
 
 ### `options.moves`
 
-You can define a `moves` method which will be invoked with `(el, container, handle)` whenever an element is clicked. If this method returns `false`, a drag event won't begin, and the event won't be prevented either. The `handle` element will be the original click target, which comes in handy to test if that element is an expected _"drag handle"_.
+You can define a `moves` callback which will be invoked with `(el, container, handle)` whenever an element is clicked. If this method returns `false`, a drag event won't begin, and the event won't be prevented either. The `handle` element will be the original click target, which comes in handy to test if that element is an expected _"drag handle"_.
 
 ### `options.accepts`
 
-You can set `accepts` to a method with the following signature: `(el, target, source, sibling)`. It'll be called to make sure that an element `el`, that came from container `source`, can be dropped on container `target` before a `sibling` element. The `sibling` can be `null`, which would mean that the element would be placed as the last element in the container. Note that if `options.copy` is set to `true`, `el` will be set to the copy, instead of the originally dragged element. Applied with options provided with initialisation of target container.
+You can set `accepts` to a method with the following signature: `(el, target, source, sibling, sourceModel, initialIndex)`. It'll be called to make sure that an element `el`, that came from container `source`, can be dropped on container `target` before a `sibling` element. The `sibling` can be `null`, which would mean that the element would be placed as the last element in the container. Note that if `options.copy` is set to `true`, `el` will be set to the copy, instead of the originally dragged element. Applied with options provided with initialisation of target container.
 
 Also note that **the position where a drag starts is always going to be a valid place where to drop the element**, even if `accepts` returned `false` for all cases.
 
 ### `options.canBeAccepted`
 
-Same as options.accepts but applied with options provided with initialisation of source container.
+Same as `options.accepts` but applied with options provided with initialisation of source container.
 
 ### `options.copy`
+### `options.copy( el, source )`
 
 If `copy` is set to `true` _(or a method that returns `true`)_, items will be copied rather than moved. This implies the following differences:
 
@@ -274,15 +279,6 @@ If `copy` is set to `true` _(or a method that returns `true`)_ and `copySortSour
 ```js
 copy: true,
 copySortSource: true
-```
-
-#### `options.copySortSource`
-
-If `copy` is set to `true` _(or a method that returns `true`)_ and `dontCopyModel` is `true` as well, dragular won`t make copy of model when coping item.
-
-```js
-copy: true,
-dontCopyModel: true
 ```
 
 ### `options.revertOnSpill`
