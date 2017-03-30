@@ -1,4 +1,4 @@
-# 4.4.0
+# 4.4.0 Accepted
 - isContainerAccepts - acceptation function for isContainer containers
 - some docs improvements
 - fixed #132 - not working isContainer with models

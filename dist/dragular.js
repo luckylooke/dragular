@@ -60,7 +60,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	var dragularService = __webpack_require__(2);
 
 	/**
-	 * Dragular 4.3.4 by Luckylooke https://github.com/luckylooke/dragular
+	 * Dragular 4.4.0 by Luckylooke https://github.com/luckylooke/dragular
 	 * Angular version of dragula https://github.com/bevacqua/dragula
 	 */
 	module.exports = 'dragularModule';
@@ -236,6 +236,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        containersFilteredModel: false, // if provided, dragular will handle filtered model cases
 	        isContainer: never, // potential target can be forced to be container by custom logic
 	        isContainerModel: getEmptyObject, // if isContainer function is provided, you can provide also respective model
+	        isContainerAccepts: always, // if isContainer function is provided, you can provide also respective accept function
 	        moves: always, // can drag start?
 	        accepts: always, // can target accept dragged item? (target context used)
 	        canBeAccepted: always, // can be dragged item accepted by target? (source context used)
@@ -286,9 +287,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	      } else if (Array.isArray(containersModel)) {
 	          //                  |-------- is 2D array? -----------|
 	          return Array.isArray(containersModel[0]) ? containersModel : [containersModel];
-	      } else if (typeof containersModel === 'string' && (o.scope || o.containersModelCtx)) {
+	      } else if (typeof containersModel === 'string' && o.scope) {
 	          return function () {
-	              return o.containersModelCtx ? o.containersModelCtx[containersModel] : o.scope[containersModel];
+	              return o.scope[containersModel];
 	          };
 	      } else {
 	        return [];
@@ -844,56 +845,67 @@ return /******/ (function(modules) { // webpackBootstrap
 	      while (target && !accepted()) {
 	        target = getParent(target);
 	      }
-	      shared.targetCtx = targetCtx;
+	      shared.targetCtx = targetCtx || {};
 	      return target;
 
 	      function accepted() {
-	        var accepts = false;
 
-	        if (isContainer(target)) { // is droppable?
+	        if (!isContainer(target)) { // is not droppable?
+	          return false;
+	        }
 
-	          var immediate = getImmediateChild(target, elementBehindCursor),
-	              reference = getReference(target, immediate, clientX, clientY),
-	              initial = isInitialPlacement(target, reference),
-	              i = o.nameSpace.length,
-	              nameSpace;
+	        var immediate = getImmediateChild(target, elementBehindCursor),
+	            reference = getReference(target, immediate, clientX, clientY),
+	            initial = isInitialPlacement(target, reference),
+	            i = o.nameSpace.length,
+	            nameSpace;
 
-	          while (i--) { // for each namespace
-	              nameSpace = o.nameSpace[i];
-	            if (shared.containers[nameSpace].indexOf(target) !== -1) {
-	              targetCtx = getTargetCtx(nameSpace);
-	              break;
-	            }
-	          }
-
-	          if (!targetCtx) {
-	              targetCtx = getTargetCtx('dragularCommon');
-	          }
-
-	          if (targetCtx && typeof targetCtx.o.containersModel === 'function'){
-	          // fix targetCtx.m(odel) for dynamic containersModel
-	            targetCtx.m = getContainersModel(targetCtx.o)[targetCtx.o.initialContainers.indexOf(target)];
-	          }
-
-	          if ( targetCtx && targetCtx.o.accepts ){
-	            if ( targetCtx ){
-	              accepts = targetCtx.o.accepts(shared.item, target, shared.source, reference, shared.sourceModel, shared.initialIndex) && o.canBeAccepted(shared.item, target, shared.source, reference, shared.sourceModel, shared.initialIndex);
-	            } else {
-	              o.canBeAccepted(shared.item, target, shared.source, reference, shared.sourceModel, shared.initialIndex);
-	            }
-	          } else {
-	              accepts = initial;
-	          }
-
-	          if (!targetCtx){
-	            targetCtx = {};
-	          }
-
-	          if (shared.target !== target) { // shared.target must be actual (used for scroll issue)
-	            shared.target = target;
+	        while (i--) { // for each namespace
+	            nameSpace = o.nameSpace[i];
+	          if (shared.containers[nameSpace].indexOf(target) !== -1) {
+	            targetCtx = getTargetCtx(nameSpace);
+	            break;
 	          }
 	        }
-	        return accepts;
+
+	        // shared.target must be actual (used for scroll functionality)
+	        shared.target = target;
+
+	        if ( initial ){
+
+	          return true; // accepts = true;
+
+	        } else {
+
+	            // try to find target in default set of containers
+	            if (!targetCtx) {
+	                targetCtx = getTargetCtx('dragularCommon');
+	            }
+
+	            // if found and containersModel is dynamic, retrieve model
+	            if (targetCtx && typeof targetCtx.o.containersModel === 'function'){
+	                // fix targetCtx.m(odel) for dynamic containersModel
+	                targetCtx.m = getContainersModel(targetCtx.o)[targetCtx.o.initialContainers.indexOf(target)];
+	            }
+
+	            if ( targetCtx && // target container is defined via service or directive
+	                targetCtx.o.accepts &&
+	                !targetCtx.o.accepts(shared.item, target, shared.source, reference, shared.sourceModel, shared.initialIndex)){
+
+	                return false;
+
+	            } else if ( o.isContainer && // target container is recognized via o.isContainer
+	                o.isContainerAccepts &&
+	                !o.isContainerAccepts(shared.item, target, shared.source, reference, shared.sourceModel, shared.initialIndex)){
+
+	                return false;
+
+	            }
+
+		        return !o.canBeAccepted || o.canBeAccepted(shared.item, target, shared.source, reference, shared.sourceModel, shared.initialIndex);
+
+	        }
+
 	      }
 
 	      function getTargetCtx(nameSpace){

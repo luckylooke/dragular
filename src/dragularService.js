@@ -748,15 +748,15 @@ var dragularService = function ($rootScope, $compile) {
                 targetCtx.m = getContainersModel(targetCtx.o)[targetCtx.o.initialContainers.indexOf(target)];
             }
 
-            if ( targetCtx // target container is defined via service or directive
-                && targetCtx.o.accepts
-                && !targetCtx.o.accepts(shared.item, target, shared.source, reference, shared.sourceModel, shared.initialIndex)){
+            if ( targetCtx && // target container is defined via service or directive
+                targetCtx.o.accepts &&
+                !targetCtx.o.accepts(shared.item, target, shared.source, reference, shared.sourceModel, shared.initialIndex)){
 
                 return false;
 
-            } else if ( o.isContainer // target container is recognized via o.isContainer
-                && o.isContainerAccepts
-                && !o.isContainerAccepts(shared.item, target, shared.source, reference, shared.sourceModel, shared.initialIndex)){
+            } else if ( o.isContainer && // target container is recognized via o.isContainer
+                o.isContainerAccepts &&
+                !o.isContainerAccepts(shared.item, target, shared.source, reference, shared.sourceModel, shared.initialIndex)){
 
                 return false;
 
