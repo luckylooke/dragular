@@ -1,7 +1,7 @@
 /* global angular */
 'use strict';
-var dragularDirective = require('./dragularDirective');
-var dragularService = require('./dragularService');
+var dragularDirective = require( './dragularDirective' );
+var dragularService = require( './dragularService' );
 
 /**
  * Dragular 4.4.0 by Luckylooke https://github.com/luckylooke/dragular
@@ -10,6 +10,6 @@ var dragularService = require('./dragularService');
 module.exports = 'dragularModule';
 
 angular
-  .module('dragularModule', [])
-  .factory('dragularService', dragularService)
-  .directive('dragular', dragularDirective);
+	.module( 'dragularModule', [] )
+	.factory( 'dragularService', dragularService )
+	.directive( 'dragular', dragularDirective );
