@@ -186,7 +186,8 @@ return /******/ (function(modules) { // webpackBootstrap
 		// abbreviations
 		var _doc = document,
 			_docElm = _doc.documentElement,
-			_isArray = Array.isArray;
+			_isArray = Array.isArray,
+			_isFunction = angular.isFunction;
 
 		// clean common/shared objects
 		service.cleanEnviroment = function cleanEnviroment() {
@@ -800,7 +801,7 @@ return /******/ (function(modules) { // webpackBootstrap
 						}
 
 						// if found and containersModel is dynamic, retrieve model
-						if ( targetCtx && typeof targetCtx.o.containersModel === 'function' ) {
+						if ( targetCtx && _isFunction( targetCtx.o.containersModel ) ) {
 							// fix targetCtx.m(odel) for dynamic containersModel
 							targetCtx.m = getContainersModel( targetCtx.o )[ getContainers( targetCtx.o ).indexOf( target ) ];
 						}
@@ -935,7 +936,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 			function _getContainers( containersType, opt, to2d ) {
 
-				return (typeof(opt[ containersType ]) === 'function') ? sanitizeContainers(
+				return _isFunction(opt[ containersType ]) ? sanitizeContainers(
 						opt[ containersType ](
 							(opt === o ? drake : null),
 							shared
@@ -1230,7 +1231,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 		function sanitizeContainers( containers, to2d, scope ) {
 
-			if ( typeof containers === 'function' ) {
+			if ( _isFunction( containers ) ) {
 
 				return containers;
 			}
@@ -1498,7 +1499,7 @@ return /******/ (function(modules) { // webpackBootstrap
 		}
 
 		function getBool( prop, args, context ) {
-			if ( angular.isFunction( prop ) ) {
+			if ( _isFunction( prop ) ) {
 				return !!prop.apply( context || this, args || shared );
 			} else {
 				return !!prop;
