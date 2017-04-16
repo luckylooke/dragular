@@ -4,6 +4,9 @@
 
 Browser support includes every sane browser and **IE7+**. <sub>_(Granted you polyfill the functional `Array` methods in ES5)_</sub>
 
+# ````IMPORTANT NOTICE!!!````
+**Maitanance of this library is from now in energy saving mode. I will continue to fix bugs which does not require too heavy rewrites like #133 for example. Because I am working on new drag&drop library called [dragon](https://github.com/luckylooke/dragon) which will be more customisable/maintainable/usable. That is the reason I decided to redirect more of my energy from my other open projects. Thank you for your understanding.**
+
 # [=== Demo ===][2]
 
 # Inspiration
