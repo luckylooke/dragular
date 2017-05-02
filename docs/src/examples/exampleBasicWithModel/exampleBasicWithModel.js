@@ -27,6 +27,9 @@ var BasicModelCtrl = function ($scope, $element, dragularService) {
       // canBeAccepted: function () {
       //     return false;
       // },
+      // accepts: function () {
+      //     return false;
+      // },
       // isContainer: function (el) {
       //     return el.id == 'test';
       // },
