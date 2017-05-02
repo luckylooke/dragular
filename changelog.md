@@ -1,3 +1,6 @@
+# 4.4.1 Dark places
+- fixed #136 - Items can be moved to the end of container even if options.accepts returns false
+
 # 4.4.0 Accepted
 - isContainerAccepts - acceptation function for isContainer containers
 - some docs improvements

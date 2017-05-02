@@ -60,7 +60,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	var dragularService = __webpack_require__( 2 );
 
 	/**
-	 * Dragular 4.4.0 by Luckylooke https://github.com/luckylooke/dragular
+	 * Dragular 4.4.1 by Luckylooke https://github.com/luckylooke/dragular
 	 * Angular version of dragula https://github.com/bevacqua/dragula
 	 */
 	module.exports = 'dragularModule';
