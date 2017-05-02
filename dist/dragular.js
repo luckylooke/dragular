@@ -841,7 +841,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 			// is item currently placed in original container and original position?
 			function isInitialPlacement( target, s ) { // watch performance - running each move several times!
-				var sibling = s || (shared.mirror ? shared.currentSibling : nextEl( shared.item ));
+				var sibling = s !== undefined ? s : (shared.mirror ? shared.currentSibling : nextEl( shared.item ));
 				return target === shared.source && sibling === shared.initialSibling;
 			}
 

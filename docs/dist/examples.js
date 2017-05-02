@@ -1040,7 +1040,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 			// is item currently placed in original container and original position?
 			function isInitialPlacement( target, s ) { // watch performance - running each move several times!
-				var sibling = s || (shared.mirror ? shared.currentSibling : nextEl( shared.item ));
+				var sibling = s !== undefined ? s : (shared.mirror ? shared.currentSibling : nextEl( shared.item ));
 				return target === shared.source && sibling === shared.initialSibling;
 			}
 
@@ -1812,6 +1812,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	  dragularService([containers[0], containers[1]],{
 	    containersModel: [$scope.items1, $scope.items2],
 	      // canBeAccepted: function () {
+	      //     return false;
+	      // },
+	      // accepts: function () {
 	      //     return false;
 	      // },
 	      // isContainer: function (el) {
