@@ -1,3 +1,6 @@
+# 4.4.2 The Model
+- fixed #138 - dynamic model via directive doesn't work properly
+
 # 4.4.1 Dark places
 - fixed #136 - Items can be moved to the end of container even if options.accepts returns false
 
