@@ -796,14 +796,14 @@ var dragularService = function ( $rootScope, $compile ) {
 
 		function _getContainers( containersType, opt, to2d ) {
 
-			return _isFunction(opt[ containersType ]) ? sanitizeContainers(
-					opt[ containersType ](
-						(opt === o ? drake : null),
-						shared
-					),
-					to2d,
-					opt.scope
-				) : opt[ containersType ];
+			return _isFunction( opt[ containersType ] ) ? sanitizeContainers(
+				opt[ containersType ](
+					(opt === o ? drake : null),
+					shared
+				),
+				to2d,
+				opt.scope
+			) : opt[ containersType ];
 		}
 
 		function cancel( revert ) {
@@ -1107,9 +1107,16 @@ var dragularService = function ( $rootScope, $compile ) {
 		}
 		else if ( typeof containers === 'string' && scope ) {
 
-			return function () {
-				return scope[ containers ];
-			};
+			var evaluated = scope.$eval( containers );
+
+			if ( _isFunction( evaluated ) ) {
+				return evaluated;
+			}
+			else {
+				return function () {
+					return scope.$eval( containers );
+				};
+			}
 		}
 		else if ( containers ) {
 
