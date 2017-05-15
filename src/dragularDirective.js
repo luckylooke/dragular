@@ -10,8 +10,7 @@ var dragular = function ( dragularService ) {
 		restrict: 'A',
 		link: function ( $scope, iElm, iAttrs ) {
 
-			var drake,
-				options = $scope.$eval( iAttrs.dragular ) || tryJson( iAttrs.dragular ) || {};
+			var options = $scope.$eval( iAttrs.dragular ) || tryJson( iAttrs.dragular ) || {};
 
 			function tryJson( json ) {
 				try { // I dont like try catch solutions but I havent find sattisfying way of chcecking json validity.
@@ -21,22 +20,11 @@ var dragular = function ( dragularService ) {
 				}
 			}
 
-			if ( options && options.containersModel && typeof options.containersModel === 'string' ) {
-				options.containersModel = $scope.$eval( options.containersModel );
-			}
-
-			if ( options && options.dynamicModelAttribute ) {
-				// watch for model changes
-				$scope.$watch( function () {
-					return $scope.$eval( iAttrs.dragularModel );
-				}, function ( newVal ) {
-					if ( newVal ) {
-						drake.containersModel = drake.sanitizeContainersModel( $scope.$eval( newVal ) );
-					}
-				} );
-			} else if ( iAttrs.dragularModel ) {
-				// bind once and keep reference
-				options.containersModel = $scope.$eval( iAttrs.dragularModel );
+			if ( iAttrs.dragularModel ) {
+				options.containersModel = iAttrs.dragularModel;
+				if ( !options.scope ){
+					options.scope = $scope;
+				}
 			}
 
 			if ( iAttrs.dragularNameSpace ) {
@@ -47,7 +35,7 @@ var dragular = function ( dragularService ) {
 				options.onInit = $scope.$eval( iAttrs.dragularOnInit );
 			}
 
-			drake = dragularService( iElm[ 0 ], options );
+			dragularService( iElm[ 0 ], options );
 		}
 	};
 };
