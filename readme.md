@@ -315,9 +315,9 @@ Parent element for placing mirror helper element. (default is document.body)
 
 Text selection in inputs wont be considered as drag (default is true).
 
-### `options.eventNames`
+### `options.classes`
 
-Default classe used by dragular can be modified here, providing object with custom names.
+Default classes used by dragular can be modified here, providing object with custom names.
 
 ```js
 defaultClasses = {
