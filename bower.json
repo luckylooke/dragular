@@ -3,8 +3,8 @@
   "version": "4.4.2",
   "description": "Angular drag and drop library based on dragula, but full featured. For light-weight angular wrap of dragula look for angular-dragula",
   "main": [
-    "dist/dragular.min.js",
-    "dist/dragular.min.css"
+    "dist/dragular.js",
+    "dist/dragular.css"
   ],
   "dependencies": {
     "angular": "1.x"
