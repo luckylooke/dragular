@@ -60,7 +60,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	var dragularService = __webpack_require__( 2 );
 
 	/**
-	 * Dragular 4.4.2 by Luckylooke https://github.com/luckylooke/dragular
+	 * Dragular 4.4.3 by Luckylooke https://github.com/luckylooke/dragular
 	 * Angular version of dragula https://github.com/bevacqua/dragula
 	 */
 	module.exports = 'dragularModule';
@@ -751,7 +751,12 @@ return /******/ (function(modules) { // webpackBootstrap
 				while ( target && !accepted() ) {
 					target = getParent( target );
 				}
-				shared.targetCtx = targetCtx || {};
+
+				// bugfix #148 model not updated on spill
+				if ( targetCtx ){
+					shared.targetCtx = targetCtx;
+				}
+
 				return target;
 
 				function accepted() {
@@ -965,6 +970,8 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 			function release( e ) {
+
+				console.log('release');
 				ungrab();
 				if ( !drake.dragging ) {
 					return;

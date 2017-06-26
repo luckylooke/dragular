@@ -1,3 +1,6 @@
+# 4.4.3 Spy Kids
+- fixed #148 - model not updated on spill
+
 # 4.4.2 The Model
 - fixed #138 - dynamic model via directive doesn't work properly
 
