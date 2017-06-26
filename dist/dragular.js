@@ -751,7 +751,12 @@ return /******/ (function(modules) { // webpackBootstrap
 				while ( target && !accepted() ) {
 					target = getParent( target );
 				}
-				shared.targetCtx = targetCtx || {};
+
+				// bugfix #148 model not updated on spill
+				if ( targetCtx ){
+					shared.targetCtx = targetCtx;
+				}
+
 				return target;
 
 				function accepted() {
