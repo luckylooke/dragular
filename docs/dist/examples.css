@@ -411,6 +411,21 @@ github.com style (c) Vasily Polovnyov <vast@whiteants.net>
   background-color: red;
 }
 
+
+.app div {
+    min-width: 200px;
+    padding: 10px
+}
+
+.can-be-empty {
+    min-height: 50px;
+    min-width: 200px;
+}
+
+.item,
+.subitem{
+    border: 1px solid blue;
+}
 .scrollingDrag {
   width: 45%;
   display: inline-block;

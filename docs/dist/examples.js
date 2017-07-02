@@ -60,6 +60,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	// var angular = require('angular');
 
 	var dragular = __webpack_require__(1);
+
+	angular
+		.module('examplesApp', [dragular, 'templates', 'ui.router']);
+
 	var examplesRouter = __webpack_require__(4);
 	var BasicCtrl = __webpack_require__(5);
 	var BasicModelCtrl = __webpack_require__(6);
@@ -86,7 +90,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	var RemoveOnSpillWithModelCtrl = __webpack_require__(27);
 	var RevertOnSpillCtrl = __webpack_require__(28);
 	var ScrollingDragCtrl = __webpack_require__(29);
-	__webpack_require__(30);
+	var NestedRepeatsWithCustomDirective = __webpack_require__(30);
+	__webpack_require__(31);
 
 	/**
 	 *  Module Example App
@@ -95,7 +100,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	 */
 
 	angular
-	  .module('examplesApp', [dragular, 'templates', 'ui.router'])
+	  .module('examplesApp')
 	  .config(examplesRouter)
 	  .controller('Basic', BasicCtrl)
 	  .controller('BasicModel', BasicModelCtrl)
@@ -122,6 +127,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	  .controller('RemoveOnSpillWithModel', RemoveOnSpillWithModelCtrl)
 	  .controller('RevertOnSpill', RevertOnSpillCtrl)
 	  .controller('ScrollingDrag', ScrollingDragCtrl)
+	  .controller('NestedRepeatsWithCustomDirective', NestedRepeatsWithCustomDirective)
 	  .controller('ExAppCtrl', ['$scope', function($scope) {
 	    $scope.examplesList = [{
 	        template: 'docsInstall/docsInstall.html',
@@ -227,6 +233,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	        template: 'exampleScrollingDrag/exampleScrollingDrag.html',
 	        link: 'exampleScrollingDrag',
 	        title: 'Scrolling drag'
+	    }, {
+	        template: 'exampleSNestedRepeatsWithCustomDirective/exampleNestedRepeatsWithCustomDirective.html',
+	        link: 'exampleNestedRepeatsWithCustomDirective',
+	        title: 'Nested repeats with custom directive'
 	    }];
 
 	    $scope.highlightCode = function () {
@@ -391,6 +401,8 @@ return /******/ (function(modules) { // webpackBootstrap
 		// service definition
 		function service( arg0, arg1 ) {
 
+			// console.log('dragularService arg0, arg1', arg0, arg1);
+
 			var initialContainers = arg0 || [],
 				options = arg1 || {},
 				o, // shorthand for options
@@ -548,23 +560,40 @@ return /******/ (function(modules) { // webpackBootstrap
 				if ( !o.nameSpace ) {
 					o.nameSpace = [ 'dragularCommon' ];
 				}
+
 				if ( !_isArray( o.nameSpace ) ) {
 					o.nameSpace = [ o.nameSpace ];
 				}
+
 				o.nameSpace.forEach( function eachNameSpace( nameSpace ) {
+
 					if ( !shared.containers[ nameSpace ] ) {
+
 						shared.containers[ nameSpace ] = [];
 						shared.containersCtx[ nameSpace ] = [];
 					}
+
 					var len = getContainers( o ).length,
-						shLen = shared.containers[ nameSpace ].length;
+						cont;
+
 					for ( var i = 0; i < len; i++ ) {
-						shared.containers[ nameSpace ][ i + shLen ] = getContainers( o )[ i ];
-						shared.containersCtx[ nameSpace ][ i + shLen ] = {
+
+						cont = getContainers( o )[ i ];
+
+						if (!cont) {
+							throw new Error( 'Container element must be defined!' );
+						}
+
+						if (shared.containers[ nameSpace ].indexOf(cont) != -1) {
+							throw new Error( 'Cannot register container element more than once! Container element: ' );
+						}
+
+						shared.containers[ nameSpace ].push(cont);
+						shared.containersCtx[ nameSpace ].push({
 							o: o,
 							m: getContainersModel( o )[ i ], // can be undefined
 							fm: o.containersFilteredModel[ i ] // can be undefined
-						};
+						});
 					}
 				} );
 			}
@@ -1170,7 +1199,6 @@ return /******/ (function(modules) { // webpackBootstrap
 
 			function release( e ) {
 
-				console.log('release');
 				ungrab();
 				if ( !drake.dragging ) {
 					return;
@@ -2701,6 +2729,193 @@ return /******/ (function(modules) { // webpackBootstrap
 /* 30 */
 /***/ function(module, exports) {
 
+	/* global angular */
+	'use strict';
+
+	NestedRepeatsWithCustomDirective.$inject = ['dragularService', '$element', '$scope', '$timeout'];
+
+	angular.module('examplesApp')
+		.directive('questionDirective', QuestionsDirective)
+		.controller('QuestionsController', QuestionsController);
+
+	module.exports = NestedRepeatsWithCustomDirective;
+
+
+
+	function NestedRepeatsWithCustomDirective( dragularService, $element, $scope, $timeout) {
+
+		dragularService.cleanEnviroment();
+
+		$scope.items = [
+			{
+				questions:[
+					{
+						text: 'text1',
+						points: 1
+					},
+					{
+						text: 'text2',
+						points: 2
+					},
+					{
+						text: 'text3',
+						points: 3
+					}
+				],
+				order: 1,
+				name: 'x',
+				age: '1'
+			},
+			{
+				questions:[
+					{
+						text: 'text1',
+						points: 1
+					},
+					{
+						text: 'text2',
+						points: 2
+					},
+					{
+						text: 'text3',
+						points: 3
+					}
+				],
+				order: 2,
+				name: 'y',
+				age: '2'
+			}, {
+				questions:[
+					{
+						text: 'text1',
+						points: 1
+					},
+					{
+						text: 'text2',
+						points: 2
+					},
+					{
+						text: 'text3',
+						points: 3
+					}
+				],
+				order: 3,
+				name: 'z',
+				age: '3'
+			},
+			{
+				questions:[
+					{
+						text: 'text1',
+						points: 1
+					},
+					{
+						text: 'text2',
+						points: 2
+					},
+					{
+						text: 'text3',
+						points: 3
+					}
+				],
+				order: 1,
+				name: 'x',
+				age: '4'
+			}, {
+				questions:[
+					{
+						text: 'text1',
+						points: 1
+					},
+					{
+						text: 'text2',
+						points: 2
+					},
+					{
+						text: 'text3',
+						points: 3
+					}
+				],
+				order: 2,
+				name: 'y',
+				age: '5'
+			}, {
+				questions:[
+					{
+						text: 'text1',
+						points: 1
+					},
+					{
+						text: 'text2',
+						points: 2
+					},
+					{
+						text: 'text3',
+						points: 3
+					}
+				],
+				order: 3,
+				name: 'z',
+				age: '6'
+			}];
+
+		// timeout due to document not ready, jsfiddle settings issue?
+		$timeout(function() {
+
+			dragularService('#items', {
+				containersModel: 'items',
+				scope: $scope,
+				moves: function itemsOnly (el, container, handle) {
+					return handle.classList.contains('item');
+				},
+				nameSpace:'items'
+			});
+
+			$scope.$on('dragulardrop', function(){
+				$scope.items.forEach(function(item, index){
+					item.order = index + 1;
+				});
+			});
+
+		});
+
+	}
+
+	function QuestionsDirective() {
+		return {
+			restrict    : 'E',
+			template : '<div class="all-data"><div class="subitem" ng-repeat="subitem in question">{{subitem.points}}. {{subitem.text}}</div></div>',
+			controller  : 'QuestionsController',
+			scope       : {
+				question: '='
+			}
+		};
+	}
+
+	function QuestionsController($scope, dragularService, $element) {
+
+		dragularService( $element.children('.all-data'), {
+			containersModel: 'question',
+			scope: $scope,
+			nameSpace: 'subitem',
+			moves: function subItemsOnly (el, container, handle) {
+				return handle.classList.contains('subitem');
+			}
+		});
+
+		$scope.$on('dragulardrop', function(){
+			$scope.question.forEach(function(item, index){
+				item.points = index + 1;
+			});
+		});
+	}
+
+
+
+/***/ },
+/* 31 */
+/***/ function(module, exports) {
+
 	'use strict'; module.exports = angular.module("templates", []).run(["$templateCache", function($templateCache) {$templateCache.put("docsInstall/docsInstall.html","<h2>Install</h2>\n<p>download dragular.js and dragular.css from dist folder</p>\n<p>OR clone git</p>\n<pre><code>\ngit clone http://github.com/luckylooke/dragular.git\n</code></pre>\n<p>OR use npm</p>\n<pre><code>\n[sudo] npm install dragular\n</code></pre>\n<p>OR use bower</p>\n<pre><code>\nbower install dragular\n</code></pre>\n<p>AND include files into your project</p>\n<pre><code>\n&lt;link href=\'styles/dragular.css\' rel=\'stylesheet\' type=\'text/css\' /&gt;\n&lt;script src=\'scripts/dragular.js\'&gt;&lt;/script&gt;\n</code></pre>\n<p>AND put dragularModule into dependency array</p>\n<pre><code>\nvar app = angular.module(\'myApp\', [\'dragularModule\', \'otherDependencies\']);\n</code></pre>\n<p>DONE :)</p>\n");
 	$templateCache.put("exampleBasic/exampleBasic.html","<div class=\'parent\'>\n  <h2>Basic</h2>\n  <label>Move stuff between these two containers. Note how the stuff gets inserted near the mouse pointer? Great stuff.</label>\n  <div class=\'wrapper\' ng-controller=\"Basic\">\n    <div class=\'containerVertical\'>\n      <div>Move me, but you can only drop me in one of these containers.</div>\n      <div>If you try to drop me somewhere other than these containers, I\'ll just come back.</div>\n      <div>Item 3.</div>\n      <div>Item 6.</div>\n    </div>\n    <div class=\'containerVertical\'>\n      <div>You can drop me in the left container, otherwise I\'ll stay here.</div>\n      <div ng-click=\"clicked = !clicked\" ng-class=\"clicked && \'clickedClass\'\">Try to click me, dragular distinguish drag from click</div>\n      <div>Item 5.</div>\n    </div>\n  </div>\n  <pre>\n        <code>\n// JS\n  controller(\'Basic\', [\'$element\', \'dragularService\', function TodoCtrl($element, dragularService) {\n    dragularService(\'.containerVertical\');\n  }])\n        </code>\n        <code>\n// CSS\n.clickedClass {\n  background-color: orange !important;\n}\n        </code>\n        <code>\n&lt;!-- HTML --&gt;\n  &lt;div class=\'wrapper\' ng-controller=&quot;Basic&quot;&gt;\n    &lt;div class=\'containerVertical\'&gt;\n        &lt;div&gt;Move me, but you can only drop me in one of these containers.&lt;/div&gt;\n        &lt;div&gt;If you try to drop me somewhere other than these containers, I\'ll just come back.&lt;/div&gt;\n        &lt;div&gt;Item 3.&lt;/div&gt;\n        &lt;div&gt;Item 6.&lt;/div&gt;\n    &lt;/div&gt;\n    &lt;div class=\'containerVertical\'&gt;\n        &lt;div&gt;You can drop me in the left container, otherwise I\'ll stay here.&lt;/div&gt;\n        &lt;div ng-click=\"clicked = !clicked\" ng-class=\"clicked && \'clickedClass\'\"&gt;Try to click me, dragular distinguish drag from click&lt;/div&gt;\n        &lt;div&gt;Item 5.&lt;/div&gt;\n    &lt;/div&gt;\n&lt;/div&gt;\n        </code>\n      </pre>\n</div>\n");
 	$templateCache.put("exampleBasicWithModel/exampleBasicWithModel.html","<div class=\'parent\'>\n  <h2>Basic - with model</h2>\n  <label>Move stuff between these two containers. Note how the stuff gets inserted near the mouse pointer? Great stuff.</label>\n  <div class=\'wrapper\' ng-controller=\"BasicModel\">\n    <div class=\'tableRow\'>\n      <div class=\'containerVertical\'>\n        <div ng-repeat=\"item in items1\">{{item.content}}</div>\n      </div>\n      <div class=\'containerVertical\' id=\"test\">\n        <div ng-repeat=\"item in items2\">{{item.content}}</div>\n      </div>\n    </div>\n    <div class=\"tableRow\">\n      <div class=\'containerVertical\'>\n        <pre>Items1:\n          <br/>{{items1 | json}}</pre>\n      </div>\n      <div class=\'containerVertical\'>\n        <pre>Items2:\n          <br/>{{items2 | json}}</pre>\n      </div>\n    </div>\n  </div>\n  <pre>\n        <code>\n// JS\n  controller(\'BasicModel\', [\'$scope\', \'$element\', \'dragularService\', function TodoCtrl($scope, $element, dragularService) {\n    $scope.items1 = [{\n      content: \'Move me, but you can only drop me in one of these containers.\'\n    }, {\n      content: \'If you try to drop me somewhere other than these containers, I\\\'ll just come back.\'\n    }, {\n      content: \'Item 3\'\n    }, {\n      content: \'Item 4\'\n    }];\n    $scope.items2 = [{\n      content: \'Item 5\'\n    }, {\n      content: \'Item 6\'\n    }, {\n      content: \'Item 7\'\n    }, {\n      content: \'Item 8\'\n    }];\n    var containers = $element.children().children();\n    dragularService([containers[0],containers[1]],{\n      containersModel: [$scope.items1, $scope.items2]\n    });\n  }])\n        </code>\n        <code>\n&lt;!-- HTML --&gt;\n&lt;div class=\'wrapper\' ng-controller=&quot;Basic&quot;&gt;\n    &lt;div class=\'tableRow\'&gt;\n        &lt;div class=\'containerVertical\'&gt;\n            &lt;div ng-repeat=&quot;item in items1&quot;&gt;{{item.content}}&lt;/div&gt;\n        &lt;/div&gt;\n        &lt;div class=\'containerVertical\'&gt;\n            &lt;div ng-repeat=&quot;item in items2&quot;&gt;{{item.content}}&lt;/div&gt;\n        &lt;/div&gt;\n    &lt;/div&gt;\n    &lt;div class=&quot;tableRow&quot;&gt;\n        &lt;div class=&quot;container&quot;&gt;\n            &lt;div&gt;Items1:\n                &lt;br/&gt;{{items1 | json}}&lt;/div&gt;\n        &lt;/div&gt;\n        &lt;div class=&quot;container&quot;&gt;\n            &lt;div&gt;Items2:\n                &lt;br/&gt;{{items2 | json}}&lt;/div&gt;\n        &lt;/div&gt;\n    &lt;/div&gt;\n&lt;/div&gt;\n        </code>\n      </pre>\n</div>\n");
@@ -2720,6 +2935,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	$templateCache.put("exampleNameSpaces/exampleNameSpaces.html","        <div class=\'parent\'>\n            <h2>NameSpaces</h2>\n            <label>Try to mix apples and oranges. You cannot place apples into oranges, but notice that you can place it into mixed. Mixed can be placed into apples and oranges. Notice that mixed becomes orange or apple if placed into their container. <b>So remember if you are using namespacing, then item is namespaced according to actual container it is placed in. If you need to item preserve thier state you need to use classes in combination with options.accepts and optionally options.isContainer.</b> It depends on setup. (See <a href=\"https://github.com/luckylooke/dragular/issues/9\">issue #9</a>.)</label>\n            <div class=\'wrapper\' ng-controller=\"NameSpaces\">\n                <div class=\'containerVertical width25\'>\n                    <div>try to mix oranges and apples</div>\n                    <div>apple 2</div>\n                    <div>apple 3</div>\n                    <div>apple 4</div>\n                </div>\n                <div class=\'containerVertical width25\'>\n                    <div>orange 1</div>\n                    <div>orange 2</div>\n                    <div>orange 3</div>\n                    <div>orange 4</div>\n                </div>\n                <div class=\'containerVertical width25\'>\n                    <div>apple 5</div>\n                    <div>apple 6</div>\n                    <div>apple 7</div>\n                    <div>apple 8</div>\n                </div>\n                <div class=\'containerVertical width25\'>\n                    <div>mixed 1</div>\n                    <div>mixed 2</div>\n                    <div>mixed 3</div>\n                    <div>mixed 4</div>\n                </div>\n            </div>\n            <pre>\n      <code>\ndragularService([$element.children()[0], $element.children()[2]], {\n  nameSpace: \'apples\'\n});\ndragularService($element.children()[1], {\n  nameSpace: \'oranges\'\n});\ndragularService($element.children()[3], { // mixed\n  nameSpace: [\'oranges\', \'apples\']\n});\n      </code>\n    </pre>\n        </div>");
 	$templateCache.put("exampleNestedNgRepeat/exampleNestedNgRepeat.html","<div class=\'parent\'>\n    <h2>Nested ngRepeat</h2>\n    <label> You can move whole rows by grabing row title, all items it selves. Try it out!\n        <hr/>\n        <b>Old IE doesnt support Flexible Box Layout</b> so it can look weird. But in modern browsers it is awsome! Dragular will be working well also in old IE but you have to use different css for layout.\n        <hr/>\n    </label>\n    <div ng-controller=\"NestedNgRepeat\">\n        <div ng-repeat=\"item in items\" class=\'exampleRow\'>\n            <div class=\"row-handle\">Row {{$index}}</div>\n            <div ng-repeat=\"item in item.items\" class=\"exampleCell\">{{item.content}}</div>\n        </div>\n    </div>\n    <pre>\n        <code>\n  // HTML\n\n  &lt;div ng-controller=&quot;Example15&quot;&gt;\n    &lt;div ng-repeat=&quot;item in items&quot; class=\'exampleRow\'&gt;\n      &lt;div class=&quot;row-handle&quot;&gt;Row {{$index}}&lt;/div&gt;\n      &lt;div ng-repeat=&quot;item in item.items&quot; class=&quot;exampleCell&quot;&gt;{{item.content}}&lt;/div&gt;\n    &lt;/div&gt;\n  &lt;/div&gt;\n        </code>\n      </pre>\n    <pre>\n        <code>\n  // CSS\n\n  .exampleRow {\n    display: flex;\n    flex-direction: row;\n  }\n\n  .exampleCell {\n    flex-grow: 1;\n  }\n\n  .exampleRow,\n  .exampleCell {\n    margin: 10px;\n    padding: 10px;\n    background-color: rgba(0, 0, 0, 0.2);\n    cursor: move;\n    cursor: grab;\n    cursor: -moz-grab;\n    cursor: -webkit-grab;\n  }\n        </code>\n      </pre>\n    <pre>\n        <code>\n  // JS\n\n  .controller(\'NestedNgRepeat\', [\'$timeout\', \'$scope\', \'$element\', \'dragularService\', function NestedNgRepeatCtrl($timeout, $scope, $element, dragularService) {\n    $timeout(function() { // timeount due to ngRepeat to be ready\n      dragularService($element, {\n        nameSpace: \'rows\',\n        moves: function rowOnly (el, container, handle) {\n          return handle.classList.contains(\'row-handle\');\n        }\n      });\n      dragularService($element.children(), {\n        nameSpace: \'cells\',\n        moves: function excludeHandle (el, container, handle) {\n          return !handle.classList.contains(\'row-handle\');\n        }\n      });\n    }, 0);\n    $scope.items = [{\n      items: [{\n        content: \'Item a1\'\n      }, {\n        content: \'Item a2\'\n      }, {\n        content: \'Item a3\'\n      }, {\n        content: \'Item a4\'\n      }]\n    }, {\n      items: [{\n        content: \'Item b1\'\n      }, {\n        content: \'Item b2\'\n      }, {\n        content: \'Item b3\'\n      }, {\n        content: \'Item b4\'\n      }]\n    }, {\n      items: [{\n        content: \'Item c1\'\n      }, {\n        content: \'Item c2\'\n      }, {\n        content: \'Item c3\'\n      }, {\n        content: \'Item c4\'\n      }]\n    }];\n  }])\n        </code>\n      </pre>\n</div>\n");
 	$templateCache.put("exampleNestedNgRepeatWithModel/exampleNestedNgRepeatWithModel.html","<div class=\'parent\'>\n  <h2>Nested ngRepeat - with model</h2>\n  <label> You can move whole rows by grabing row title, all items it selves. Try it out!\n    <hr/>\n    <b>Old IE doesnt support Flexible Box Layout</b> so it can look weird. But in modern browsers it is awsome! Dragular will be working well also in old IE but you have to use different css for layout.\n    <hr/>\n  </label>\n  <div ng-controller=\"NestedNgRepeatWithModel\">\n    <div class=\'tableRow\'>\n      <div class=\'containerVertical\'>\n        <div ng-repeat=\"item in items\" class=\'exampleRow\'>\n          <div class=\"row-handle\">Row {{::$index}}</div>\n          <div class=\"exampleRow exampleCell containerNested\">\n            <div ng-repeat=\"item in item.items\" class=\"exampleCell\">{{item.content}}</div>\n          </div>\n        </div>\n      </div>\n    </div>\n    <div class=\"tableRow\">\n      <div class=\'containerVertical\'>\n        <pre>\n            <div>Items:\n              <br/>{{items | json}}</div>\n        </pre>\n      </div>\n    </div>\n  </div>\n  <pre>\n    <code>\n&lt;!-- HTML --&gt;\n&lt;div ng-controller=&quot;NestedNgRepeatWithModel&quot;&gt;\n  &lt;div class=\'containerVertical\'&gt;\n    &lt;div ng-repeat=&quot;item in items&quot; class=\'exampleRow\'&gt;\n      &lt;div class=&quot;row-handle&quot;&gt;Row {{::$index}}&lt;/div&gt;\n      &lt;div class=&quot;exampleRow exampleCell containerNested&quot;&gt;\n        &lt;div ng-repeat=&quot;item in item.items&quot; class=&quot;exampleCell&quot;&gt;{{item.content}}&lt;/div&gt;\n      &lt;/div&gt;\n    &lt;/div&gt;\n  &lt;/div&gt;\n&lt;/div&gt;\n    </code>\n  </pre>\n  <pre>\n    <code>\n  // CSS\n\n  .exampleRow {\n    display: flex;\n    flex-direction: row;\n  }\n\n  .exampleCell {\n    flex-grow: 1;\n  }\n\n  .exampleRow,\n  .exampleCell {\n    margin: 10px;\n    padding: 10px;\n    background-color: rgba(0, 0, 0, 0.2);\n    cursor: move;\n    cursor: grab;\n    cursor: -moz-grab;\n    cursor: -webkit-grab;\n  }\n    </code>\n  </pre>\n  <pre>\n    <code>\n  // JS\n.controller(\'NestedNgRepeatWithModel\', [\'$timeout\', \'$scope\', \'$element\', \'dragularService\', function NestedNgRepeatWithModelCtrl($timeout, $scope, $element, dragularService) {\n    $timeout(function() { // timeount due to nested ngRepeat to be ready\n      var container = $element.children().eq(0).children(),\n        parentContainers = container.children(),\n        nestedContainers = [];\n\n      dragularService(container, {\n        moves: function(el, container, handle) {\n          return handle.classList.contains(\'row-handle\');\n        },\n        containersModel: $scope.items,\n        nameSpace: \'rows\'\n      });\n\n      // collect nested contianers\n      for (var i = 0; i < parentContainers.length; i++) {\n        nestedContainers.push(parentContainers.eq(i).children()[1]);\n      }\n\n      dragularService(nestedContainers, {\n        moves: function(el, container, handle) {\n          return !handle.classList.contains(\'row-handle\');\n        },\n        containersModel: (function getNestedContainersModel(){\n          var parent = $scope.items,\n            containersModel = [];\n          for (var i = 0; i < parent.length; i++) {\n            containersModel.push(parent[i].items);\n          }\n          return containersModel;\n        })(),\n        nameSpace: \'cells\'\n      });\n    }, 0);\n    $scope.items = [{\n      items: [{\n        content: \'Item a1\'\n      }, {\n        content: \'Item a2\'\n      }, {\n        content: \'Item a3\'\n      }, {\n        content: \'Item a4\'\n      }]\n    }, {\n      items: [{\n        content: \'Item b1\'\n      }, {\n        content: \'Item b2\'\n      }, {\n        content: \'Item b3\'\n      }, {\n        content: \'Item b4\'\n      }]\n    }, {\n      items: [{\n        content: \'Item c1\'\n      }, {\n        content: \'Item c2\'\n      }, {\n        content: \'Item c3\'\n      }, {\n        content: \'Item c4\'\n      }]\n    }];\n  }])\n    </code>\n  </pre>\n</div>\n");
+	$templateCache.put("exampleNestedRepeatsWithCustomDirective/exampleNestedRepeatsWithCustomDirective.html","<div class=\'app\' ng-controller=\"NestedRepeatsWithCustomDirective\">\n    <div id=\"items\" class=\"can-be-empty\">\n        <div class=\"item\" ng-repeat=\"item in items\">\n            {{item.order}}: ({{item.name}} + {{item.age}})\n            <div class=\"all-subitems\">\n                <question-directive question=\"item.questions\"></question-directive>\n                <!--             {{question.points}} + {{question.text}} -->\n            </div>\n        </div>\n    </div>\n</div>\n</div>");
 	$templateCache.put("exampleNgRepeat/exampleNgRepeat.html","        <div class=\'parent\'>\n            <h2>ngRepeat</h2>\n            <label>Example of using ng-repeat with dragular and adding/removing items dynamicaly.</label>\n            <div class=\'wrapper\' ng-controller=\"NgRepeat\">\n                <div class=\'containerVertical\'>\n                    <div ng-repeat=\"item in items\">\n                        {{item.content}}\n                    </div>\n                </div>\n            </div>\n            <pre>\n        <code>\n  // HTML:\n  &lt;div class=\'containerVertical\'&gt;\n    &lt;div ng-repeat=&quot;item in items&quot;&gt;\n      {{item.content}}\n    &lt;/div&gt;\n  &lt;/div&gt;\n\n  // JS:\n  dragularService($element.children());\n  $scope.items = [{\n    content: \'Try to add or remove some elements (click on +- buttons), you will see that it is not problem for dragular.\'\n  },{\n    content: \'Item 2\'\n  },{\n    content: \'Item 3\'\n  },{\n    content: \'Item 4\'\n  }];\n        </code>\n      </pre>\n        </div>\n");
 	$templateCache.put("exampleNgRepeatFilteredWithModel/exampleNgRepeatFilteredWithModel.html","<div class=\'parent\'>\n  <h2>Filtered ngRepeat - with model</h2>\n  <p>Move stuff between these two filtered containers. You can play with filter inputs to see that everything goes right.\n    <br/>\n    <b>Please notify the getFilteredModel function, it is necessery for not replacing the initial array object with new filtered one!</b></p>\n  <div class=\'wrapper\' ng-controller=\"NgRepeatFilteredWithModel\">\n    <div class=\"tableRow\">\n      <div class=\'containerVertical\'>\n        <input ng-model=\"filter1query\" style=\"margin:10px 10px\">\n      </div>\n      <div class=\'containerVertical\'>\n        <input ng-model=\"filter2query\" style=\"margin:10px 10px\">\n      </div>\n    </div>\n    <div class=\'tableRow\'>\n      <div class=\'containerVertical\'>\n        <div ng-repeat=\"item in getFilteredModel(filteredModel1, items1, filter1query)\">{{item.content}}</div>\n      </div>\n      <div class=\'containerVertical\'>\n        <div ng-repeat=\"item in getFilteredModel(filteredModel2, items2, filter2query)\">{{item.content}}</div>\n      </div>\n    </div>\n    <div class=\"tableRow\">\n      <div class=\'containerVertical\'>\n        <pre>Items1:\n          <br/>{{items1 | json}}</pre>\n      </div>\n      <div class=\'containerVertical\'>\n        <pre>Items2:\n          <br/>{{items2 | json}}</pre>\n      </div>\n    </div>\n  </div>\n  <pre>\n        <code>\n// JS\n  .controller(\'NgRepeatFilteredWithModel\', [\'$scope\', \'$element\', \'dragularService\', \'$filter\', function TodoCtrl($scope, $element, dragularService, $filter) {\n    $scope.items1 = [{\n      content: \'Move me, but you can only drop me in one of these containers.\'\n    }, {\n      content: \'If you try to drop me somewhere other than these containers, I\\\'ll just come back.\'\n    }, {\n      content: \'Apple 3\'\n    }, {\n      content: \'Orange 4\'\n    }, {\n      content: \'Orange 5\'\n    }, {\n      content: \'Apple 6\'\n    }, {\n      content: \'Apple 7\'\n    }, {\n      content: \'Apple 8\'\n    }];\n    $scope.items2 = [{\n      content: \'Apple 9\'\n    }, {\n      content: \'Orange 10\'\n    }, {\n      content: \'Orange 11\'\n    }, {\n      content: \'Apple 12\'\n    }, {\n      content: \'Orange 13\'\n    }, {\n      content: \'Apple 14\'\n    }];\n    $scope.filter1query = \'Orange\';\n    $scope.filter2query = \'Orange\';\n    $scope.filteredModel1 = [];\n    $scope.filteredModel2 = [];\n    $scope.getFilteredModel = function (filteredModel, items, filterQuery) {\n      filteredModel.length = 0;\n      /*\n      * Following one-liner is same like:\n      *   var filteredModelTemp = $filter(\'filter\')(items, filterQuery);\n      *   angular.forEach(filteredModelTemp, function(item){\n      *     filteredModel.push(item);\n      *   });\n      * Or like:\n      *   var filteredModelTemp = $filter(\'filter\')(items, filterQuery);\n      *   for(var i; i < filteredModelTemp.length; i++){\n      *     filteredModel.push(filteredModelTemp[i]);\n      *   }\n      *\n      * You cannot just assign filtered array to filteredModel like this:\n      *   filteredModel = $filter(\'filter\')(items, filterQuery);\n      * Because you would replace the array object you provide to dragular with new one.\n      * So dragular will continue to use the one it was provided on init.\n      * Hopefully I make it clear. :)\n       */\n      [].push.apply(filteredModel, $filter(\'filter\')(items, filterQuery));\n      return filteredModel;\n    };\n    var containers = $element.children().eq(1).children();\n    dragularService.cleanEnviroment();\n    dragularService([containers[0],containers[1]],{\n      containersModel: [$scope.items1, $scope.items2],\n      containersFilteredModel: [$scope.filteredModel1, $scope.filteredModel2]\n    });\n  }]);\n\n        </code>\n        <code>\n&lt;!-- HTML --&gt;\n  &lt;div class=\'wrapper\' ng-controller=&quot;NgRepeatFilteredWithModel&quot;&gt;\n    &lt;div class=&quot;tableRow&quot;&gt;\n      &lt;div class=\'containerVertical\'&gt;\n        &lt;input ng-model=&quot;filter1query&quot; style=&quot;margin:10px 10px&quot;&gt;\n      &lt;/div&gt;\n      &lt;div class=\'containerVertical\'&gt;\n        &lt;input ng-model=&quot;filter2query&quot; style=&quot;margin:10px 10px&quot;&gt;\n      &lt;/div&gt;\n    &lt;/div&gt;\n    &lt;div class=\'tableRow\'&gt;\n      &lt;div class=\'containerVertical\'&gt;\n        &lt;div ng-repeat=&quot;item in getFilteredModel(filteredModel1, items1, filter1query)&quot;&gt;{{item.content}}&lt;/div&gt;\n      &lt;/div&gt;\n      &lt;div class=\'containerVertical\'&gt;\n        &lt;div ng-repeat=&quot;item in getFilteredModel(filteredModel2, items2, filter2query)&quot;&gt;{{item.content}}&lt;/div&gt;\n      &lt;/div&gt;\n    &lt;/div&gt;\n    &lt;div class=&quot;tableRow&quot;&gt;\n      &lt;div class=\'containerVertical\'&gt;\n        &lt;pre&gt;Items1:\n          &lt;br/&gt;{{items1 | json}}&lt;/pre&gt;\n      &lt;/div&gt;\n      &lt;div class=\'containerVertical\'&gt;\n        &lt;pre&gt;Items2:\n          &lt;br/&gt;{{items2 | json}}&lt;/pre&gt;\n      &lt;/div&gt;\n    &lt;/div&gt;\n  &lt;/div&gt;\n        </code>\n      </pre>\n</div>\n");
 	$templateCache.put("exampleNgRepeatWithModel/exampleNgRepeatWithModel.html","<div class=\'parent\'>\n  <h2>ngRepeat - with model</h2>\n  <label>Example of using ng-repeat with dragular and adding/removing items dynamicaly.</label>\n  <div class=\'wrapper\' ng-controller=\"NgRepeatWithModel\">\n    <div class=\'tableRow\'>\n      <div class=\'containerVertical\'>\n        <div ng-repeat=\"item in items\">\n          {{item.content}}\n          <button class=\'cursorDefault\' ng-click=\"addItem()\">+</button>\n          <button class=\'cursorDefault\' ng-click=\"removeItem()\">x</button>\n        </div>\n      </div>\n    </div>\n    <div class=\"tableRow\">\n      <div class=\'containerVertical\'>\n        <div>Items:\n          <br/>{{items | json}}</div>\n      </div>\n    </div>\n  </div>\n  <pre>\n    <code>\n  // HTML:\n   &lt;div class=\'wrapper\' ng-controller=&quot;NgRepeatWithModel&quot;&gt;\n      &lt;div class=\'containerVertical\'&gt;\n        &lt;div ng-repeat=&quot;item in items&quot;&gt;\n          {{item.content}}\n          &lt;button class=\'cursorDefault\' ng-click=&quot;addItem()&quot;&gt;+&lt;/button&gt;\n          &lt;button class=\'cursorDefault\' ng-click=&quot;removeItem()&quot;&gt;x&lt;/button&gt;\n        &lt;/div&gt;\n    &lt;/div&gt;\n  &lt;/div&gt;\n    </code>\n  </pre>\n  <pre>\n    <code>\n  // JS:\n  controller(\'NgRepeatWithModel\', [\'$scope\', \'$element\', \'dragularService\', function TodoCtrl($scope, $element, dragularService) {\n    $scope.items = [{\n      content: \'Try to add or remove some elements (click on +- buttons), you will see that it is not problem for dragular.\'\n    }, {\n      content: \'Item 2\'\n    }, {\n      content: \'Item 3\'\n    }, {\n      content: \'Item 4\'\n    }];\n    dragularService($element.children().eq(0).children(), {containersModel: $scope.items});\n    $scope.addItem = function addItem() {\n      var index = $scope.items.indexOf(this.item) + 1;\n      $scope.items.splice(index, 0, {\n        content: this.item.content + \'-copy\'\n      });\n    };\n    $scope.removeItem = function removeItem() {\n      var index = $scope.items.indexOf(this.item);\n      $scope.items.splice(index, 1);\n    };\n  }])\n    </code>\n  </pre>\n</div>\n");

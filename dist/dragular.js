@@ -349,23 +349,34 @@ return /******/ (function(modules) { // webpackBootstrap
 				if ( !o.nameSpace ) {
 					o.nameSpace = [ 'dragularCommon' ];
 				}
+
 				if ( !_isArray( o.nameSpace ) ) {
 					o.nameSpace = [ o.nameSpace ];
 				}
+
 				o.nameSpace.forEach( function eachNameSpace( nameSpace ) {
+
 					if ( !shared.containers[ nameSpace ] ) {
+
 						shared.containers[ nameSpace ] = [];
 						shared.containersCtx[ nameSpace ] = [];
 					}
+
 					var len = getContainers( o ).length,
-						shLen = shared.containers[ nameSpace ].length;
+						cont;
+
 					for ( var i = 0; i < len; i++ ) {
-						shared.containers[ nameSpace ][ i + shLen ] = getContainers( o )[ i ];
-						shared.containersCtx[ nameSpace ][ i + shLen ] = {
-							o: o,
-							m: getContainersModel( o )[ i ], // can be undefined
-							fm: o.containersFilteredModel[ i ] // can be undefined
-						};
+
+						cont = getContainers( o )[ i ];
+
+						if (shared.containers[ nameSpace ].indexOf(cont) == -1) {
+							shared.containers[ nameSpace ].push(cont);
+							shared.containersCtx[ nameSpace ].push({
+								o: o,
+								m: getContainersModel( o )[ i ], // can be undefined
+								fm: o.containersFilteredModel[ i ] // can be undefined
+							});
+						}
 					}
 				} );
 			}
@@ -971,7 +982,6 @@ return /******/ (function(modules) { // webpackBootstrap
 
 			function release( e ) {
 
-				console.log('release');
 				ungrab();
 				if ( !drake.dragging ) {
 					return;
