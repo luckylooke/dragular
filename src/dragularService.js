@@ -247,7 +247,7 @@ var dragularService = function ( $rootScope, $compile ) {
 						throw new Error( 'Container element must be defined!' );
 					}
 
-					if (shared.containers[ nameSpace ].indexOf(cont) != -1) {
+					if (shared.containers[ nameSpace ].indexOf(cont) !== -1) {
 						throw new Error( 'Cannot register container element more than once! Container element: ' );
 					}
 

@@ -60,7 +60,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	var dragularService = __webpack_require__( 2 );
 
 	/**
-	 * Dragular 4.4.3 by Luckylooke https://github.com/luckylooke/dragular
+	 * Dragular 4.4.4 by Luckylooke https://github.com/luckylooke/dragular
 	 * Angular version of dragula https://github.com/bevacqua/dragula
 	 */
 	module.exports = 'dragularModule';
@@ -191,6 +191,8 @@ return /******/ (function(modules) { // webpackBootstrap
 
 		// service definition
 		function service( arg0, arg1 ) {
+
+			// console.log('dragularService arg0, arg1', arg0, arg1);
 
 			var initialContainers = arg0 || [],
 				options = arg1 || {},
@@ -369,14 +371,20 @@ return /******/ (function(modules) { // webpackBootstrap
 
 						cont = getContainers( o )[ i ];
 
-						if (shared.containers[ nameSpace ].indexOf(cont) == -1) {
-							shared.containers[ nameSpace ].push(cont);
-							shared.containersCtx[ nameSpace ].push({
-								o: o,
-								m: getContainersModel( o )[ i ], // can be undefined
-								fm: o.containersFilteredModel[ i ] // can be undefined
-							});
+						if (!cont) {
+							throw new Error( 'Container element must be defined!' );
 						}
+
+						if (shared.containers[ nameSpace ].indexOf(cont) !== -1) {
+							throw new Error( 'Cannot register container element more than once! Container element: ' );
+						}
+
+						shared.containers[ nameSpace ].push(cont);
+						shared.containersCtx[ nameSpace ].push({
+							o: o,
+							m: getContainersModel( o )[ i ], // can be undefined
+							fm: o.containersFilteredModel[ i ] // can be undefined
+						});
 					}
 				} );
 			}

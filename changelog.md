@@ -1,3 +1,7 @@
+# 4.4.4 Don't Knock Twice
+- throwing error if trying same container to register twice
+- new example of nested ng-repeats combined with custom directive
+
 # 4.4.3 Spy Kids
 - fixed #148 - model not updated on spill
 
