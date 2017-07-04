@@ -64,6 +64,8 @@ var dragularService = function ( $rootScope, $compile ) {
 	// service definition
 	function service( arg0, arg1 ) {
 
+		// console.log('dragularService arg0, arg1', arg0, arg1);
+
 		var initialContainers = arg0 || [],
 			options = arg1 || {},
 			o, // shorthand for options
@@ -221,23 +223,40 @@ var dragularService = function ( $rootScope, $compile ) {
 			if ( !o.nameSpace ) {
 				o.nameSpace = [ 'dragularCommon' ];
 			}
+
 			if ( !_isArray( o.nameSpace ) ) {
 				o.nameSpace = [ o.nameSpace ];
 			}
+
 			o.nameSpace.forEach( function eachNameSpace( nameSpace ) {
+
 				if ( !shared.containers[ nameSpace ] ) {
+
 					shared.containers[ nameSpace ] = [];
 					shared.containersCtx[ nameSpace ] = [];
 				}
+
 				var len = getContainers( o ).length,
-					shLen = shared.containers[ nameSpace ].length;
+					cont;
+
 				for ( var i = 0; i < len; i++ ) {
-					shared.containers[ nameSpace ][ i + shLen ] = getContainers( o )[ i ];
-					shared.containersCtx[ nameSpace ][ i + shLen ] = {
+
+					cont = getContainers( o )[ i ];
+
+					if (!cont) {
+						throw new Error( 'Container element must be defined!' );
+					}
+
+					if (shared.containers[ nameSpace ].indexOf(cont) !== -1) {
+						throw new Error( 'Cannot register container element more than once! Container element: ' );
+					}
+
+					shared.containers[ nameSpace ].push(cont);
+					shared.containersCtx[ nameSpace ].push({
 						o: o,
 						m: getContainersModel( o )[ i ], // can be undefined
 						fm: o.containersFilteredModel[ i ] // can be undefined
-					};
+					});
 				}
 			} );
 		}

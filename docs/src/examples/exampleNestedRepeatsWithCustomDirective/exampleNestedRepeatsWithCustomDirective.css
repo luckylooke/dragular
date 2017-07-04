@@ -1,0 +1,15 @@
+
+.app div {
+    min-width: 200px;
+    padding: 10px
+}
+
+.can-be-empty {
+    min-height: 50px;
+    min-width: 200px;
+}
+
+.item,
+.subitem{
+    border: 1px solid blue;
+}
