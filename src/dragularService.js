@@ -390,7 +390,6 @@ var dragularService = function ( $rootScope, $compile ) {
 
 		function canStart( item ) {
 			if ( drake.dragging && shared.mirror ) {
-				console.log( 'usecase?' );
 				return; // already dragging
 			}
 
@@ -843,7 +842,6 @@ var dragularService = function ( $rootScope, $compile ) {
 
 		function release( e ) {
 
-			console.log('release');
 			ungrab();
 			if ( !drake.dragging ) {
 				return;
