@@ -537,7 +537,6 @@ return /******/ (function(modules) { // webpackBootstrap
 
 			function canStart( item ) {
 				if ( drake.dragging && shared.mirror ) {
-					console.log( 'usecase?' );
 					return; // already dragging
 				}
 
@@ -754,10 +753,19 @@ return /******/ (function(modules) { // webpackBootstrap
 
 				function moved( type ) {
 					if ( o.scope ) {
-						o.scope.$emit( o.eventNames[ 'dragular' + type ], shared.item, shared.lastDropTarget, shared.source, e );
+						notify( o.scope );
 					}
+
+					if ( shared.targetCtx && shared.targetCtx.o.scope && shared.targetCtx.o.scope !== o.scope ) {
+						notify( shared.targetCtx.o.scope );
+					}
+
 					if ( g( o.removeOnSpill ) === true ) {
 						type === 'over' ? spillOver() : spillOut();
+					}	
+
+					function notify( scope ){
+						scope.$emit( o.eventNames[ 'dragular' + type ], shared.item, shared.lastDropTarget, shared.source, e );
 					}
 				}
 			}
@@ -1107,15 +1115,23 @@ return /******/ (function(modules) { // webpackBootstrap
 					}
 
 					if ( o.scope ) {
-						if ( isInitialPlacement( target ) ) {
-							o.scope.$emit( o.eventNames.dragularcancel, item, shared.source, shared.sourceModel, shared.initialIndex );
-						} else {
-							o.scope.$emit( o.eventNames.dragulardrop, item, target, shared.source, shared.sourceModel, shared.initialIndex, shared.targetModel, dropIndex );
-						}
+						notify( o.scope );
+					}
+
+					if ( shared.targetCtx && shared.targetCtx.o.scope && shared.targetCtx.o.scope !== o.scope ) {
+						notify( shared.targetCtx.o.scope );
 					}
 
 					if ( !o.compileItemOnDrop ) {
 						cleanup();
+					}
+
+					function notify( scope ){
+						if ( isInitialPlacement( target ) ) {
+							scope.$emit( o.eventNames.dragularcancel, item, shared.source, shared.sourceModel, shared.initialIndex );
+						} else {
+							scope.$emit( o.eventNames.dragulardrop, item, target, shared.source, shared.sourceModel, shared.initialIndex, shared.targetModel, dropIndex );
+						}
 					}
 				}
 			}

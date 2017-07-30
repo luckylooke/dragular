@@ -12,6 +12,10 @@
     "angularjs"
   ],
   "main": "./dist/dragular.js",
+  "scripts": {
+    "start": "gulp dev:docs",
+    "build": "gulp build"
+  },  
   "jspm": {
     "format": "global",
     "shim": {

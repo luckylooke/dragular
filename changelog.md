@@ -1,3 +1,8 @@
+# 4.4.5 Target
+- fixes #154 - both scopes should be notified about events (source and also target scope)
+- adding main gulp tasks to standard npm tasks, to get better orented quickly
+- renamed CHANGELOG and README to UPPERCASE so they can be more easily to find visually
+
 # 4.4.4 Don't Knock Twice
 - throwing error if trying same container to register twice
 - new example of nested ng-repeats combined with custom directive
