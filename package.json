@@ -15,7 +15,7 @@
   "scripts": {
     "start": "gulp dev:docs",
     "build": "gulp build"
-  },  
+  },
   "jspm": {
     "format": "global",
     "shim": {
@@ -41,7 +41,7 @@
   },
   "homepage": "http://luckylooke.github.io/dragular/",
   "dependencies": {
-    "angular": "^1.4.0"
+    "angular": "^1.6.5"
   },
   "devDependencies": {
     "browser-sync": "^2.8.0",
