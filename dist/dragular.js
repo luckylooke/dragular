@@ -52,7 +52,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /************************************************************************/
 /******/ ([
 /* 0 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	/* global angular */
 	'use strict';
@@ -71,9 +71,9 @@ return /******/ (function(modules) { // webpackBootstrap
 		.directive( 'dragular', dragularDirective );
 
 
-/***/ },
+/***/ }),
 /* 1 */
-/***/ function(module, exports) {
+/***/ (function(module, exports) {
 
 	'use strict';
 
@@ -122,9 +122,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = dragular;
 
 
-/***/ },
+/***/ }),
 /* 2 */
-/***/ function(module, exports) {
+/***/ (function(module, exports) {
 
 	/* global angular */
 	'use strict';
@@ -1549,7 +1549,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = dragularService;
 
 
-/***/ }
+/***/ })
 /******/ ])
 });
 ;
