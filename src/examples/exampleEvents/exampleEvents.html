@@ -1,6 +1,6 @@
 <div class='parent'>
     <h2>Events</h2>
-    <label>Add some fantastic events!</label>
+    <label>Add some fantastic events!</label><p>Events affecting more than on cotrollers are emitted on both scopes if provided.</p>
     <div class='wrapper' ng-controller="Events">
         <div id='left3' class='containerVertical'>
             <div>Move me, but you can only drop me in one of these containers.</div>
@@ -8,6 +8,8 @@
             <div>Item 3.</div>
             <div>Item 6.</div>
         </div>
+    </div>
+    <div class='wrapper' ng-controller="Events2">
         <div id='right3' class='containerVertical'>
             <div>You can drop me in the left container, otherwise I'll stay here.</div>
             <div>Item 4.</div>

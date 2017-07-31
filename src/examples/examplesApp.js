@@ -4,6 +4,10 @@
 // var angular = require('angular');
 
 var dragular = require('../../../src/dragularModule');
+
+angular
+	.module('examplesApp', [dragular, 'templates', 'ui.router']);
+
 var examplesRouter = require('./examplesRouter');
 var BasicCtrl = require('./exampleBasic/exampleBasic');
 var BasicModelCtrl = require('./exampleBasicWithModel/exampleBasicWithModel');
@@ -30,6 +34,7 @@ var RemoveOnSpillCtrl = require('./exampleRemoveOnSpill/exampleRemoveOnSpill');
 var RemoveOnSpillWithModelCtrl = require('./exampleRemoveOnSpillWithModel/exampleRemoveOnSpillWithModel');
 var RevertOnSpillCtrl = require('./exampleRevertOnSpill/exampleRevertOnSpill.js');
 var ScrollingDragCtrl = require('./exampleScrollingDrag/exampleScrollingDrag.js');
+var NestedRepeatsWithCustomDirective = require('./exampleNestedRepeatsWithCustomDirective/exampleNestedRepeatsWithCustomDirective.js');
 require('./templates');
 
 /**
@@ -39,7 +44,7 @@ require('./templates');
  */
 
 angular
-  .module('examplesApp', [dragular, 'templates', 'ui.router'])
+  .module('examplesApp')
   .config(examplesRouter)
   .controller('Basic', BasicCtrl)
   .controller('BasicModel', BasicModelCtrl)
@@ -53,7 +58,8 @@ angular
   .controller('Directive', DirectiveCtrl)
   .controller('DirectiveModel', DirectiveModelCtrl)
   .controller('DragOverEvents', DragOverEventsCtrl)
-  .controller('Events', EventsCtrl)
+  .controller('Events', EventsCtrl[0])
+  .controller('Events2', EventsCtrl[1])
   .controller('Handle', HandleCtrl)
   .controller('IsContainerModel', IsContainerModelCtrl)
   .controller('NameSpaces', NameSpacesCtrl)
@@ -66,6 +72,7 @@ angular
   .controller('RemoveOnSpillWithModel', RemoveOnSpillWithModelCtrl)
   .controller('RevertOnSpill', RevertOnSpillCtrl)
   .controller('ScrollingDrag', ScrollingDragCtrl)
+  .controller('NestedRepeatsWithCustomDirective', NestedRepeatsWithCustomDirective)
   .controller('ExAppCtrl', ['$scope', function($scope) {
     $scope.examplesList = [{
         template: 'docsInstall/docsInstall.html',
@@ -171,6 +178,10 @@ angular
         template: 'exampleScrollingDrag/exampleScrollingDrag.html',
         link: 'exampleScrollingDrag',
         title: 'Scrolling drag'
+    }, {
+        template: 'exampleSNestedRepeatsWithCustomDirective/exampleNestedRepeatsWithCustomDirective.html',
+        link: 'exampleNestedRepeatsWithCustomDirective',
+        title: 'Nested repeats with custom directive'
     }];
 
     $scope.highlightCode = function () {

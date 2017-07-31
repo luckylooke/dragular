@@ -1,0 +1,12 @@
+<div class='app' ng-controller="NestedRepeatsWithCustomDirective">
+    <div id="items" class="can-be-empty">
+        <div class="item" ng-repeat="item in items">
+            {{item.order}}: ({{item.name}} + {{item.age}})
+            <div class="all-subitems">
+                <question-directive question="item.questions"></question-directive>
+                <!--             {{question.points}} + {{question.text}} -->
+            </div>
+        </div>
+    </div>
+</div>
+</div>
