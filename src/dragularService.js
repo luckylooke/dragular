@@ -102,7 +102,7 @@ var dragularService = function ( $rootScope, $compile ) {
 				containersModel: false, // if provided, model will be synced with DOM
 				containersFilteredModel: false, // if provided, dragular will handle filtered model cases
 				isContainer: never, // potential target can be forced to be container by custom logic
-				isContainerModel: getEmptyObject, // if isContainer function is provided, you can provide also respective model
+				isContainerModel: getEmptyArray, // if isContainer function is provided, you can provide also respective model
 				isContainerAccepts: always, // if isContainer function is provided, you can provide also respective accept function
 				moves: always, // can drag start?
 				accepts: always, // can target accept dragged item? (target context used)
@@ -717,7 +717,7 @@ var dragularService = function ( $rootScope, $compile ) {
 			}
 
 			function getTargetCtx( nameSpace ) {
-				return shared.containersCtx[ nameSpace ][ shared.containers[ nameSpace ].indexOf( target ) ];
+				return shared.containersCtx[ nameSpace ] && shared.containersCtx[ nameSpace ][ shared.containers[ nameSpace ].indexOf( target ) ];
 			}
 		}
 
@@ -1283,8 +1283,8 @@ var dragularService = function ( $rootScope, $compile ) {
 		return rect.height || (rect.bottom - rect.top);
 	}
 
-	function getEmptyObject() {
-		return {};
+	function getEmptyArray() {
+		return [];
 	}
 
 	function nextEl( el ) {

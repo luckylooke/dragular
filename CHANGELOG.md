@@ -1,5 +1,6 @@
 # X.X.X Xxxxx
 - isContainer docs augmentation
+- fixed bug in getTargetCtx
 
 # 4.4.5 Target
 - fixes #154 - both scopes should be notified about events (source and also target scope)
