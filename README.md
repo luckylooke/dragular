@@ -224,15 +224,15 @@ $scope.getFilteredModel = function (filteredModel, items, filterQuery) {
 
 See 'options.containersModel' above for usecase.
 
-### `options.isContainer`
+### `options.isContainer( element )`
 
-Element can be forced to be container by custom logic function. Tested element is passed as argument.
+Element can be forced to be container by custom logic function. Tested element is passed as argument. It is an element under dragged item called recursivelly so it can be also parent of element under the item or parent of a parent, etc.. 
 
-### `options.isContainerModel`
+### `options.isContainerModel( element )`
 
 If isContainer function is provided, you can provide also respective model. Tested element is passed as argument.
 
-### `options.isContainerAccepts`
+### `options.isContainerAccepts( shared.item, target, shared.source, reference, shared.sourceModel, shared.initialIndex )`
 
 If isContainer function is provided, you can provide also respective acceptation function. Parameters are same as for `options.accepts`.
 

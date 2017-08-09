@@ -1,3 +1,6 @@
+# X.X.X Xxxxx
+- isContainer docs augmentation
+
 # 4.4.5 Target
 - fixes #154 - both scopes should be notified about events (source and also target scope)
 - adding main gulp tasks to standard npm tasks, to get better orented quickly
