@@ -3,7 +3,7 @@
 var EventsCtrl = function ($scope, $element, dragularService, $timeout) {
   dragularService.cleanEnviroment();
   
-  var drake = dragularService($element.children()[0], {
+  var drake = dragularService($element.children(), {
     scope: $scope
   });
   $scope.$on('dragulardrag', function(e, el) {
@@ -33,7 +33,7 @@ var EventsCtrl = function ($scope, $element, dragularService, $timeout) {
 };
 
 var Events2Ctrl = function ($scope, $element, dragularService, $timeout) {
-  var drake = dragularService($element.children()[0], {
+  var drake = dragularService($element.children(), {
     scope: $scope
   });
   $scope.$on('dragulardrag', function(e, el) {

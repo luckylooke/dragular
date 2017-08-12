@@ -13,7 +13,7 @@ Browser support includes every sane browser and **IE7+**. <sub>_(Granted you pol
 
 I was working on huge angular project and I was using several drag&drop libraries in it, one for UI, one for lists, etc.. I wanted to use one full-featured drag&drop library for whole project. As I could not find any suitable, I decided to create one. I have choosen great library [dragula](http://github.com/bevacqua/dragula) by [Nicolas Bevacqua](http://github.com/bevacqua) as my starting point, make it more angular and started to put features in it! If you wish light-weight angular version of dragula, there is [official angular version of dragula](http://github.com/bevacqua/angular-dragula).
 
-<b>Actual version 4.4.5 is based on dragula 3.6.3 and tested with angular 1.6.5.</b>
+<b>Actual version 4.4.6 is based on dragula 3.6.3 and tested with angular 1.6.5.</b>
 
 # Differences of dragular (against dragula)
 
@@ -224,15 +224,15 @@ $scope.getFilteredModel = function (filteredModel, items, filterQuery) {
 
 See 'options.containersModel' above for usecase.
 
-### `options.isContainer`
+### `options.isContainer( element )`
 
-Element can be forced to be container by custom logic function. Tested element is passed as argument.
+Element can be forced to be container by custom logic function. Tested element is passed as argument. It is an element under dragged item called recursivelly so it can be also parent of element under the item or parent of a parent, etc.. 
 
-### `options.isContainerModel`
+### `options.isContainerModel( element )`
 
 If isContainer function is provided, you can provide also respective model. Tested element is passed as argument.
 
-### `options.isContainerAccepts`
+### `options.isContainerAccepts( shared.item, target, shared.source, reference, shared.sourceModel, shared.initialIndex )`
 
 If isContainer function is provided, you can provide also respective acceptation function. Parameters are same as for `options.accepts`.
 

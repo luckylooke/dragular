@@ -52,7 +52,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /************************************************************************/
 /******/ ([
 /* 0 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	/* global angular */
 	'use strict';
@@ -60,7 +60,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	var dragularService = __webpack_require__( 2 );
 
 	/**
-	 * Dragular 4.4.5 by Luckylooke https://github.com/luckylooke/dragular
+	 * Dragular 4.4.6 by Luckylooke https://github.com/luckylooke/dragular
 	 * Angular version of dragula https://github.com/bevacqua/dragula
 	 */
 	module.exports = 'dragularModule';
@@ -71,9 +71,9 @@ return /******/ (function(modules) { // webpackBootstrap
 		.directive( 'dragular', dragularDirective );
 
 
-/***/ },
+/***/ }),
 /* 1 */
-/***/ function(module, exports) {
+/***/ (function(module, exports) {
 
 	'use strict';
 
@@ -122,9 +122,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = dragular;
 
 
-/***/ },
+/***/ }),
 /* 2 */
-/***/ function(module, exports) {
+/***/ (function(module, exports) {
 
 	/* global angular */
 	'use strict';
@@ -230,7 +230,7 @@ return /******/ (function(modules) { // webpackBootstrap
 					containersModel: false, // if provided, model will be synced with DOM
 					containersFilteredModel: false, // if provided, dragular will handle filtered model cases
 					isContainer: never, // potential target can be forced to be container by custom logic
-					isContainerModel: getEmptyObject, // if isContainer function is provided, you can provide also respective model
+					isContainerModel: getEmptyArray, // if isContainer function is provided, you can provide also respective model
 					isContainerAccepts: always, // if isContainer function is provided, you can provide also respective accept function
 					moves: always, // can drag start?
 					accepts: always, // can target accept dragged item? (target context used)
@@ -780,7 +780,8 @@ return /******/ (function(modules) { // webpackBootstrap
 				}
 
 				// bugfix #148 model not updated on spill
-				if ( targetCtx ){
+				// added target condition to fix #161
+				if ( target && targetCtx ){
 					shared.targetCtx = targetCtx;
 				}
 
@@ -845,7 +846,7 @@ return /******/ (function(modules) { // webpackBootstrap
 				}
 
 				function getTargetCtx( nameSpace ) {
-					return shared.containersCtx[ nameSpace ][ shared.containers[ nameSpace ].indexOf( target ) ];
+					return shared.containersCtx[ nameSpace ] && shared.containersCtx[ nameSpace ][ shared.containers[ nameSpace ].indexOf( target ) ];
 				}
 			}
 
@@ -1411,8 +1412,8 @@ return /******/ (function(modules) { // webpackBootstrap
 			return rect.height || (rect.bottom - rect.top);
 		}
 
-		function getEmptyObject() {
-			return {};
+		function getEmptyArray() {
+			return [];
 		}
 
 		function nextEl( el ) {
@@ -1549,7 +1550,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = dragularService;
 
 
-/***/ }
+/***/ })
 /******/ ])
 });
 ;

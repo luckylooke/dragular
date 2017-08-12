@@ -1,3 +1,8 @@
+# 4.4.6 Ghost in the shell
+- isContainer docs augmentation
+- fixed bug in getTargetCtx
+- fixed #161 previous target context used if the last before drop was not accepted target
+
 # 4.4.5 Target
 - fixes #154 - both scopes should be notified about events (source and also target scope)
 - adding main gulp tasks to standard npm tasks, to get better orented quickly
