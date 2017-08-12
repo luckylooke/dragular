@@ -60,7 +60,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	var dragularService = __webpack_require__( 2 );
 
 	/**
-	 * Dragular 4.4.5 by Luckylooke https://github.com/luckylooke/dragular
+	 * Dragular 4.4.6 by Luckylooke https://github.com/luckylooke/dragular
 	 * Angular version of dragula https://github.com/bevacqua/dragula
 	 */
 	module.exports = 'dragularModule';
@@ -780,7 +780,8 @@ return /******/ (function(modules) { // webpackBootstrap
 				}
 
 				// bugfix #148 model not updated on spill
-				if ( targetCtx ){
+				// added target condition to fix #161
+				if ( target && targetCtx ){
 					shared.targetCtx = targetCtx;
 				}
 

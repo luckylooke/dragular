@@ -652,7 +652,8 @@ var dragularService = function ( $rootScope, $compile ) {
 			}
 
 			// bugfix #148 model not updated on spill
-			if ( targetCtx ){
+			// added target condition to fix #161
+			if ( target && targetCtx ){
 				shared.targetCtx = targetCtx;
 			}
 
