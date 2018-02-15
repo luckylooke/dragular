@@ -609,7 +609,7 @@ var dragularService = function ( $rootScope, $compile ) {
 				return;
 			}
 
-			if ( reference === null ||
+			if ( (reference === null && changed) ||
 				reference !== shared.item &&
 				reference !== nextEl( shared.item ) &&
 				reference !== shared.currentSibling ) {
