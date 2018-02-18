@@ -1084,8 +1084,9 @@ var dragularService = function ( $rootScope, $compile ) {
 						shared.containers[ nameSpace ].splice( index, 1 );
 						shared.containersCtx[ nameSpace ].splice( index, 1 );
 
-						if ( -1 < (index = initialContainers.indexOf( container )))
+						if ( -1 < (index = initialContainers.indexOf( container ))) {
 							initialContainers.splice( index, 1 );
+						}
 					} );
 				} );
 			} );
