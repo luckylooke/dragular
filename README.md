@@ -262,12 +262,18 @@ Event     | Move                                     | Copy
 `dragularremove`  | Element will be removed from DOM         | Nothing happens
 `dragularcancel`  | Element will stay in `source`            | Nothing happens
 
-If a method is passed, it'll be called whenever an element starts being dragged in order to decide whether it should follow `copy` behavior or not. Consider the following example.
+If a function is passed, it'll be called whenever an element starts being dragged in order to decide whether it should follow `copy` behavior or not. Consider the following example.
 
 ```js
 copy: function (el, source) {
   return el.className === 'you-may-copy-us';
 }
+```
+
+If you wish to event handlers binded to element to be copied too, you need to set copy option to 'events' value. It will trigger 'deepWithDataAndEvents' option in clone method of jQlite described in [jQuery docs](http://api.jquery.com/clone/#clone-withDataAndEvents-deepWithDataAndEvents)
+
+```js
+copy: 'events'
 ```
 
 #### `options.copySortSource`

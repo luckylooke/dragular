@@ -570,8 +570,9 @@ return /******/ (function(modules) { // webpackBootstrap
 				shared.initialSibling = shared.currentSibling = nextEl( context.item );
 
 				if ( g( o.copy, [ context.item, context.source ] ) ) {
-					shared.item = context.item.cloneNode( true );
-					shared.copy = true;
+					// http://api.jquery.com/clone/#clone-withDataAndEvents-deepWithDataAndEvents
+					shared.item = angular.element( context.item ).clone( o.copy === 'events', o.copy === 'events' )[0];
+					shared.copy = o.copy;
 					if ( o.scope ) {
 						o.scope.$emit( o.eventNames.dragularcloned, shared.item, context.item );
 					}
