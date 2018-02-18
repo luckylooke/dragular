@@ -127,6 +127,8 @@ var dragularService = function ( $rootScope, $compile ) {
 				containersCtx: shared.containersCtx, // all contexts to containers
 				sanitizeContainersModel: depSanitize,
 				sanitizeContainers: sanitizeContainers,
+				addContainers: addContainers,
+				removeContainers: removeContainers,
 				isContainer: isContainer,
 				start: manualStart,
 				end: end,
@@ -1068,12 +1070,12 @@ var dragularService = function ( $rootScope, $compile ) {
 			release( {} );
 		}
 
-		function removeContainers( all ) {
+		function removeContainers( containers ) {
 
 			$rootScope.$applyAsync( function applyDestroyed() {
 
-				var changes = _isArray( all ) ? all : makeArray( all );
-				changes.forEach( function forEachContainer( container ) {
+				containers = _isArray( containers ) ? containers : makeArray( containers );
+				containers.forEach( function forEachContainer( container ) {
 
 					angular.forEach( o.nameSpace, function forEachNs( nameSpace ) {
 
@@ -1081,7 +1083,28 @@ var dragularService = function ( $rootScope, $compile ) {
 						index = shared.containers[ nameSpace ].indexOf( container );
 						shared.containers[ nameSpace ].splice( index, 1 );
 						shared.containersCtx[ nameSpace ].splice( index, 1 );
+
+						if ( -1 < (index = initialContainers.indexOf( container )))
+							initialContainers.splice( index, 1 );
 					} );
+				} );
+			} );
+		}
+
+		function addContainers( containers ) {
+
+			containers = _isArray( containers ) ? containers : makeArray( containers );
+			containers.forEach( function forEachContainer( container, i ) {
+
+				angular.forEach( o.nameSpace, function forEachNs( nameSpace ) {
+
+					shared.containers[ nameSpace ].push( container );
+					shared.containersCtx[ nameSpace ].push({
+						o: o,
+						m: getContainersModel( o )[ i ], // can be undefined
+						fm: o.containersFilteredModel[ i ] // can be undefined
+					});
+					initialContainers.push( container );
 				} );
 			} );
 		}

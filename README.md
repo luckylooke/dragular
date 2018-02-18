@@ -429,6 +429,16 @@ If an element managed by `drake` is currently being dragged, this method will gr
 
 Removes all drag and drop events used by `dragularService` to manage drag and drop between the `containers`. If `.destroy` is called while an element is being dragged, the drag will be effectively cancelled.
 
+### `drake.addContainers( containers )` *!!! Experimental !!!*
+
+Method to add containers dynamicaly into drake initialised earlier.
+
+### `drake.removeContainers( containers )` *!!! Experimental !!!*
+
+Method to remove containers dynamicaly from drake initialised earlier.
+
+
+
 # License
 
 MIT
