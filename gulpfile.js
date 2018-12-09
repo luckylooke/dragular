@@ -1,24 +1,23 @@
 /* global process */
 'use strict';
-var gulp = require('gulp');
-var gutil = require('gulp-util');
-var gulpif = require('gulp-if');
-var webpack = require('webpack-stream');
-var size = require('gulp-size');
-var sequence = require('run-sequence');
-var uglify = require('gulp-uglify');
-var rename = require('gulp-rename');
-var minifyCss = require('gulp-minify-css');
-var autoprefixer = require('gulp-autoprefixer');
-var browserSync = require('browser-sync');
-var jshint = require('gulp-jshint');
-var concat = require('gulp-concat');
-var templateCache = require('gulp-angular-templatecache');
-var ghPages = require('gulp-gh-pages');
-var sourcemaps = require('gulp-sourcemaps');
-var markdown = require('gulp-markdown');
+const gulp = require('gulp');
+const gutil = require('gulp-util');
+const gulpif = require('gulp-if');
+const webpack = require('webpack-stream');
+const size = require('gulp-size');
+const uglify = require('gulp-uglify');
+const rename = require('gulp-rename');
+const minifyCss = require('gulp-minify-css');
+const autoprefixer = require('gulp-autoprefixer');
+const browserSync = require('browser-sync');
+const jshint = require('gulp-jshint');
+const concat = require('gulp-concat');
+const templateCache = require('gulp-angular-templatecache');
+const ghPages = require('gulp-gh-pages');
+const sourcemaps = require('gulp-sourcemaps');
+const markdown = require('gulp-markdown');
 
-var config = {
+const config = {
   dragular: {
     scripts: './src/*.js',
     styles: './src/*.css',
@@ -71,12 +70,14 @@ var config = {
   isProd: false
 };
 
+const tasks = {};
+
 /*
 * Defaults stores temporary scripts & styles settings (like entry point or
 * output directory). This metadata is used to configure the webpack compilation
 * process.
 */
-var defaults = {
+let defaults = {
   scripts: config.scripts.dragular,
   styles: config.styles.dragular
 }
@@ -89,10 +90,9 @@ function handleErrors(err) {
 /*
 * See http://blog.avisi.nl/2014/04/25/how-to-keep-a-fast-build-with-browserify-and-reactjs/
 */
-function buildScript() {
-
-  function rebundle() {
-    return gulp.src(defaults.scripts.entryPoint)
+function buildScript(done) {
+  function rebundle(done) {
+    gulp.src(defaults.scripts.entryPoint)
       .on('error', handleErrors)
       .pipe(webpack({
         watch: config.isProd ? false : true,
@@ -118,26 +118,23 @@ function buildScript() {
       .pipe(gulpif(config.isProd, sourcemaps.write('./')))
       .pipe(gulp.dest(defaults.scripts.dest))
       .pipe(gulpif(browserSync.active, browserSync.stream()));
+    done();
   }
 
-  function lintAndRebundle() {
-    if (defaults.scripts.type === 'dragular') {
-      return sequence('lint', rebundle);
-    }
-
-    return sequence('lint:docs', rebundle);
+  if (defaults.scripts.type === 'dragular') {
+    gulp.series(tasks.lint, rebundle);
+  } else {
+    gulp.series(tasks.lint, rebundle);
   }
-
-  return lintAndRebundle();
+  done();
 }
 
-gulp.task('scripts', function() {
-  return buildScript();
+tasks.scripts = gulp.series((done) => {
+  buildScript(done);
 });
 
-gulp.task('styles', function() {
-
-  return gulp.src(defaults.styles.entryPoint)
+tasks.styles = gulp.series((done) => {
+  gulp.src(defaults.styles.entryPoint)
     .pipe(autoprefixer({
       browsers: [ 'last 15 versions', '> 1%', 'ie 8', 'ie 7' ],
       cascade: false
@@ -156,24 +153,26 @@ gulp.task('styles', function() {
     }))
     .pipe(gulp.dest(defaults.styles.dest))
     .pipe(gulpif(browserSync.active, browserSync.stream()));
+
+  done();
 });
 
-gulp.task('lint', function() {
-
-  return gulp.src([config.dragular.scripts])
+tasks.lint = gulp.series((done) => {
+  gulp.src([config.dragular.scripts])
     .pipe(jshint())
     .pipe(jshint.reporter('jshint-stylish'));
+  done();
 });
 
-gulp.task('lint:docs', function() {
+tasks.lint_docs = gulp.series((done) => {
 
-  return gulp.src([config.docs.scripts, '!./docs/src/examples/templates.js'])
+  gulp.src([config.docs.scripts, '!./docs/src/examples/templates.js'])
     .pipe(jshint())
     .pipe(jshint.reporter('jshint-stylish'));
+  done();
 });
 
-gulp.task('serve', function () {
-
+tasks.serve = gulp.series((done) => {
   browserSync({
     ui:{
       port: '8081'
@@ -187,102 +186,108 @@ gulp.task('serve', function () {
     logFileChanges: true,
     notify: true
   });
+  done();
 });
 
 /*
 * Concatenate and register templates in the $templateCache. The resulting file
 * (templates.js) is placed inside the directory specified in config.docs.src.
 */
-gulp.task('templates:docs', function() {
+tasks.templates_docs = gulp.series((done) => {
 
-  return gulp.src(config.docs.templates)
+  gulp.src(config.docs.templates)
     .pipe(templateCache({
       moduleSystem: 'Browserify',
       standalone: true
     }))
     .pipe(gulp.dest(config.docs.src));
+  done();
 });
 
 /*
 * Watch files for changes
 */
-gulp.task('watch', ['serve'], function() {
-  gulp.watch(config.dragular.styles,  ['styles']);
-  gulp.watch(config.dragular.scripts,  ['scripts']);
+tasks.watch = gulp.series(tasks.serve, (done) => {
+  gulp.watch(config.dragular.styles, tasks.styles);
+  gulp.watch(config.dragular.scripts, tasks.scripts);
+  done();
 });
 
-gulp.task('watch:docs', ['serve'], function() {
-  gulp.watch(config.dragular.styles,  ['styles']);
-  gulp.watch(config.dragular.scripts,  ['scripts']);
-  gulp.watch(config.docs.styles,  ['styles']);
-  gulp.watch(config.docs.scripts,  ['scripts']);
-  gulp.watch(config.docs.templates,  ['templates:docs']);
+tasks.watch_docs = gulp.series(tasks.serve, (done) => {
+  gulp.watch(config.dragular.styles,  tasks.styles);
+  gulp.watch(config.dragular.scripts,  tasks.scripts);
+  gulp.watch(config.docs.styles,  tasks.styles);
+  gulp.watch(config.docs.scripts,  tasks.scripts);
+  gulp.watch(config.docs.templates,  tasks.templates_docs);
   gulp.watch(config.docs.index, browserSync.reload);
-  gulp.watch('./CONTRIBUTING.md', ['markdown']);
+  gulp.watch('./CONTRIBUTING.md', tasks.markdown);
+  done();
 });
 
 /*
 * Launch browserSync server, watch & automatically refresh connected browsers
 * on changes, generate non-minified but concatenated output.
 */
-gulp.task('dev', function() {
+tasks.dev = gulp.series((done) => {
   config.isProd = true;
   defaults = {
     scripts: config.scripts.dragular,
     styles: config.styles.dragular
   };
-
-  sequence(['scripts', 'styles'], 'watch');
-});
-
-gulp.task('dev:docs', function() {
-  config.isProd = true;
-  defaults = {
-    scripts: config.scripts.docs,
-    styles: config.styles.docs
-  };
-
-  sequence('markdown', 'templates:docs', ['scripts', 'styles'], 'watch:docs');
-});
-
-/*
-* Generate production ready minified and concantenated output.
-*/
-gulp.task('build', function() {
-  config.isProd = true;
-  defaults = {
-    scripts: config.scripts.dragular,
-    styles: config.styles.dragular
-  };
-
-  sequence(['scripts', 'styles'], 'build:docs');
-});
-
-gulp.task('build:docs', function() {
-  config.isProd = true;
-  defaults = {
-    scripts: config.scripts.docs,
-    styles: config.styles.docs
-  };
-
-  sequence('markdown', 'templates:docs', ['scripts', 'styles']);
-});
-
-/*
-* Publish code to GitHub pages.
-*/
-gulp.task('deploy:docs', function() {
-  return gulp.src('./docs/**/*')
-    .pipe(ghPages());
-});
+  done();
+}, gulp.parallel(tasks.scripts, tasks.styles), tasks.watch);
 
 /*
 * Compiles markdown to html.
 */
-gulp.task('markdown', function () {
+tasks.markdown = gulp.series((done) => {
 
-  return gulp.src('./CONTRIBUTING.md')
+  gulp.src('./CONTRIBUTING.md')
     .pipe(markdown())
     .pipe(gulpif('**/CONTRIBUTING.html', rename({basename: 'contribute'})))
     .pipe(gulp.dest(config.docs.src + '/partials/autogenerated'));
+  done();
 });
+
+tasks.dev_docs = gulp.series((done) => {
+  config.isProd = true;
+  defaults = {
+    scripts: config.scripts.docs,
+    styles: config.styles.docs
+  };
+  done();
+}, tasks.markdown, tasks.templates_docs, gulp.parallel(tasks.scripts, tasks.styles), tasks.watch_docs);
+
+tasks.build_docs = gulp.series((done) => {
+  config.isProd = true;
+  defaults = {
+    scripts: config.scripts.docs,
+    styles: config.styles.docs
+  };
+  done();
+}, tasks.markdown, tasks.templates_docs, gulp.parallel(tasks.scripts, tasks.styles));
+
+/*
+* Generate production ready minified and concantenated output.
+*/
+tasks.build = gulp.series((done) => {
+  config.isProd = true;
+  defaults = {
+    scripts: config.scripts.dragular,
+    styles: config.styles.dragular
+  };
+  done();
+}, gulp.parallel(tasks.scripts, tasks.styles), tasks.build_docs);
+
+/*
+* Publish code to GitHub pages.
+*/
+tasks.deploy_docs = gulp.series((done) => {
+  gulp.src('./docs/**/*')
+    .pipe(ghPages());
+  done();
+});
+
+
+exports.build = tasks.build;
+gulp.task('dev:docs', tasks.dev_docs);

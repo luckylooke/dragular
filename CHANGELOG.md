@@ -1,3 +1,6 @@
+# 4.5.1 Grinch
+- fixed npm audit vulnerabilities #173
+
 # 4.5.0 Wind River
 - with "copy:'events'" option dragular clone element including event handlers binded on element (request #165)
 - added helpers methods into drake for easier dynamic add/removal of containers of drake initialised earlier

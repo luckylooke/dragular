@@ -13,7 +13,7 @@ Browser support includes every sane browser and **IE7+**. <sub>_(Granted you pol
 
 I was working on huge angular project and I was using several drag&drop libraries in it, one for UI, one for lists, etc.. I wanted to use one full-featured drag&drop library for whole project. As I could not find any suitable, I decided to create one. I have choosen great library [dragula](http://github.com/bevacqua/dragula) by [Nicolas Bevacqua](http://github.com/bevacqua) as my starting point, make it more angular and started to put features in it! If you wish light-weight angular version of dragula, there is [official angular version of dragula](http://github.com/bevacqua/angular-dragula).
 
-<b>Actual version 4.5.0 is based on dragula 3.6.3 and tested with angular 1.6.5.</b>
+<b>Actual version 4.5.1 is based on dragula 3.6.3 and tested with angular 1.6.5.</b>
 
 # Differences of dragular (against dragula)
 
@@ -168,7 +168,7 @@ The options are detailed below. All boolean options can be also function returni
 
 ### `options.containers`
 
-Container element, NodeList, array of elements, jQuery object returned by selector or any array-like object where containers elements are placed on properties named 0,1,2,.. etc. 
+Container element, NodeList, array of elements, jQuery object returned by selector or any array-like object where containers elements are placed on properties named 0,1,2,.. etc.
 
 ### `options.containersModel`
 
@@ -189,7 +189,7 @@ String can be also provided to `options.containersModel` which is used against `
  ```
  ```js
 $scope.filteredItems = [];
- 
+
 dragularService('#container', {
   containersModel: sourceItems,
   containersFilteredModel: $scope.filteredItems
@@ -226,7 +226,7 @@ See 'options.containersModel' above for usecase.
 
 ### `options.isContainer( element )`
 
-Element can be forced to be container by custom logic function. Tested element is passed as argument. It is an element under dragged item called recursivelly so it can be also parent of element under the item or parent of a parent, etc.. 
+Element can be forced to be container by custom logic function. Tested element is passed as argument. It is an element under dragged item called recursivelly so it can be also parent of element under the item or parent of a parent, etc..
 
 ### `options.isContainerModel( element )`
 
@@ -301,7 +301,7 @@ When an element is dropped onto a container, it'll be placed near the point wher
 
 Scope can be provided for emitting events, you can provide whichever scope you like.
 
-### `options.lockX` 
+### `options.lockX`
 
 Lock movement into x-axis.
 
