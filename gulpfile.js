@@ -291,3 +291,4 @@ tasks.deploy_docs = gulp.series((done) => {
 
 exports.build = tasks.build;
 gulp.task('dev:docs', tasks.dev_docs);
+gulp.task('deploy:docs', tasks.deploy_docs);
