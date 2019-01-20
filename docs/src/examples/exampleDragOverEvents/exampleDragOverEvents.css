@@ -11,10 +11,10 @@
   background-color: yellow;
 }
 
-.containerVertical.gu-over-accept {
+.container-vertical.gu-over-accept {
   background-color: green;
 }
 
-.containerVertical.gu-over-decline {
+.container-vertical.gu-over-decline {
   background-color: red;
 }

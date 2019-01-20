@@ -3,7 +3,7 @@
   <label> Containers can be scrolled by hovering up/down bar near containers. Bars on right side are transparent and moved a bit over containers. It can be scrolled also by mouse wheel.
   </label>
   <div ng-controller="ScrollingDrag">
-    <div class="containerVertical scrollingDrag">
+    <div class="container-vertical scrollingDrag">
       <div class="scrollBar" id="leftTopBar">up</div>
       <div id="leftScroll" class="scrollingDragInner">
         <div>Item 1.</div>
@@ -21,7 +21,7 @@
       </div>
       <div class="scrollBar" id="leftBottomBar">down</div>
     </div>
-    <div class="containerVertical scrollingDrag">
+    <div class="container-vertical scrollingDrag">
       <div class="scrollBar" id="rightTopBar"></div>
       <div id="rightScroll" class="scrollingDragInner">
         <div>Item 1.</div>
@@ -83,7 +83,7 @@ controller('ScrollingDrag', ['$interval', '$element', 'dragularService', functio
         <code>
 &lt;!-- HTML --&gt;
 &lt;div ng-controller=&quot;ScrollingDrag&quot;&gt;
-    &lt;div class=&quot;containerVertical scrollingDrag&quot;&gt;
+    &lt;div class=&quot;container-vertical scrollingDrag&quot;&gt;
       &lt;div class=&quot;scrollBar&quot; id=&quot;leftTopBar&quot;&gt;up&lt;/div&gt;
       &lt;div id=&quot;leftScroll&quot; class=&quot;scrollingDragInner&quot;&gt;
         &lt;div&gt;Item 1&lt;/div&gt;
@@ -92,7 +92,7 @@ controller('ScrollingDrag', ['$interval', '$element', 'dragularService', functio
       &lt;/div&gt;
       &lt;div class=&quot;scrollBar&quot; id=&quot;leftBottomBar&quot;&gt;down&lt;/div&gt;
     &lt;/div&gt;
-    &lt;div class=&quot;containerVertical scrollingDrag&quot;&gt;
+    &lt;div class=&quot;container-vertical scrollingDrag&quot;&gt;
       &lt;div class=&quot;scrollBar&quot; id=&quot;rightTopBar&quot;&gt;up&lt;/div&gt;
       &lt;div id=&quot;rightScroll&quot; class=&quot;scrollingDragInner&quot;&gt;
         &lt;div&gt;Item 1&lt;/div&gt;

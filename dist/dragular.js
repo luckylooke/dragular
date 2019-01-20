@@ -60,7 +60,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	var dragularService = __webpack_require__( 2 );
 
 	/**
-	 * Dragular 4.5.0 by Luckylooke https://github.com/luckylooke/dragular
+	 * Dragular 4.6.0 by Luckylooke https://github.com/luckylooke/dragular
 	 * Angular version of dragula https://github.com/bevacqua/dragula
 	 */
 	module.exports = 'dragularModule';
@@ -192,8 +192,6 @@ return /******/ (function(modules) { // webpackBootstrap
 		// service definition
 		function service( arg0, arg1 ) {
 
-			// console.log('dragularService arg0, arg1', arg0, arg1);
-
 			var initialContainers = arg0 || [],
 				options = arg1 || {},
 				o, // shorthand for options
@@ -287,19 +285,17 @@ return /******/ (function(modules) { // webpackBootstrap
 
 			function processServiceArguments() {
 
-				if ( arguments.length === 1 && // if there is only one argument we need to distinguish if it is options object or container(s) reference
-
+				if ( typeof arg0 === 'string' ) {
+					initialContainers = document.querySelectorAll( arg0 );
+				}
+				else if (
+	        arguments.length === 1 && // if there is only one argument we need to distinguish if it is options object or container(s) reference
 					!_isArray( arg0 ) && // array of containers elements
 					!angular.isElement( arg0 ) && // one container element
-					!arg0[ 0 ] && // array-like object with containers elements
-					typeof arg0 !== 'string' ) { // selector
+					!arg0[ 0 ]){ // array-like object with containers elements
 					// then arg0 is options object
 					options = arg0 || {};
 					initialContainers = []; // containers are not provided on init
-				}
-				else if ( typeof arg0 === 'string' ) {
-
-					initialContainers = document.querySelectorAll( arg0 );
 				}
 
 				o = options.copyOptions ? angular.copy( options ) : options;
@@ -385,7 +381,7 @@ return /******/ (function(modules) { // webpackBootstrap
 						shared.containersCtx[ nameSpace ].push({
 							o: o,
 							m: getContainersModel( o )[ i ], // can be undefined
-							fm: o.containersFilteredModel[ i ] // can be undefined
+							fm: getContainersFilteredModel( o )[ i ] // can be undefined
 						});
 					}
 				} );
@@ -586,7 +582,7 @@ return /******/ (function(modules) { // webpackBootstrap
 				var containerIndex = getContainers( o ).indexOf( context.source );
 				shared.sourceModel = getContainersModel( o )[ containerIndex ];
 
-				shared.sourceFilteredModel = o.containersFilteredModel[ containerIndex ];
+				shared.sourceFilteredModel = getContainersFilteredModel( o )[ containerIndex ];
 				shared.initialIndex = domIndexOf( context.item, context.source );
 
 				drake.dragging = true;
@@ -765,7 +761,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 					if ( g( o.removeOnSpill ) === true ) {
 						type === 'over' ? spillOver() : spillOut();
-					}	
+					}
 
 					function notify( scope ){
 						scope.$emit( o.eventNames[ 'dragular' + type ], shared.item, shared.lastDropTarget, shared.source, e );
@@ -929,6 +925,10 @@ return /******/ (function(modules) { // webpackBootstrap
 					return false;
 				}
 
+	      if ( getContainers( o ).indexOf( el ) > -1) {
+	        return true;
+	      }
+
 				var i = o.nameSpace.length;
 				while ( i-- ) {
 
@@ -956,6 +956,11 @@ return /******/ (function(modules) { // webpackBootstrap
 			function getContainersModel( opt ) {
 
 				return _getContainers( 'containersModel', opt, true );
+			}
+
+			function getContainersFilteredModel( opt ) {
+
+				return _getContainers( 'containersFilteredModel', opt, true );
 			}
 
 			function _getContainers( containersType, opt, to2d ) {
@@ -1198,6 +1203,35 @@ return /******/ (function(modules) { // webpackBootstrap
 				release( {} );
 			}
 
+			function addContainers( containers, containersModel, containersFilteredModel ) {
+
+	      if (!containers) {
+	        return;
+	      }
+
+	      containersModel = containersModel || getContainersModel( o ) || {};
+	      containersFilteredModel = containersFilteredModel || getContainersFilteredModel( o ) || {};
+	      containers = _isArray( containers ) ? containers : makeArray( containers );
+	      containers.forEach( function forEachContainer( container ) {
+
+	        angular.forEach( o.nameSpace, function forEachNs( nameSpace ) {
+	          if (shared.containers[ nameSpace ].indexOf( container ) > -1) {
+	            return;
+	          }
+
+	          var newIndex = shared.containers[ nameSpace ].push( container ) - 1;
+	          shared.containersCtx[ nameSpace ].push({
+	            o: o,
+	            m: containersModel[ newIndex ], // can be undefined
+	            fm: containersFilteredModel[ newIndex ] // can be undefined
+	          });
+
+	          regEvent( container, 'off', 'mousedown', grab );
+						regEvent( container, 'on', 'mousedown', grab );
+	        } );
+	      } );
+	    }
+
 			function removeContainers( containers ) {
 
 				$rootScope.$applyAsync( function applyDestroyed() {
@@ -1211,29 +1245,7 @@ return /******/ (function(modules) { // webpackBootstrap
 							index = shared.containers[ nameSpace ].indexOf( container );
 							shared.containers[ nameSpace ].splice( index, 1 );
 							shared.containersCtx[ nameSpace ].splice( index, 1 );
-
-							if ( -1 < (index = initialContainers.indexOf( container ))) {
-								initialContainers.splice( index, 1 );
-							}
 						} );
-					} );
-				} );
-			}
-
-			function addContainers( containers ) {
-
-				containers = _isArray( containers ) ? containers : makeArray( containers );
-				containers.forEach( function forEachContainer( container, i ) {
-
-					angular.forEach( o.nameSpace, function forEachNs( nameSpace ) {
-
-						shared.containers[ nameSpace ].push( container );
-						shared.containersCtx[ nameSpace ].push({
-							o: o,
-							m: getContainersModel( o )[ i ], // can be undefined
-							fm: o.containersFilteredModel[ i ] // can be undefined
-						});
-						initialContainers.push( container );
 					} );
 				} );
 			}

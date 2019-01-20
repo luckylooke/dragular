@@ -73,11 +73,11 @@ const config = {
 const tasks = {};
 
 /*
-* Defaults stores temporary scripts & styles settings (like entry point or
+* selectedConfigs stores temporary scripts & styles settings (like entry point or
 * output directory). This metadata is used to configure the webpack compilation
 * process.
 */
-let defaults = {
+let selectedConfigs = {
   scripts: config.scripts.dragular,
   styles: config.styles.dragular
 }
@@ -87,21 +87,36 @@ function handleErrors(err) {
   this.emit('end');
 }
 
-/*
-* See http://blog.avisi.nl/2014/04/25/how-to-keep-a-fast-build-with-browserify-and-reactjs/
-*/
-function buildScript(done) {
-  function rebundle(done) {
-    gulp.src(defaults.scripts.entryPoint)
+tasks.lint = gulp.series(function lint() {
+  return gulp.src([config.dragular.scripts])
+    .pipe(jshint())
+    .pipe(jshint.reporter('jshint-stylish'));
+});
+
+tasks.lint_docs = gulp.series(function lintDocs() {
+  return gulp.src([config.docs.scripts, '!./docs/src/examples/templates.js'])
+    .pipe(jshint())
+    .pipe(jshint.reporter('jshint-stylish'));
+});
+
+tasks.scripts = gulp.series(selectedConfigs.scripts.type === 'dragular' ? tasks.lint : tasks.lint_docs, function scriptsTask(done) {
+    console.log('selected configs: ', selectedConfigs);
+    return gulp.src(selectedConfigs.scripts.entryPoint)
       .on('error', handleErrors)
       .pipe(webpack({
         watch: config.isProd ? false : true,
         output: {
           libraryTarget: config.scripts.libraryTarget,
-          filename: defaults.scripts.bundleName
+          filename: selectedConfigs.scripts.bundleName
         }
+      }, null, function(err, stats) {
+        if ( err ) {
+          throw err;
+        }
+        console.log('webpack build finished in ', stats.endTime - stats.startTime, 'ms');
+        done();
       }))
-      .pipe(gulpif(config.isProd, gulp.dest(defaults.scripts.dest)))
+      .pipe(gulpif(config.isProd, gulp.dest(selectedConfigs.scripts.dest)))
       .pipe(gulpif(config.isProd, size({
         title: 'Non-minified scripts: '
       })))
@@ -116,31 +131,19 @@ function buildScript(done) {
         title: 'Scripts: '
       }))
       .pipe(gulpif(config.isProd, sourcemaps.write('./')))
-      .pipe(gulp.dest(defaults.scripts.dest))
+      .pipe(gulp.dest(selectedConfigs.scripts.dest))
       .pipe(gulpif(browserSync.active, browserSync.stream()));
-    done();
   }
+);
 
-  if (defaults.scripts.type === 'dragular') {
-    gulp.series(tasks.lint, rebundle);
-  } else {
-    gulp.series(tasks.lint, rebundle);
-  }
-  done();
-}
-
-tasks.scripts = gulp.series((done) => {
-  buildScript(done);
-});
-
-tasks.styles = gulp.series((done) => {
-  gulp.src(defaults.styles.entryPoint)
+tasks.styles = gulp.series(function stylesTask() {
+  return gulp.src(selectedConfigs.styles.entryPoint)
     .pipe(autoprefixer({
       browsers: [ 'last 15 versions', '> 1%', 'ie 8', 'ie 7' ],
       cascade: false
     }))
-    .pipe(concat(defaults.styles.bundleName))
-    .pipe(gulpif(config.isProd, gulp.dest(defaults.styles.dest)))
+    .pipe(concat(selectedConfigs.styles.bundleName))
+    .pipe(gulpif(config.isProd, gulp.dest(selectedConfigs.styles.dest)))
     .pipe(gulpif(config.isProd, size({
       title: 'Non-minified styles:  '
     })))
@@ -151,28 +154,12 @@ tasks.styles = gulp.series((done) => {
     .pipe(size({
       title: 'Styles: '
     }))
-    .pipe(gulp.dest(defaults.styles.dest))
+    .pipe(gulp.dest(selectedConfigs.styles.dest))
     .pipe(gulpif(browserSync.active, browserSync.stream()));
+  }
+);
 
-  done();
-});
-
-tasks.lint = gulp.series((done) => {
-  gulp.src([config.dragular.scripts])
-    .pipe(jshint())
-    .pipe(jshint.reporter('jshint-stylish'));
-  done();
-});
-
-tasks.lint_docs = gulp.series((done) => {
-
-  gulp.src([config.docs.scripts, '!./docs/src/examples/templates.js'])
-    .pipe(jshint())
-    .pipe(jshint.reporter('jshint-stylish'));
-  done();
-});
-
-tasks.serve = gulp.series((done) => {
+tasks.serve = gulp.series(function serve(done) {
   browserSync({
     ui:{
       port: '8081'
@@ -193,27 +180,26 @@ tasks.serve = gulp.series((done) => {
 * Concatenate and register templates in the $templateCache. The resulting file
 * (templates.js) is placed inside the directory specified in config.docs.src.
 */
-tasks.templates_docs = gulp.series((done) => {
-
-  gulp.src(config.docs.templates)
+tasks.templates_docs = gulp.series(function templatesDocs() {
+  return gulp.src(config.docs.templates)
     .pipe(templateCache({
       moduleSystem: 'Browserify',
       standalone: true
     }))
     .pipe(gulp.dest(config.docs.src));
-  done();
 });
 
 /*
 * Watch files for changes
 */
-tasks.watch = gulp.series(tasks.serve, (done) => {
+tasks.watch = gulp.series(tasks.serve, function watch(done) {
   gulp.watch(config.dragular.styles, tasks.styles);
   gulp.watch(config.dragular.scripts, tasks.scripts);
   done();
 });
 
-tasks.watch_docs = gulp.series(tasks.serve, (done) => {
+tasks.watch_docs = gulp.series(tasks.serve, function watchDocs(done) {
+  console.log('watching docs');
   gulp.watch(config.dragular.styles,  tasks.styles);
   gulp.watch(config.dragular.scripts,  tasks.scripts);
   gulp.watch(config.docs.styles,  tasks.styles);
@@ -228,9 +214,9 @@ tasks.watch_docs = gulp.series(tasks.serve, (done) => {
 * Launch browserSync server, watch & automatically refresh connected browsers
 * on changes, generate non-minified but concatenated output.
 */
-tasks.dev = gulp.series((done) => {
+tasks.dev = gulp.series(function dev(done) {
   config.isProd = true;
-  defaults = {
+  selectedConfigs = {
     scripts: config.scripts.dragular,
     styles: config.styles.dragular
   };
@@ -240,27 +226,25 @@ tasks.dev = gulp.series((done) => {
 /*
 * Compiles markdown to html.
 */
-tasks.markdown = gulp.series((done) => {
-
-  gulp.src('./CONTRIBUTING.md')
+tasks.markdown = gulp.series(function markdownTask() {
+  return gulp.src('./CONTRIBUTING.md')
     .pipe(markdown())
     .pipe(gulpif('**/CONTRIBUTING.html', rename({basename: 'contribute'})))
     .pipe(gulp.dest(config.docs.src + '/partials/autogenerated'));
-  done();
 });
 
-tasks.dev_docs = gulp.series((done) => {
-  config.isProd = true;
-  defaults = {
+tasks.dev_docs = gulp.series(function devDocs(done) {
+  config.isProd = false;
+  selectedConfigs = {
     scripts: config.scripts.docs,
     styles: config.styles.docs
   };
   done();
 }, tasks.markdown, tasks.templates_docs, gulp.parallel(tasks.scripts, tasks.styles), tasks.watch_docs);
 
-tasks.build_docs = gulp.series((done) => {
+tasks.build_docs = gulp.series(function buildDocs(done) {
   config.isProd = true;
-  defaults = {
+  selectedConfigs = {
     scripts: config.scripts.docs,
     styles: config.styles.docs
   };
@@ -270,9 +254,9 @@ tasks.build_docs = gulp.series((done) => {
 /*
 * Generate production ready minified and concantenated output.
 */
-tasks.build = gulp.series((done) => {
+tasks.build = gulp.series(function build(done) {
   config.isProd = true;
-  defaults = {
+  selectedConfigs = {
     scripts: config.scripts.dragular,
     styles: config.styles.dragular
   };
@@ -282,10 +266,9 @@ tasks.build = gulp.series((done) => {
 /*
 * Publish code to GitHub pages.
 */
-tasks.deploy_docs = gulp.series((done) => {
-  gulp.src('./docs/**/*')
+tasks.deploy_docs = gulp.series(function deployDocs() {
+  return gulp.src('./docs/**/*')
     .pipe(ghPages());
-  done();
 });
 
 

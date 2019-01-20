@@ -37,18 +37,18 @@
   width: 100%;
 }
 
-.containerVertical {
+.container-vertical {
   display: table-cell;
   background-color: rgba(255, 255, 255, 0.2);
   width: 50%;
 }
 
-.containerHorizontal {
+.container-horizontal {
   display: table-row;
   background-color: rgba(255, 255, 255, 0.2);
 }
 
-.containerHorizontal div {
+.container-horizontal div {
   border-spacing: 5px;
   display: table-cell;
   margin: 10px;
@@ -65,15 +65,15 @@
   width: 25%;
 }
 
-.containerVertical:nth-child(odd) {
+.container-vertical:nth-child(odd) {
   background-color: rgba(0, 0, 0, 0.2);
 }
 
-.containerVertical:nth-child(even) {
+.container-vertical:nth-child(even) {
   background-color: rgba(0, 0, 0, 0.4);
 }
 
-.containerVertical pre {
+.container-vertical pre {
   border: 0;
   background-color: transparent;
 }
@@ -87,7 +87,7 @@ label b{
  * you're better off giving the draggable elements a unique class and styling that directly!
  */
 
-.containerVertical div,
+.container-vertical div,
 .gu-mirror {
   margin: 10px;
   padding: 10px;
@@ -104,7 +104,7 @@ label b{
   cursor: -webkit-grabbing;
 }
 
-.containerVertical .ex-moved {
+.container-vertical .ex-moved {
   background-color: #e74c3c;
 }
 
@@ -128,11 +128,11 @@ label b{
   z-index: 9999 !important;
 }
 
-.containerVertical.width25.gu-over-active.gu-over-accept {
+.container-vertical.width25.gu-over-active.gu-over-accept {
   background-color: green !important;
 }
 
-.containerVertical.width25.gu-over-active.gu-over-decline {
+.container-vertical.width25.gu-over-active.gu-over-decline {
   background-color: red !important;
 }
 
@@ -140,17 +140,17 @@ pre.gu-over-active.gu-over-decline {
   background-color: yellow !important;
 }
 
-div.limitBox {
+div.limit-box {
   margin: 0;
   padding: 0;
   background: transparent;
 }
 
-.cursorDefault {
+.cursor-default {
   cursor: default !important;
 }
 
-.exampleRow {
+.example-row {
   display: -webkit-box;
   display: -webkit-flex;
   display: -ms-flexbox;
@@ -162,15 +162,15 @@ div.limitBox {
   flex-direction: row;
 }
 
-.exampleCell {
+.example-cell {
   -webkit-box-flex: 1;
   -webkit-flex-grow: 1;
   -ms-flex-positive: 1;
   flex-grow: 1;
 }
 
-.exampleRow,
-.exampleCell {
+.example-row,
+.example-cell {
   margin: 10px;
   padding: 10px;
   background-color: rgba(0, 0, 0, 0.2);
@@ -179,7 +179,7 @@ div.limitBox {
   cursor: -webkit-grab;
 }
 
-.tableRow {
+.table-row {
   display: table-row;
 }
 
@@ -403,11 +403,11 @@ github.com style (c) Vasily Polovnyov <vast@whiteants.net>
   background-color: yellow;
 }
 
-.containerVertical.gu-over-accept {
+.container-vertical.gu-over-accept {
   background-color: green;
 }
 
-.containerVertical.gu-over-decline {
+.container-vertical.gu-over-decline {
   background-color: red;
 }
 

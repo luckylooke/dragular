@@ -4,28 +4,28 @@
     <br/>
     <b>Please notify the getFilteredModel function, it is necessery for not replacing the initial array object with new filtered one!</b></p>
   <div class='wrapper' ng-controller="NgRepeatFilteredWithModel">
-    <div class="tableRow">
-      <div class='containerVertical'>
+    <div class="table-row">
+      <div class='container-vertical'>
         <input ng-model="filter1query" style="margin:10px 10px">
       </div>
-      <div class='containerVertical'>
+      <div class='container-vertical'>
         <input ng-model="filter2query" style="margin:10px 10px">
       </div>
     </div>
-    <div class='tableRow'>
-      <div class='containerVertical'>
+    <div class='table-row'>
+      <div class='container-vertical'>
         <div ng-repeat="item in getFilteredModel(filteredModel1, items1, filter1query)">{{item.content}}</div>
       </div>
-      <div class='containerVertical'>
+      <div class='container-vertical'>
         <div ng-repeat="item in getFilteredModel(filteredModel2, items2, filter2query)">{{item.content}}</div>
       </div>
     </div>
-    <div class="tableRow">
-      <div class='containerVertical'>
+    <div class="table-row">
+      <div class='container-vertical'>
         <pre>Items1:
           <br/>{{items1 | json}}</pre>
       </div>
-      <div class='containerVertical'>
+      <div class='container-vertical'>
         <pre>Items2:
           <br/>{{items2 | json}}</pre>
       </div>
@@ -104,28 +104,28 @@
         <code>
 &lt;!-- HTML --&gt;
   &lt;div class='wrapper' ng-controller=&quot;NgRepeatFilteredWithModel&quot;&gt;
-    &lt;div class=&quot;tableRow&quot;&gt;
-      &lt;div class='containerVertical'&gt;
+    &lt;div class=&quot;table-row&quot;&gt;
+      &lt;div class='container-vertical'&gt;
         &lt;input ng-model=&quot;filter1query&quot; style=&quot;margin:10px 10px&quot;&gt;
       &lt;/div&gt;
-      &lt;div class='containerVertical'&gt;
+      &lt;div class='container-vertical'&gt;
         &lt;input ng-model=&quot;filter2query&quot; style=&quot;margin:10px 10px&quot;&gt;
       &lt;/div&gt;
     &lt;/div&gt;
-    &lt;div class='tableRow'&gt;
-      &lt;div class='containerVertical'&gt;
+    &lt;div class='table-row'&gt;
+      &lt;div class='container-vertical'&gt;
         &lt;div ng-repeat=&quot;item in getFilteredModel(filteredModel1, items1, filter1query)&quot;&gt;{{item.content}}&lt;/div&gt;
       &lt;/div&gt;
-      &lt;div class='containerVertical'&gt;
+      &lt;div class='container-vertical'&gt;
         &lt;div ng-repeat=&quot;item in getFilteredModel(filteredModel2, items2, filter2query)&quot;&gt;{{item.content}}&lt;/div&gt;
       &lt;/div&gt;
     &lt;/div&gt;
-    &lt;div class=&quot;tableRow&quot;&gt;
-      &lt;div class='containerVertical'&gt;
+    &lt;div class=&quot;table-row&quot;&gt;
+      &lt;div class='container-vertical'&gt;
         &lt;pre&gt;Items1:
           &lt;br/&gt;{{items1 | json}}&lt;/pre&gt;
       &lt;/div&gt;
-      &lt;div class='containerVertical'&gt;
+      &lt;div class='container-vertical'&gt;
         &lt;pre&gt;Items2:
           &lt;br/&gt;{{items2 | json}}&lt;/pre&gt;
       &lt;/div&gt;

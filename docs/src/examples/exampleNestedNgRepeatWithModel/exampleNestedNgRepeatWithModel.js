@@ -2,40 +2,85 @@
 
 var NestedNgRepeatWithModelCtrl = function ($timeout, $scope, $element, dragularService) {
   $timeout(function() { // timeount due to nested ngRepeat to be ready
-    var container = $element.children().eq(0).children(),
-      parentContainers = container.children(),
-      nestedContainers = [];
+    var rowsContainer = $element.children().eq(0).children(),
+      rows = getRows(),
+      cellContainers = getCellContainers();
 
     dragularService.cleanEnviroment();
-    dragularService(container, {
+    dragularService(rowsContainer, {
       moves: function(el, container, handle) {
         return handle.classList.contains('row-handle');
       },
-      containersModel: $scope.items,
+      containersModel: $scope.rows,
       nameSpace: 'rows'
     });
 
-    // collect nested contianers
-    for (var i = 0; i < parentContainers.length; i++) {
-      nestedContainers.push(parentContainers.eq(i).children()[1]);
+    var cellContainersDrake = dragularService(cellContainers, {
+      moves: function(el, container, handle) {
+        return handle.classList.contains('example-cell');
+      },
+      containersModel: getcellContainersModel(),
+      nameSpace: 'cells'
+    });
+
+    $scope.addItem = function(row) {
+      var item = {
+        content: 'Item x' + Math.round( Math.random() * 1000 )
+      }
+      row.items.push( item );
     }
 
-    dragularService(nestedContainers, {
-      moves: function(el, container, handle) {
-        return !handle.classList.contains('row-handle');
-      },
-      containersModel: (function getNestedContainersModel(){
-        var parent = $scope.items,
+    $scope.removeItem = function(row, item) {
+      row.items.splice( row.items.indexOf( item ), 1);
+    }
+
+    $scope.addRow = function() {
+      var row = { items: [] };
+      $scope.rows.push( row );
+      // wait for angular to create element for added row
+      $scope.$evalAsync(function() {
+        // $evalAsync is probably not enough to get after the DOM creation, so timeouted :/
+        $timeout(function() {
+          // you can provide all containers, dragular will add just new containers
+          cellContainersDrake.addContainers( getCellContainers(), getcellContainersModel());
+        }, 500);
+      });
+    }
+
+    $scope.removeRow = function( row, e ) {
+      var cellsContainerElm = e.target.parentElement.parentElement.querySelectorAll('.container-nested')[0];
+      cellContainersDrake.removeContainers( cellsContainerElm );
+      $scope.rows.splice( $scope.rows.indexOf( row ), 1 );
+    }
+
+    function getRows() {
+      return rowsContainer.children();
+    }
+
+    function getCellContainers() {
+      var tmpContainers = [];
+      rows = getRows();
+      for (var i = 0; i < rows.length; i++) {
+        var cellContainer = rows.eq(i).children()[1];
+        if ( cellContainer ) {
+          tmpContainers.push( cellContainer );
+        }
+      }
+      return tmpContainers;
+    }
+
+    function getcellContainersModel(){
+        var parent = $scope.rows,
           containersModel = [];
         for (var i = 0; i < parent.length; i++) {
           containersModel.push(parent[i].items);
         }
         return containersModel;
-      })(),
-      nameSpace: 'cells'
-    });
+      }
+
   }, 0);
-  $scope.items = [{
+
+  $scope.rows = [{
     items: [{
       content: 'Item a1'
     }, {

@@ -3,13 +3,13 @@
     <label>Add some fantastic events!</label><p>Events affecting more than on cotrollers are emitted on both scopes if provided.</p>
     <h3>EventsCtrl</h3>
     <div class='wrapper' ng-controller="Events">
-        <div id='left3' class='containerVertical'>
+        <div id='left3' class='container-vertical'>
             <div>Move me, but you can only drop me in one of these containers.</div>
             <div>If you try to drop me somewhere other than these containers, I'll just come back.</div>
             <div>Item 3.</div>
             <div>Item 6.</div>
         </div>
-        <div id='right3' class='containerVertical'>
+        <div id='right3' class='container-vertical'>
             <div>You can drop me in the left container, otherwise I'll stay here.</div>
             <div>Item 4.</div>
             <div>Item 5.</div>
@@ -18,13 +18,13 @@
     <hr>
     <h3>Events2Ctrl</h3>
     <div class='wrapper' ng-controller="Events2">
-        <div id='left3' class='containerVertical'>
+        <div id='left3' class='container-vertical'>
             <div>Move me, but you can only drop me in one of these containers.</div>
             <div>If you try to drop me somewhere other than these containers, I'll just come back.</div>
             <div>Item 3.</div>
             <div>Item 6.</div>
         </div>
-        <div id='right3' class='containerVertical'>
+        <div id='right3' class='container-vertical'>
             <div>You can drop me in the left container, otherwise I'll stay here.</div>
             <div>Item 4.</div>
             <div>Item 5.</div>
@@ -33,7 +33,7 @@
     <pre>
         <code>
 var EventsCtrl = function ($scope, $element, dragularService, $timeout) {
-  
+
   var drake = dragularService($element.children(), {
     scope: $scope
   });

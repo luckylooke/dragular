@@ -22,23 +22,23 @@ var examplesRouter = function ($stateProvider, $urlRouterProvider) {
   $stateProvider
     .state('home', {
       url: '/home',
-      templateUrl: 'partials/partial-home.html'
+      templateUrl: '/partials/partial-home.html'
     })
     .state('docs', {
       url: '/docs',
-      templateUrl: 'partials/partial-docs.html',
+      templateUrl: '/partials/partial-docs.html',
       controller: ctrl
     })
     .state('docs.detail', {
       url: '/:link',
       templateUrl: function($stateParams) {
-        return $stateParams.link + '/' + $stateParams.link + '.html';
+        return '/' + $stateParams.link + '/' + $stateParams.link + '.html';
       },
       controller: ctrl
     })
     .state('contribute', {
       url: '/contribute',
-      templateUrl: 'partials/partial-contribute.html'
+      templateUrl: '/partials/partial-contribute.html'
     });
 };
 

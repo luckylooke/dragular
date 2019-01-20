@@ -2,21 +2,21 @@
   <h2>isContainer - with model</h2>
   <label>Possible use case of <b>options.isContainer</b> combined with model. When you provide function <b>isContainer</b> and in case it returns true and you are providing models (<b>options.containersModel</b>), dragular check for model by calling <b>options.isContainerModel(el)</b> function. If not provided, model is discarted.</label>
   <div class='wrapper' ng-controller="IsContainerModel">
-    <div class='tableRow'>
-      <div id="containerLeft" class='containerVertical'>
+    <div class='table-row'>
+      <div id="containerLeft" class='container-vertical'>
         <div ng-repeat="item in items1">{{item.content}}</div>
       </div>
-      <div id="cart" class='containerVertical'>
-        <div class='cursorDefault' ng-repeat="item in cartModel">{{item.content}}
-        <button class='cursorDefault' ng-click="removeItem()">x</button></div>
+      <div id="cart" class='container-vertical'>
+        <div class='cursor-default' ng-repeat="item in cartModel">{{item.content}}
+        <button class='cursor-default' ng-click="removeItem()">x</button></div>
       </div>
     </div>
-    <div class="tableRow">
-      <div class='containerVertical'>
+    <div class="table-row">
+      <div class='container-vertical'>
         <pre>Items1:
           <br/>{{items1 | json}}</pre>
       </div>
-      <div class='containerVertical'>
+      <div class='container-vertical'>
         <pre>Cart:
           <br/>{{cartModel | json}}</pre>
       </div>
@@ -61,21 +61,21 @@
         <code>
 &lt;!-- HTML --&gt;
  &lt;div class='wrapper' ng-controller=&quot;IsContainerModel&quot;&gt;
-    &lt;div class='tableRow'&gt;
-      &lt;div id=&quot;containerLeft&quot; class='containerVertical'&gt;
+    &lt;div class='table-row'&gt;
+      &lt;div id=&quot;containerLeft&quot; class='container-vertical'&gt;
         &lt;div ng-repeat=&quot;item in items1&quot;&gt;{{item.content}}&lt;/div&gt;
       &lt;/div&gt;
-      &lt;div id=&quot;cart&quot; class='containerVertical'&gt;
-        &lt;div class='cursorDefault' ng-repeat=&quot;item in cartModel&quot;&gt;{{item.content}}
-        &lt;button class='cursorDefault' ng-click=&quot;removeItem()&quot;&gt;x&lt;/button&gt;&lt;/div&gt;
+      &lt;div id=&quot;cart&quot; class='container-vertical'&gt;
+        &lt;div class='cursor-default' ng-repeat=&quot;item in cartModel&quot;&gt;{{item.content}}
+        &lt;button class='cursor-default' ng-click=&quot;removeItem()&quot;&gt;x&lt;/button&gt;&lt;/div&gt;
       &lt;/div&gt;
     &lt;/div&gt;
-    &lt;div class=&quot;tableRow&quot;&gt;
-      &lt;div class='containerVertical'&gt;
+    &lt;div class=&quot;table-row&quot;&gt;
+      &lt;div class='container-vertical'&gt;
         &lt;pre&gt;Items1:
           &lt;br/&gt;{{items1 | json}}&lt;/pre&gt;
       &lt;/div&gt;
-      &lt;div class='containerVertical'&gt;
+      &lt;div class='container-vertical'&gt;
         &lt;pre&gt;Cart:
           &lt;br/&gt;{{cartModel | json}}&lt;/pre&gt;
       &lt;/div&gt;

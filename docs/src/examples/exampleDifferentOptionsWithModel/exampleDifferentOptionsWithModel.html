@@ -2,20 +2,20 @@
   <h2>Different options - with model</h2>
   <label>You may need to setup different options (rules) for each container. For such setup you need to initialize each container separately. <b>Do not initialize same container twice!</b> In example bellow you can copy from left to right, but not otherwise. And from right container items can be removed on spill.</label>
   <div class='wrapper' ng-controller="DifferentOptionsModel">
-    <div class='tableRow'>
-      <div id="containerLeft" class='containerVertical'>
+    <div class='table-row'>
+      <div id="containerLeft" class='container-vertical'>
         <div ng-repeat="item in items1">{{item.content}}</div>
       </div>
-      <div id="containerRight" class='containerVertical'>
+      <div id="containerRight" class='container-vertical'>
         <div ng-repeat="item in items2">{{item.content}}</div>
       </div>
     </div>
-    <div class="tableRow">
-      <div class='containerVertical'>
+    <div class="table-row">
+      <div class='container-vertical'>
         <pre>Items1:
           <br/>{{items1 | json}}</pre>
       </div>
-      <div class='containerVertical'>
+      <div class='container-vertical'>
         <pre>Items2:
           <br/>{{items2 | json}}</pre>
       </div>
@@ -56,14 +56,14 @@
     dragularService([containerLeft], {
       containersModel: [$scope.items1],
       copy: true,
-      //move only from left to right  
+      //move only from left to right
       accepts: accepts
     });
 
     dragularService([containerRight], {
       containersModel: [$scope.items2],
       removeOnSpill: true,
-      //move only from left to right  
+      //move only from left to right
       accepts: accepts
     });
 
@@ -72,20 +72,20 @@
         <code>
 &lt;!-- HTML --&gt;
 &lt;div class='wrapper' ng-controller=&quot;DifferentOptionsModel&quot;&gt;
-    &lt;div class='tableRow'&gt;
-      &lt;div id=&quot;containerLeft&quot; class='containerVertical'&gt;
+    &lt;div class='table-row'&gt;
+      &lt;div id=&quot;containerLeft&quot; class='container-vertical'&gt;
         &lt;div ng-repeat=&quot;item in items1&quot;&gt;{{item.content}}&lt;/div&gt;
       &lt;/div&gt;
-      &lt;div id=&quot;containerRight&quot; class='containerVertical'&gt;
+      &lt;div id=&quot;containerRight&quot; class='container-vertical'&gt;
         &lt;div ng-repeat=&quot;item in items2&quot;&gt;{{item.content}}&lt;/div&gt;
       &lt;/div&gt;
     &lt;/div&gt;
-    &lt;div class=&quot;tableRow&quot;&gt;
-      &lt;div class='containerVertical'&gt;
+    &lt;div class=&quot;table-row&quot;&gt;
+      &lt;div class='container-vertical'&gt;
         &lt;pre&gt;Items1:
           &lt;br/&gt;{{items1 | json}}&lt;/pre&gt;
       &lt;/div&gt;
-      &lt;div class='containerVertical'&gt;
+      &lt;div class='container-vertical'&gt;
         &lt;pre&gt;Items2:
           &lt;br/&gt;{{items2 | json}}&lt;/pre&gt;
       &lt;/div&gt;

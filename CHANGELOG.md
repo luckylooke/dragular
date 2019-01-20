@@ -1,3 +1,9 @@
+# 4.6.0 Ghost busters
+- improved dynamic containers recognition
+- improved addContainers, removeContainers methods
+- improved example of nested containers
+- fixing gulp tasks
+
 # 4.5.1 Grinch
 - fixed npm audit vulnerabilities #173
 
