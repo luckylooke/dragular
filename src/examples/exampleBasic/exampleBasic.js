@@ -2,7 +2,7 @@
 
 var BasicCtrl = function ($element, dragularService) {
   dragularService.cleanEnviroment();
-  dragularService('.containerVertical');
+  dragularService('.container-vertical');
 };
 
 BasicCtrl.$inject = ['$element', 'dragularService'];

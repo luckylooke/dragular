@@ -6,21 +6,31 @@
     <hr/>
   </label>
   <div ng-controller="NestedNgRepeatWithModel">
-    <div class='tableRow'>
-      <div class='containerVertical'>
-        <div ng-repeat="item in items" class='exampleRow'>
+    <div class='table-row'>
+      <div class='container-vertical'>
+        <div ng-repeat="row in rows" class='example-row'>
           <div class="row-handle">Row {{::$index}}</div>
-          <div class="exampleRow exampleCell containerNested">
-            <div ng-repeat="item in item.items" class="exampleCell">{{item.content}}</div>
+          <div class="example-row container-nested">
+            <div ng-repeat="item in row.items" class="example-cell">{{item.content}} <button class='cursor-default' ng-click="removeItem(row, item)">x</button></div>
+            <div><button class='cursor-default' ng-click="addItem(row)">+</button></div>
           </div>
+          <div><button class='cursor-default' ng-click="removeRow(row, $event)">X</button></div>
         </div>
       </div>
     </div>
-    <div class="tableRow">
-      <div class='containerVertical'>
+    <div class="table-row">
+      <div class='container-vertical'>
+        <div>
+          <button class='cursor-default' ng-click="addRow()">add row</button>
+        </div>
+      </div>
+    </div>
+    <hr>
+    <div class="table-row">
+      <div class='container-vertical'>
         <pre>
-            <div>Items:
-              <br/>{{items | json}}</div>
+            <div>Rows:
+              <br/>{{rows | json}}</div>
         </pre>
       </div>
     </div>
@@ -29,11 +39,11 @@
     <code>
 &lt;!-- HTML --&gt;
 &lt;div ng-controller=&quot;NestedNgRepeatWithModel&quot;&gt;
-  &lt;div class='containerVertical'&gt;
-    &lt;div ng-repeat=&quot;item in items&quot; class='exampleRow'&gt;
+  &lt;div class='container-vertical'&gt;
+    &lt;div ng-repeat=&quot;item in items&quot; class='example-row'&gt;
       &lt;div class=&quot;row-handle&quot;&gt;Row {{::$index}}&lt;/div&gt;
-      &lt;div class=&quot;exampleRow exampleCell containerNested&quot;&gt;
-        &lt;div ng-repeat=&quot;item in item.items&quot; class=&quot;exampleCell&quot;&gt;{{item.content}}&lt;/div&gt;
+      &lt;div class=&quot;example-row example-cell container-nested&quot;&gt;
+        &lt;div ng-repeat=&quot;item in item.items&quot; class=&quot;example-cell&quot;&gt;{{item.content}}&lt;/div&gt;
       &lt;/div&gt;
     &lt;/div&gt;
   &lt;/div&gt;
@@ -44,17 +54,14 @@
     <code>
   // CSS
 
-  .exampleRow {
+  .example-row {
     display: flex;
     flex-direction: row;
   }
 
-  .exampleCell {
+  .example-row,
+  .example-cell {
     flex-grow: 1;
-  }
-
-  .exampleRow,
-  .exampleCell {
     margin: 10px;
     padding: 10px;
     background-color: rgba(0, 0, 0, 0.2);
