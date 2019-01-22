@@ -1,24 +1,24 @@
-<div class='parent'>
+<div class="parent">
   <h2>Copy - with model</h2>
   <label>Copying stuff is great too.</label>
-  <div class='wrapper' ng-controller="CopyModel">
-    <div class='table-row'>
-      <div class='container-vertical'>
+  <div class="wrapper" ng-controller="CopyModel">
+    <div class="table-row">
+      <div class="container-vertical">
         <div ng-repeat="item in items1">{{item.content}}</div>
       </div>
-      <div class='container-vertical'>
+      <div class="container-vertical">
         <div ng-repeat="item in items2">{{item.content}}</div>
       </div>
     </div>
     <div class="table-row">
-      <div class='container-vertical'>
+      <div class="container-vertical">
         <div>Items1:
           <pre>
             {{ items1 | json }}
           </pre>
         </div>
       </div>
-      <div class='container-vertical'>
+      <div class="container-vertical">
         <div>Items2:
           <pre>
             {{ items2 | json }}
@@ -58,12 +58,12 @@
         </code>
         <code>
 &lt;!-- HTML --&gt;
-&lt;div class='wrapper' ng-controller=&quot;CopyModel&quot; ng-show=&quot;globals.showModelExamples&quot;&gt;
-    &lt;div class='table-row'&gt;
-      &lt;div class='container-vertical'&gt;
+&lt;div class="wrapper" ng-controller=&quot;CopyModel&quot; ng-show=&quot;globals.showModelExamples&quot;&gt;
+    &lt;div class="table-row"&gt;
+      &lt;div class="container-vertical"&gt;
         &lt;div ng-repeat=&quot;item in items1&quot;&gt;{{item.content}}&lt;/div&gt;
       &lt;/div&gt;
-      &lt;div class='container-vertical'&gt;
+      &lt;div class="container-vertical"&gt;
         &lt;div ng-repeat=&quot;item in items2&quot;&gt;{{item.content}}&lt;/div&gt;
       &lt;/div&gt;
     &lt;/div&gt;

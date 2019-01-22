@@ -1,4 +1,4 @@
-<div class='parent'>
+<div class="parent">
   <h2>Nested ngRepeat - with model</h2>
   <label> You can move whole rows by grabing row title, all items it selves. Try it out!
     <hr/>
@@ -6,28 +6,30 @@
     <hr/>
   </label>
   <div ng-controller="NestedNgRepeatWithModel">
-    <div class='table-row'>
-      <div class='container-vertical'>
-        <div ng-repeat="row in rows" class='example-row'>
+    <div class="table-row">
+      <div class="container-vertical">
+        <div ng-repeat="row in rows" class="example-row">
           <div class="row-handle">Row {{::$index}}</div>
           <div class="example-row container-nested">
-            <div ng-repeat="item in row.items" class="example-cell">{{item.content}} <button class='cursor-default' ng-click="removeItem(row, item)">x</button></div>
-            <div><button class='cursor-default' ng-click="addItem(row)">+</button></div>
+            <div ng-repeat="item in row.items" class="example-cell">{{item.content}} <button class="cursor-default" ng-click="removeItem(row, item)">x</button></div>
           </div>
-          <div><button class='cursor-default' ng-click="removeRow(row, $event)">X</button></div>
+          <div>
+            <button class="cursor-default" ng-click="addItem(row)">+</button>
+            <button class="cursor-default" ng-click="removeRow(row, $event)">X</button>
+          </div>
         </div>
       </div>
     </div>
     <div class="table-row">
-      <div class='container-vertical'>
+      <div class="container-vertical">
         <div>
-          <button class='cursor-default' ng-click="addRow()">add row</button>
+          <button class="cursor-default" ng-click="addRow()">add row</button>
         </div>
       </div>
     </div>
     <hr>
     <div class="table-row">
-      <div class='container-vertical'>
+      <div class="container-vertical">
         <pre>
             <div>Rows:
               <br/>{{rows | json}}</div>
@@ -37,17 +39,29 @@
   </div>
   <pre>
     <code>
-&lt;!-- HTML --&gt;
-&lt;div ng-controller=&quot;NestedNgRepeatWithModel&quot;&gt;
-  &lt;div class='container-vertical'&gt;
-    &lt;div ng-repeat=&quot;item in items&quot; class='example-row'&gt;
-      &lt;div class=&quot;row-handle&quot;&gt;Row {{::$index}}&lt;/div&gt;
-      &lt;div class=&quot;example-row example-cell container-nested&quot;&gt;
-        &lt;div ng-repeat=&quot;item in item.items&quot; class=&quot;example-cell&quot;&gt;{{item.content}}&lt;/div&gt;
+  &lt;!-- HTML --&gt;
+  &lt;div ng-controller=&quot;NestedNgRepeatWithModel&quot;&gt;
+    &lt;div class=&quot;table-row&quot;&gt;
+      &lt;div class=&quot;container-vertical&quot;&gt;
+        &lt;div ng-repeat=&quot;row in rows&quot; class=&quot;example-row&quot;&gt;
+          &lt;div class=&quot;row-handle&quot;&gt;Row {{::$index}}&lt;/div&gt;
+          &lt;div class=&quot;example-row container-nested&quot;&gt;
+            &lt;div ng-repeat=&quot;item in row.items&quot; class=&quot;example-cell&quot;&gt;{{item.content}} &lt;button class=&quot;cursor-default&quot; ng-click=&quot;removeItem(row, item)&quot;&gt;x&lt;/button&gt;&lt;/div&gt;
+          &lt;/div&gt;
+          &lt;div&gt;
+            &lt;button class=&quot;cursor-default&quot; ng-click=&quot;addItem(row)&quot;&gt;+&lt;/button&gt;
+            &lt;button class=&quot;cursor-default&quot; ng-click=&quot;removeRow(row, $event)&quot;&gt;X&lt;/button&gt;
+          &lt;/div&gt;
+        &lt;/div&gt;
       &lt;/div&gt;
     &lt;/div&gt;
-  &lt;/div&gt;
-&lt;/div&gt;
+    &lt;div class=&quot;table-row&quot;&gt;
+      &lt;div class=&quot;container-vertical&quot;&gt;
+        &lt;div&gt;
+          &lt;button class=&quot;cursor-default&quot; ng-click=&quot;addRow()&quot;&gt;add row&lt;/button&gt;
+        &lt;/div&gt;
+      &lt;/div&gt;
+    &lt;/div&gt;
     </code>
   </pre>
   <pre>
@@ -77,39 +91,72 @@
   // JS
 .controller('NestedNgRepeatWithModel', ['$timeout', '$scope', '$element', 'dragularService', function NestedNgRepeatWithModelCtrl($timeout, $scope, $element, dragularService) {
     $timeout(function() { // timeount due to nested ngRepeat to be ready
-      var container = $element.children().eq(0).children(),
-        parentContainers = container.children(),
-        nestedContainers = [];
+      var rowsContainer = $element[0].querySelector('.container-vertical'),
+        cellsContainers = getCellsContainers();
 
-      dragularService(container, {
+      dragularService.cleanEnviroment();
+      dragularService(rowsContainer, {
         moves: function(el, container, handle) {
           return handle.classList.contains('row-handle');
         },
-        containersModel: $scope.items,
+        containersModel: $scope.rows,
         nameSpace: 'rows'
       });
 
-      // collect nested contianers
-      for (var i = 0; i < parentContainers.length; i++) {
-        nestedContainers.push(parentContainers.eq(i).children()[1]);
+      var cellsContainersDrake = dragularService(cellsContainers, {
+        moves: function(el, container, handle) {
+          return handle.classList.contains('example-cell');
+        },
+        containersModel: getcellsContainersModel(),
+        nameSpace: 'cells'
+      });
+
+      $scope.addItem = function(row) {
+        var item = {
+          content: 'Item x' + Math.round( Math.random() * 1000 )
+        }
+        row.items.push( item );
       }
 
-      dragularService(nestedContainers, {
-        moves: function(el, container, handle) {
-          return !handle.classList.contains('row-handle');
-        },
-        containersModel: (function getNestedContainersModel(){
-          var parent = $scope.items,
+      $scope.removeItem = function(row, item) {
+        row.items.splice( row.items.indexOf( item ), 1);
+      }
+
+      $scope.addRow = function() {
+        var row = { items: [] };
+        $scope.rows.push( row );
+        // wait for angular to create element for added row
+        $scope.$evalAsync(function() {
+          // $evalAsync is probably not enough to get after the DOM creation, so timeouted :/
+          $timeout(function() {
+            // you can provide all containers, dragular will add just new containers
+            cellsContainersDrake.addContainers( getCellsContainers(), getcellsContainersModel());
+          }, 500);
+        });
+      }
+
+      $scope.removeRow = function( row, e ) {
+        var cellsContainerElm = e.target.parentElement.parentElement.querySelectorAll('.container-nested')[0];
+        cellsContainersDrake.removeContainers( cellsContainerElm );
+        $scope.rows.splice( $scope.rows.indexOf( row ), 1 );
+      }
+
+      function getCellsContainers() {
+        return $element[0].querySelectorAll('.container-nested');
+      }
+
+      function getcellsContainersModel(){
+          var parent = $scope.rows,
             containersModel = [];
           for (var i = 0; i < parent.length; i++) {
             containersModel.push(parent[i].items);
           }
           return containersModel;
-        })(),
-        nameSpace: 'cells'
-      });
+        }
+
     }, 0);
-    $scope.items = [{
+
+    $scope.rows = [{
       items: [{
         content: 'Item a1'
       }, {
@@ -140,7 +187,7 @@
         content: 'Item c4'
       }]
     }];
-  }])
+  });
     </code>
   </pre>
 </div>

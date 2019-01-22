@@ -1,18 +1,18 @@
-<div class='parent'>
+<div class="parent">
   <h2>ngRepeat - with model</h2>
   <label>Example of using ng-repeat with dragular and adding/removing items dynamicaly.</label>
-  <div class='wrapper' ng-controller="NgRepeatWithModel">
-    <div class='table-row'>
-      <div class='container-vertical'>
+  <div class="wrapper" ng-controller="NgRepeatWithModel">
+    <div class="table-row">
+      <div class="container-vertical">
         <div ng-repeat="item in items">
           {{item.content}}
-          <button class='cursor-default' ng-click="addItem()">+</button>
-          <button class='cursor-default' ng-click="removeItem()">x</button>
+          <button class="cursor-default" ng-click="addItem()">+</button>
+          <button class="cursor-default" ng-click="removeItem()">x</button>
         </div>
       </div>
     </div>
     <div class="table-row">
-      <div class='container-vertical'>
+      <div class="container-vertical">
         <div>Items:
           <br/>{{items | json}}</div>
       </div>
@@ -21,12 +21,12 @@
   <pre>
     <code>
   // HTML:
-   &lt;div class='wrapper' ng-controller=&quot;NgRepeatWithModel&quot;&gt;
-      &lt;div class='container-vertical'&gt;
+   &lt;div class="wrapper" ng-controller=&quot;NgRepeatWithModel&quot;&gt;
+      &lt;div class="container-vertical"&gt;
         &lt;div ng-repeat=&quot;item in items&quot;&gt;
           {{item.content}}
-          &lt;button class='cursor-default' ng-click=&quot;addItem()&quot;&gt;+&lt;/button&gt;
-          &lt;button class='cursor-default' ng-click=&quot;removeItem()&quot;&gt;x&lt;/button&gt;
+          &lt;button class="cursor-default" ng-click=&quot;addItem()&quot;&gt;+&lt;/button&gt;
+          &lt;button class="cursor-default" ng-click=&quot;removeItem()&quot;&gt;x&lt;/button&gt;
         &lt;/div&gt;
     &lt;/div&gt;
   &lt;/div&gt;
