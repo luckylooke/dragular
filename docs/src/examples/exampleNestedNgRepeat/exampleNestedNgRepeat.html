@@ -1,4 +1,4 @@
-<div class='parent'>
+<div class="parent">
     <h2>Nested ngRepeat</h2>
     <label> You can move whole rows by grabing row title, all items it selves. Try it out!
         <hr/>
@@ -6,7 +6,7 @@
         <hr/>
     </label>
     <div ng-controller="NestedNgRepeat">
-        <div ng-repeat="item in items" class='example-row'>
+        <div ng-repeat="item in items" class="example-row">
             <div class="row-handle">Row {{$index}}</div>
             <div ng-repeat="item in item.items" class="example-cell">{{item.content}}</div>
         </div>
@@ -16,7 +16,7 @@
   // HTML
 
   &lt;div ng-controller=&quot;Example15&quot;&gt;
-    &lt;div ng-repeat=&quot;item in items&quot; class='example-row'&gt;
+    &lt;div ng-repeat=&quot;item in items&quot; class="example-row"&gt;
       &lt;div class=&quot;row-handle&quot;&gt;Row {{$index}}&lt;/div&gt;
       &lt;div ng-repeat=&quot;item in item.items&quot; class=&quot;example-cell&quot;&gt;{{item.content}}&lt;/div&gt;
     &lt;/div&gt;
