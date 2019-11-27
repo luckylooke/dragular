@@ -5,7 +5,7 @@
 Browser support includes every sane browser and **IE7+**. <sub>_(Granted you polyfill the functional `Array` methods in ES5)_</sub>
 
 # :warning: ````IMPORTANT NOTICE!!!```` :warning:
-**Maitanance of this library is from now in energy saving mode. I will continue to fix bugs which does not require too heavy rewrites like #133 for example. Because I am working on new drag&drop library called [dragon](https://github.com/luckylooke/dragon) which will be more customisable/maintainable/usable. That is the reason I decided to redirect more of my energy from my other open projects. Thank you for your understanding.**
+**I am archiving this repository as I do not want to maintain it anymore, it is obsolete in some way and I am far from using angular v1+ now so it would be hard to continue with support. Please feel free to fork and continue on your own if you wish, thank you for understanding**
 
 # [=== Demo ===][2]
 
